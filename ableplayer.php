@@ -5,9 +5,9 @@ Plugin URI: https://github.com/ableplayer-wordpress
 Description: Accessible HTML5 media player
 Contributors: terrillthompson
 Tags: html5, media, audio, video, accessibility
-Version: 0.1.1
-Requires at least: 2.6
-Tested up to: 4.5
+Version: 0.1.2
+Requires at least: 4.9
+Tested up to: 4.9
 License: MIT
 License URI: https://github.com/ableplayer-wordpress/LICENSE
 */
@@ -40,14 +40,15 @@ function ableplayer_enqueue_scripts(){
 
   // Register/enqueue other dependencies
   wp_enqueue_script( 'js-cookie', plugins_url('thirdparty',__FILE__).'/js.cookie.js',array('jquery'));
+  wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
 
   // Register/enqueue Able Player JavaScript (two options; uncomment the one you prefer)
 
   // JS Option 1: minified, for production
-  // wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.min.js',array('jquery'));
+  wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.min.js',array('jquery'));
 
   // JS Option 2: human-readable, for debugging
-  wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.js',array('jquery'));
+  // wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.js',array('jquery'));
 
   // Register/enqueue Able Player CSS (two options; uncomment the one you prefer)
 
@@ -79,8 +80,13 @@ function able_player_shortcode( $atts,$content=null ) {
   // build complete array of all attributes; defaults will be overridden with user values
   $all_atts = shortcode_atts([
     'id' => get_unique_id(),
-		'type' => '',
+		'youtube-id' => '',
+		'youtube-desc-id' => '',
+		'youtube-nocookie' => '',
+		'vimeo-id' => '',
+		'vimeo-desc-id' => '',
 		'autoplay' => 'false',
+		'preload' => 'auto',
 		'loop' => 'false',
 		'playsinline' => 'true',
 		'hidecontrols' => 'false',
@@ -92,135 +98,67 @@ function able_player_shortcode( $atts,$content=null ) {
 		'start' => '',
 		'volume' => '',
 		'seekinterval' => '',
-		'nowplaying' => 'false'
+		'nowplaying' => 'false',
+		'skin' => '2020'
 	], $atts );
 
   // output
-  if (!$all_atts['type']) {
+  if (!($all_atts['youtube-id'] || $all_atts['vimeo-id'])) {
     // required fields are missing
     return false;
   }
   else {
-    $type = $all_atts['type'];
-    if (!($type == 'audio' || $type == 'video')) {
-      // type is not a supported value
-      return false;
+    // build a video player!
+    $o = '<video ';
+    $o .= ' id="'.$all_atts['id'].'"';
+    $o .= ' data-able-player';
+    if (is_true($all_atts['autoplay'])) {
+      $o .= ' autoplay';
     }
-    else {
-      // build a media player!
-      $o = '<'.$type;
-      $o .= ' id="'.$all_atts['id'].'"';
-      $o .= ' data-able-player';
-      $o .= ' preload="auto"';
-      if (is_true($all_atts['autoplay'])) {
-        $o .= ' autoplay';
-      }
-      if (is_true($all_atts['loop'])) {
-        $o .= ' loop';
-      }
-      if (is_true($all_atts['playsinline'])) {
-        $o .= ' playsinline';
-      }
-      if (is_true($all_atts['hidecontrols'])) {
-        $o .= ' data-hide-controls';
-      }
-      if (!empty($all_atts['poster'])) {
-        $o .= ' poster="'.$all_atts['poster'].'"';
-      }
-      if (!empty($all_atts['width'])) {
-        $o .= ' width="'.$all_atts['width'].'"';
-      }
-      if (!empty($all_atts['height'])) {
-        $o .= ' height="'.$all_atts['height'].'"';
-      }
-      if (!empty($all_atts['poster'])) {
-        $o .= ' poster="'.$all_atts['poster'].'"';
-      }
-      if (!empty($all_atts['heading'])) {
-        $o .= ' data-heading-level="'.$all_atts['heading'].'"';
-      }
-      if (!empty($all_atts['speed'])) {
-        $o .= ' data-speed-icons="'.$all_atts['speed'].'"';
-      }
-      if (!empty($all_atts['start'])) {
-        $o .= ' data-start-time="'.$all_atts['start'].'"';
-      }
-      if (!empty($all_atts['volume'])) {
-        $o .=  'data-volume="'.$all_atts['volume'].'"';
-      }
-      if (!empty($all_atts['seekinterval'])) {
-        $o .= ' data-seek-interval="'.$all_atts['seekinterval'].'"';
-      }
-      if (!empty($all_atts['shownowplaying'])) {
-        $o .= ' data-show-now-playing="'.$all_atts['shownowplaying'].'"';
-      }
-      $o .= '>';
-
-      // enclosing tags
-      if (!is_null($content)) {
-        // run shortcode parser recursively
-        $o .= do_shortcode($content);
-      }
-
-      // end media tag
-      $o .= '</'.$type.'>';
-
-      // return output
-      // To display HTML <audio> or <video> code (for debugging), uncomment first return statement
-      // For production, uncomment second return statement
-      // return esc_html($o);
-      return $o;
+    if (is_true($all_atts['loop'])) {
+      $o .= ' loop';
     }
-  }
-}
-add_shortcode('able-player', 'able_player_shortcode');
-
-/*
- *
- * Add support for [able-source] shortcode
- *
- *
-*/
-
-function able_source_shortcode( $atts,$content=null ) {
-
-	// Each of the following attributes can be passed with the [able-source] shortcode
-	// Either 'src', youtube-id, or vimeo-id is required
-
-  $all_atts = shortcode_atts([
-		'src' => '',
-		'type' => '',
-		'desc-src' => '',
-		'sign-src' => '',
-		'youtube-id' => '',
-		'youtube-desc-id' => '',
-		'youtube-nocookie' => '',
-		'vimeo-id' => '',
-		'vimeo-desc-id' => ''
-	], $atts );
-
-  // normalize attribute keys, lowercase
-  $atts = array_change_key_case((array)$atts, CASE_LOWER);
-
-  // output
-  if (!($all_atts['src'] || $all_atts['youtube-id'] || $all_atts['youtube-desc-id'])) {
-    // there is no media source
-    return false;
-  }
-  else {
-    // build a source tag
-    $o = '<source';
-    if (!empty($all_atts['src'])) {
-      $o .= ' src="'.$all_atts['src'].'"';
+    if (is_true($all_atts['playsinline'])) {
+      $o .= ' playsinline';
     }
-    if (!empty($all_atts['type'])) {
-      $o .= ' type="'.$all_atts['type'].'"';
+    if (is_true($all_atts['hidecontrols'])) {
+      $o .= ' data-hide-controls';
     }
-    if (!empty($all_atts['desc-src'])) {
-      $o .= ' data-desc-src="'.$all_atts['desc-src'].'"';
+    if (!empty($all_atts['preload'])) {
+      $o .= ' preload="'.$all_atts['preload'].'"';
     }
-    if (!empty($all_atts['sign-src'])) {
-      $o .= ' data-sign-src="'.$all_atts['sign-src'].'"';
+    if (!empty($all_atts['poster'])) {
+      $o .= ' poster="'.$all_atts['poster'].'"';
+    }
+    if (!empty($all_atts['width'])) {
+      $o .= ' width="'.$all_atts['width'].'"';
+    }
+    if (!empty($all_atts['height'])) {
+      $o .= ' height="'.$all_atts['height'].'"';
+    }
+    if (!empty($all_atts['poster'])) {
+      $o .= ' poster="'.$all_atts['poster'].'"';
+    }
+    if (!empty($all_atts['heading'])) {
+      $o .= ' data-heading-level="'.$all_atts['heading'].'"';
+    }
+    if (!empty($all_atts['speed'])) {
+      $o .= ' data-speed-icons="'.$all_atts['speed'].'"';
+    }
+    if (!empty($all_atts['start'])) {
+      $o .= ' data-start-time="'.$all_atts['start'].'"';
+    }
+    if (!empty($all_atts['volume'])) {
+      $o .=  'data-volume="'.$all_atts['volume'].'"';
+    }
+    if (!empty($all_atts['seekinterval'])) {
+      $o .= ' data-seek-interval="'.$all_atts['seekinterval'].'"';
+    }
+    if (!empty($all_atts['nowplaying'])) {
+      $o .= ' data-show-now-playing="'.$all_atts['nowplaying'].'"';
+    }
+    if (!empty($all_atts['skin'])) {
+      $o .= ' data-skin="'.$all_atts['skin'].'"';
     }
     if (!empty($all_atts['youtube-id'])) {
       $o .= ' data-youtube-id="'.$all_atts['youtube-id'].'"';
@@ -238,54 +176,24 @@ function able_source_shortcode( $atts,$content=null ) {
       $o .= ' data-vimeo-desc-id="'.$all_atts['vimeo-desc-id'].'"';
     }
     $o .= '>';
-  }
-  return $o;
-}
-add_shortcode('able-source', 'able_source_shortcode');
 
-/*
- *
- * Add support for [able-track] shortcode
- *
- *
-*/
-
-function able_track_shortcode( $atts,$content=null ) {
-
-	// Each of the following attributes can be passed with the [able-track] shortcode
-	// 'kind' and 'src' are required
-
-  $all_atts = shortcode_atts([
-		'kind' => '',
-		'src' => '',
-		'srclang' => '',
-		'label' => ''
-	], $atts );
-
-  // normalize attribute keys, lowercase
-  $atts = array_change_key_case((array)$atts, CASE_LOWER);
-
-  // output
-  if (!($all_atts['kind'] && $all_atts['src'])) {
-    // required fields are missing
-    return false;
-  }
-  else {
-    // build a track tag
-    $o = '<track';
-    $o .= ' kind="'.$all_atts['kind'].'"';
-    $o .= ' src="'.$all_atts['src'].'"';
-    if (!empty($all_atts['srclang'])) {
-      $o .= ' srclang="'.$all_atts['srclang'].'"';
+    // enclosing tags
+    if (!is_null($content)) {
+      // run shortcode parser recursively
+      $o .= do_shortcode($content);
     }
-    if (!empty($all_atts['label'])) {
-      $o .= ' label="'.$all_atts['label'].'"';
-    }
-    $o .= '>';
+
+    // end media tag
+    $o .= '</video>';
+
+    // return output
+    // To display HTML <video> code (for debugging), uncomment first return statement
+    // For production, uncomment second return statement
+    // return esc_html($o);
     return $o;
   }
 }
-add_shortcode('able-track', 'able_track_shortcode');
+add_shortcode('able-player', 'able_player_shortcode');
 
 /*
  *
@@ -300,16 +208,16 @@ function get_unique_id() {
   // return a unique id for each new player instance,
   // using the form 'able_player_1', 'able_player_2', etc.
   $this_player = 1;
-  $num_players = get_option('able-player-count');
+  $num_players = get_option('able_player_count');
   if (empty($num_players)) {
-    add_option('able-player-count',$player_count);
-    return 'able-player-'.$this_player;
+    update_option('able_player_count',$this_player,false);
+    return 'able_player_'.$this_player;
   }
   else {
     // there's already at least one player
     $this_player = $num_players + 1;
-    update_option('able-player-count',$this_player);
-    return 'able-player-'.$this_player;
+    update_option('able_player_count',$this_player,false);
+    return 'able_player_'.$this_player;
   }
 }
 
