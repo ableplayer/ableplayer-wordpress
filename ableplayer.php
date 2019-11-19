@@ -64,12 +64,12 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts');
 
 /*
  *
- * Add support for [able-player] shortcode
+ * Add support for [ableplayer] shortcode
  *
  *
 */
 
-function able_player_shortcode( $atts,$content=null ) {
+function ableplayer_shortcode( $atts,$content=null ) {
 
 	// Each of the following attributes can be passed with the [able-player] shortcode
 	// 'id' and 'type' (video or audio) is required
@@ -79,7 +79,7 @@ function able_player_shortcode( $atts,$content=null ) {
 
   // build complete array of all attributes; defaults will be overridden with user values
   $all_atts = shortcode_atts([
-    'id' => get_unique_id(),
+    'id' => ableplayer_get_unique_id(),
 		'youtube-id' => '',
 		'youtube-desc-id' => '',
 		'youtube-nocookie' => '',
@@ -112,16 +112,16 @@ function able_player_shortcode( $atts,$content=null ) {
     $o = '<video ';
     $o .= ' id="'.$all_atts['id'].'"';
     $o .= ' data-able-player';
-    if (is_true($all_atts['autoplay'])) {
+    if (ableplayer_is_true($all_atts['autoplay'])) {
       $o .= ' autoplay';
     }
-    if (is_true($all_atts['loop'])) {
+    if (ableplayer_is_true($all_atts['loop'])) {
       $o .= ' loop';
     }
-    if (is_true($all_atts['playsinline'])) {
+    if (ableplayer_is_true($all_atts['playsinline'])) {
       $o .= ' playsinline';
     }
-    if (is_true($all_atts['hidecontrols'])) {
+    if (ableplayer_is_true($all_atts['hidecontrols'])) {
       $o .= ' data-hide-controls';
     }
     if (!empty($all_atts['preload'])) {
@@ -193,7 +193,7 @@ function able_player_shortcode( $atts,$content=null ) {
     return $o;
   }
 }
-add_shortcode('able-player', 'able_player_shortcode');
+add_shortcode('able-player', 'ableplayer_shortcode');
 
 /*
  *
@@ -201,7 +201,7 @@ add_shortcode('able-player', 'able_player_shortcode');
  *
 */
 
-function get_unique_id() {
+function ableplayer_get_unique_id() {
 
   // use add_option(), get_option(), update_option(), & delete_option()
   // to track the number of Able Player instances on the current page
@@ -221,7 +221,7 @@ function get_unique_id() {
   }
 }
 
-function is_true($var) {
+function ableplayer_is_true($var) {
 
   // $var is a Boolean parameter
   // check for all variations that might be considered 'true'
