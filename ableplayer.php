@@ -71,7 +71,7 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts');
 
 function ableplayer_shortcode( $atts,$content=null ) {
 
-	// Each of the following attributes can be passed with the [able-player] shortcode
+	// Each of the following attributes can be passed with the [ableplayer] shortcode
 	// 'id' and 'type' (video or audio) is required
 
   // normalize attribute keys, lowercase
@@ -193,7 +193,7 @@ function ableplayer_shortcode( $atts,$content=null ) {
     return $o;
   }
 }
-add_shortcode('able-player', 'ableplayer_shortcode');
+add_shortcode('ableplayer', 'ableplayer_shortcode');
 
 /*
  *

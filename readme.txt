@@ -34,11 +34,11 @@ There are currently two ways to add an Able Player instance to a WordPress site:
 
 1. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
 
-2. Enter an [able-player] shortcode. The shortcode is intended for adding videos hosted on YouTube or Vimeo, with captions and subtitles hosted on these services. For anything more complex, use HTML.
+2. Enter an [ableplayer] shortcode. The shortcode is intended for adding videos hosted on YouTube or Vimeo, with captions and subtitles hosted on these services. For anything more complex, use HTML.
 
-== The [able-player] shortcode ==
+== The [ableplayer] shortcode ==
 
-The [able-player] shortcode supports the following attributes.
+The [ableplayer] shortcode supports the following attributes.
 
 = Required attributes (one of these) =
 
@@ -90,13 +90,13 @@ This example uses HTML to add a video player to the page, with one source (an MP
 
 This example uses a shortcode to add a YouTube player to the page, with two versions of the video, one with audio description and the other without (the user can toggle between the two versions using the D button).
 
-  [able-player youtube-id="XXXXXXXXXXX" youtube-desc-id="YYYYYYYYYYY"]
+  [ableplayer youtube-id="XXXXXXXXXXX" youtube-desc-id="YYYYYYYYYYY"]
 
 = Example 4 =
 
 This example uses a shortcode to add a Vimeo player to the page, with two versions of the video, one with audio description and the other without (the user can toggle between the two versions using the D button).
 
-  [able-player vimeo-id="XXXXXXXXX" vimeo-desc-id="YYYYYYYYY"]
+  [ableplayer vimeo-id="XXXXXXXXX" vimeo-desc-id="YYYYYYYYY"]
 
 == Roadmap ==
 1. Provide a user interface by which authors can select and configure default options through WordPress.
