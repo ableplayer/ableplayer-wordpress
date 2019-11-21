@@ -11,7 +11,7 @@ License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
 
-HTML5 accessible media player
+Accessible HTML5 media player
 
 == Description ==
 

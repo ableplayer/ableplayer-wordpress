@@ -1,28 +1,14 @@
 <?php
 /*
 Plugin Name: Able Player
-Plugin URI: https://github.com/ableplayer-wordpress
-Description: Accessible HTML5 media player
+Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
+Version: 1.0
+Author Name: Terrill Thompson
+Author URI: http://terrillthompson.com
 Contributors: terrillthompson
-Tags: html5, media, audio, video, accessibility
-Version: 0.1.2
-Requires at least: 4.9
-Tested up to: 4.9
+Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
 License: MIT
-License URI: https://github.com/ableplayer-wordpress/LICENSE
 */
-
-/*
- *
- * Disable the feature in WordPress that wraps everything (including Able Player code)
- * in <p> tags
- *
- * NOTE: This will affect ALL content on site, and may have undesirable consequences
- * Therefore it's commented out by default. Test before using.
- *
- *
-*/
-// remove_filter ('the_content', 'wpautop');
 
 /*
  *
