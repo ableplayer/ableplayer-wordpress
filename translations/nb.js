@@ -1,4 +1,4 @@
-var nb = {
+{
 
 "audio": "audio",
 
@@ -204,7 +204,25 @@ var nb = {
 
 "prefDescPause": "Sett video automatisk på pause når lydbeskrivelse starter",
 
-"prefVisibleDesc": "Gjør lydbeskrivelsen synlig",
+"prefDescVisible": "Gjør lydbeskrivelsen synlig",
+
+"prefDescVoice": "Voice",
+
+"prefDescRate": "Rate",
+
+"prefDescPitch": "Pitch",
+
+"prefDescPitch1": "Very low",
+
+"prefDescPitch2": "Low",
+
+"prefDescPitch3": "Default",
+
+"prefDescPitch4": "High",
+
+"prefDescPitch5": "Very high",
+
+"sampleDescriptionText": "Adjust settings to hear this sample text.",
 
 "prefHighlight": "Fremhev transkripsjon når media spilles av",
 
@@ -306,6 +324,32 @@ var nb = {
 
 "windowBringTop": "Legg i forgrunnen",
 
-"windowBringTopAlert": "Dette vinduet ligger nå foran andre vinduer."
+"windowBringTopAlert": "Dette vinduet ligger nå foran andre vinduer.",
 
-};
+"resultsSummary1": "You searched for:",
+
+"resultsSummary2": "Found",
+
+"resultsSummary3": "matching items.",
+
+"resultsSummary4": "Click the time associated with any item to play the video from that point.",
+
+"noResultsFound": "No results found.",
+
+"searchButtonLabel": "Play at",
+
+"hour": "hour",
+
+"minute": "minute",
+
+"second": "second",
+
+"hours": "hours",
+
+"minutes": "minutes",
+
+"seconds": "seconds",
+
+"enableKeyboardShortcuts": "Enable keyboard shortcuts"
+
+}

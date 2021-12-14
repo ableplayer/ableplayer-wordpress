@@ -1,4 +1,4 @@
-var fr = {
+{
 
 "audio": "audio",
 
@@ -204,7 +204,25 @@ var fr = {
 
 "prefDescPause": "Mettre la vidéo en pause automatiquement quand la description commence",
 
-"prefVisibleDesc": "Affichez la description",
+"prefDescVisible": "Affichez la description",
+
+"prefDescVoice": "Voix",
+
+"prefDescRate": "Vitesse",
+
+"prefDescPitch": "Volume",
+
+"prefDescPitch1": "Très faible",
+
+"prefDescPitch2": "Faible",
+
+"prefDescPitch3": "Par défaut",
+
+"prefDescPitch4": "Fort",
+
+"prefDescPitch5": "Très fort",
+
+"sampleDescriptionText": "Régler les paramètres afin d'entendre cet extrait de texte",
 
 "prefHighlight": "Surligner la transcription pendant la lecture",
 
@@ -308,4 +326,30 @@ var fr = {
 
 "windowBringTopAlert": "Cette fenêtre est maintenant devant d’autres objets sur la page.",
 
-};
+"resultsSummary1": "Vos résultats de recherche",
+
+"resultsSummary2": "Trouvé",
+
+"resultsSummary3": "éléments correspondants.",
+
+"resultsSummary4": "Cliquez sur le temps associé à n'importe quel élément pour lire la vidéo à partir de ce point.",
+
+"noResultsFound": "Aucun résultat trouvé.",
+
+"searchButtonLabel": "Lecture à",
+
+"hour": "heure",
+
+"minute": "minute",
+
+"second": "seconde",
+
+"hours": "heures",
+
+"minutes": "minutes",
+
+"seconds": "seconds",
+
+"enableKeyboardShortcuts": "Permettre les raccourcis clavier"
+
+}

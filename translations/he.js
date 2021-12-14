@@ -1,4 +1,4 @@
-var he = {
+{
 
 "audio": "שמע",
 
@@ -204,7 +204,25 @@ var he = {
 
 "prefDescPause": "השהה את הווידאו באופן אוטומטי כאשר התיאור מתחיל",
 
-"prefVisibleDesc": "הפוך תיאור גלוי",
+"prefDescVisible": "הפוך תיאור גלוי",
+
+"prefDescVoice": "Voice",
+
+"prefDescRate": "Rate",
+
+"prefDescPitch": "Pitch",
+
+"prefDescPitch1": "Very low",
+
+"prefDescPitch2": "Low",
+
+"prefDescPitch3": "Default",
+
+"prefDescPitch4": "High",
+
+"prefDescPitch5": "Very high",
+
+"sampleDescriptionText": "Adjust settings to hear this sample text.",
 
 "prefHighlight": "הדגש תמליל כמו משחק מדיה",
 
@@ -306,6 +324,32 @@ var he = {
 
 "windowBringTop": "שליחה קדימה",
 
-"windowBringTopAlert": "חלון זה נמצא עתה מעל אלמנטים אחרים בעמוד."
+"windowBringTopAlert": "חלון זה נמצא עתה מעל אלמנטים אחרים בעמוד.",
 
-};
+"resultsSummary1": "You searched for:",
+
+"resultsSummary2": "Found",
+
+"resultsSummary3": "matching items.",
+
+"resultsSummary4": "Click the time associated with any item to play the video from that point.",
+
+"noResultsFound": "No results found.",
+
+"searchButtonLabel": "Play at",
+
+"hour": "hour",
+
+"minute": "minute",
+
+"second": "second",
+
+"hours": "hours",
+
+"minutes": "minutes",
+
+"seconds": "seconds",
+
+"enableKeyboardShortcuts": "Enable keyboard shortcuts"
+
+}

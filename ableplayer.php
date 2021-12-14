@@ -2,7 +2,7 @@
 /*
 Plugin Name: Able Player
 Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
-Version: 1.0
+Version: 1.1
 Author Name: Terrill Thompson
 Author URI: http://terrillthompson.com
 Contributors: terrillthompson

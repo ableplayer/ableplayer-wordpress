@@ -1,4 +1,4 @@
-var zhtw = {
+{
 
 "audio": "音訊",
 
@@ -204,7 +204,25 @@ var zhtw = {
 
 "prefDescPause": "開始口述時自動暫停影片",
 
-"prefVisibleDesc": "同時以視覺方式呈現口述影像",
+"prefDescVisible": "同時以視覺方式呈現口述影像",
+
+"prefDescVoice": "語音",
+
+"prefDescRate": "語速",
+
+"prefDescPitch": "音調",
+
+"prefDescPitch1": "非常低沈",
+
+"prefDescPitch2": "低沈",
+
+"prefDescPitch3": "預設",
+
+"prefDescPitch4": "高亢",
+
+"prefDescPitch5": "非常高亢",
+
+"sampleDescriptionText": "調整設定以聆聽這段範例文字。",
 
 "prefHighlight": "播放媒體內容時凸顯相對應的逐字稿段落",
 
@@ -306,6 +324,32 @@ var zhtw = {
 
 "windowBringTop": "移至上層",
 
-"windowBringTopAlert": "此視窗已經放到本頁面其他物件上層。"
+"windowBringTopAlert": "此視窗已經放到本頁面其他物件上層。",
 
-};
+"resultsSummary1": "You searched for:",
+
+"resultsSummary2": "Found",
+
+"resultsSummary3": "matching items.",
+
+"resultsSummary4": "Click the time associated with any item to play the video from that point.",
+
+"noResultsFound": "No results found.",
+
+"searchButtonLabel": "Play at",
+
+"hour": "hour",
+
+"minute": "minute",
+
+"second": "second",
+
+"hours": "hours",
+
+"minutes": "minutes",
+
+"seconds": "seconds",
+
+"enableKeyboardShortcuts": "Enable keyboard shortcuts"
+
+}
