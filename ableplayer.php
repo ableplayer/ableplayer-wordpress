@@ -28,25 +28,27 @@ function ableplayer_enqueue_scripts(){
   wp_enqueue_script( 'js-cookie', plugins_url('thirdparty',__FILE__).'/js.cookie.js',array('jquery'));
   wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
 
-  // Register/enqueue Able Player JavaScript (two options; uncomment the one you prefer)
+  // Register/enqueue Able Player JavaScript (if debugging, unminified)
+  $js_dir = apply_filters( 'able_player_js', plugins_url('build',__FILE__) );
+  // Register/enqueue Able Player CSS (if debugging, unminified))
+  $css_dir = apply_filters( 'able_player_css', plugins_url('build',__FILE__) );
 
-  // JS Option 1: minified, for production
-  wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.min.js',array('jquery'));
+  $is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() == 'production' ) ? true : SCRIPT_DEBUG;
+  if ( SCRIPT_DEBUG === true || ! $is_production_environment ) {
+    // JS Option 2: human-readable, for debugging
+    wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.js', array('jquery'));
 
-  // JS Option 2: human-readable, for debugging
-  // wp_enqueue_script( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.js',array('jquery'));
-
-  // Register/enqueue Able Player CSS (two options; uncomment the one you prefer)
-
-  // CSS Option 1: minified, for production
-  wp_enqueue_style( 'ableplayer', plugins_url('build',__FILE__).'/ableplayer.min.css');
-
-  // CSS Option 2: human-readable; use this if you intend to change the styles and customize the player
-  // wp_enqueue_style( 'ableplayer', plugins_url('styles',__FILE__).'/ableplayer.css');
-
+    // CSS Option 2: human-readable; use this if you intend to change the styles and customize the player
+    wp_enqueue_style( 'ableplayer', $css_dir .'/ableplayer.css');
+  } else {
+    // JS Option 1: minified, for production
+    wp_enqueue_script( 'ableplayer', $js_dir .'/ableplayer.min.js',array('jquery'));
+    
+    // CSS Option 1: minified, for production
+    wp_enqueue_style( 'ableplayer', $css_dir .'/ableplayer.min.css');
+  }
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts');
-
 
 /*
  *
