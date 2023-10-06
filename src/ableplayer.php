@@ -2,21 +2,21 @@
 /**
  * Able Player WordPress plugin, accessible HTML5 media player 
  *
- * @package     Able Player
- * @author      Terrill Thompson
- * @license     MIT
+ * @package		 Able Player
+ * @author			Terrill Thompson
+ * @license		 MIT
  *
  * @wordpress-plugin
  * Plugin Name: Able Player
- * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
+ * Plugin URI:	https://github.com/ableplayer/ableplayer-wordpress
  * Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
- * Author:      Terrill Thompson
- * Author URI:  http://terrillthompson.com
+ * Author:			Terrill Thompson
+ * Author URI:	http://terrillthompson.com
  * Text Domain: ableplayer
- * License:     MIT
+ * License:		 MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:     1.1
+ * Version:		 1.1
  */
 
 // Configure debugging mode.
@@ -75,42 +75,45 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 /**
  * Add support for [ableplayer] shortcode.
  *
- * @param array  $atts Array of shortcode parameters.
+ * @param array	$atts Array of shortcode parameters.
  * @param string $content Content between shortcode opening and closing tags, if any.
  *
  * @return string.
  */
 function ableplayer_shortcode( $atts, $content = null ) {
-	// Each of the following attributes can be passed with the [ableplayer] shortcode
-	// 'id' and 'type' (video or audio) is required
+	// Each of the following attributes can be passed with the [ableplayer] shortcode.
+	// 'id' and 'type' (video or audio) is required.
 
 	// normalize attribute keys, lowercase
-	$atts = array_change_key_case((array)$atts, CASE_LOWER);
+	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
 	// build complete array of all attributes; defaults will be overridden with user values
-	$all_atts = shortcode_atts([
-	'id' => ableplayer_get_unique_id(),
-		'youtube-id' => '',
-		'youtube-desc-id' => '',
-		'youtube-nocookie' => '',
-		'vimeo-id' => '',
-		'vimeo-desc-id' => '',
-		'autoplay' => 'false',
-		'preload' => 'auto',
-		'loop' => 'false',
-		'playsinline' => 'true',
-		'hidecontrols' => 'false',
-		'poster' => '',
-		'width' => '',
-		'height' => '',
-		'heading' => '',
-		'speed' => 'animals',
-		'start' => '',
-		'volume' => '',
-		'seekinterval' => '',
-		'nowplaying' => 'false',
-		'skin' => '2020'
-	], $atts );
+	$all_atts = shortcode_atts(
+		array(
+			'id'               => ableplayer_get_unique_id(),
+			'youtube-id'       => '',
+			'youtube-desc-id'  => '',
+			'youtube-nocookie' => '',
+			'vimeo-id'         => '',
+			'vimeo-desc-id'    => '',
+			'autoplay'         => 'false',
+			'preload'          => 'auto',
+			'loop'             => 'false',
+			'playsinline'      => 'true',
+			'hidecontrols'     => 'false',
+			'poster'           => '',
+			'width'            => '',
+			'height'           => '',
+			'heading'          => '',
+			'speed'            => 'animals',
+			'start'            => '',
+			'volume'           => '',
+			'seekinterval'     => '',
+			'nowplaying'       => 'false',
+			'skin'             => '2020',
+		),
+		$atts
+	);
 
 	// output
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] ) ) {
@@ -122,73 +125,73 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		$o .= ' id="' . $all_atts['id'] . '"';
 		$o .= ' data-able-player';
 		if ( ableplayer_is_true( $all_atts['autoplay'] ) ) {
-		  $o .= ' autoplay';
+			$o .= ' autoplay';
 		}
 		if ( ableplayer_is_true( $all_atts['loop'] ) ) {
-		  $o .= ' loop';
+			$o .= ' loop';
 		}
 		if ( ableplayer_is_true( $all_atts['playsinline'] ) ) {
-		  $o .= ' playsinline';
+			$o .= ' playsinline';
 		}
 		if ( ableplayer_is_true( $all_atts['hidecontrols'] ) ) {
-		  $o .= ' data-hide-controls';
+			$o .= ' data-hide-controls';
 		}
 		if ( ! empty( $all_atts['preload'] ) ) {
-		  $o .= ' preload="' . $all_atts['preload'] . '"';
+			$o .= ' preload="' . $all_atts['preload'] . '"';
 		}
 		if ( ! empty( $all_atts['poster'] ) ) {
-		  $o .= ' poster="' . $all_atts['poster'] . '"';
+			$o .= ' poster="' . $all_atts['poster'] . '"';
 		}
 		if ( ! empty($all_atts['width'] ) ) {
-		  $o .= ' width="' . $all_atts['width'] . '"';
+			$o .= ' width="' . $all_atts['width'] . '"';
 		}
 		if ( ! empty( $all_atts['height'] ) ) {
-		  $o .= ' height="' . $all_atts['height'] . '"';
+			$o .= ' height="' . $all_atts['height'] . '"';
 		}
 		if ( ! empty( $all_atts['poster'] ) ) {
-		  $o .= ' poster="' . $all_atts['poster'] . '"';
+			$o .= ' poster="' . $all_atts['poster'] . '"';
 		}
 		if ( ! empty( $all_atts['heading'] ) ) {
-		  $o .= ' data-heading-level="' . $all_atts['heading'] . '"';
+			$o .= ' data-heading-level="' . $all_atts['heading'] . '"';
 		}
 		if ( ! empty( $all_atts['speed'] ) ) {
-		  $o .= ' data-speed-icons="' . $all_atts['speed'] . '"';
+			$o .= ' data-speed-icons="' . $all_atts['speed'] . '"';
 		}
 		if ( ! empty( $all_atts['start'] ) ) {
-		  $o .= ' data-start-time="' . $all_atts['start'] . '"';
+			$o .= ' data-start-time="' . $all_atts['start'] . '"';
 		}
 		if ( ! empty( $all_atts['volume'] ) ) {
-		  $o .=  'data-volume="' . $all_atts['volume'] . '"';
+			$o .=	'data-volume="' . $all_atts['volume'] . '"';
 		}
 		if ( ! empty( $all_atts['seekinterval'] ) ) {
-		  $o .= ' data-seek-interval="' . $all_atts['seekinterval'] . '"';
+			$o .= ' data-seek-interval="' . $all_atts['seekinterval'] . '"';
 		}
 		if ( ! empty( $all_atts['nowplaying'] ) ) {
-		  $o .= ' data-show-now-playing="' . $all_atts['nowplaying'] . '"';
+			$o .= ' data-show-now-playing="' . $all_atts['nowplaying'] . '"';
 		}
 		if ( ! empty( $all_atts['skin'] ) ) {
-		  $o .= ' data-skin="' . $all_atts['skin'] . '"';
+			$o .= ' data-skin="' . $all_atts['skin'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-id'] ) ) {
-		  $o .= ' data-youtube-id="' . $all_atts['youtube-id'] . '"';
+			$o .= ' data-youtube-id="' . $all_atts['youtube-id'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-desc-id'] ) ) {
-		  $o .= ' data-youtube-desc-id="' . $all_atts['youtube-desc-id'] . '"';
+			$o .= ' data-youtube-desc-id="' . $all_atts['youtube-desc-id'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-nocookie'] ) ) {
-		  $o .= ' data-youtube-nocookie="' . $all_atts['youtube-nocookie'] . '"';
+			$o .= ' data-youtube-nocookie="' . $all_atts['youtube-nocookie'] . '"';
 		}
 		if ( ! empty( $all_atts['vimeo-id'] ) ) {
-		  $o .= ' data-vimeo-id="' . $all_atts['vimeo-id'] . '"';
+			$o .= ' data-vimeo-id="' . $all_atts['vimeo-id'] . '"';
 		}
 		if ( ! empty( $all_atts['vimeo-desc-id'] ) ) {
-		  $o .= ' data-vimeo-desc-id="' . $all_atts['vimeo-desc-id'] . '"';
+			$o .= ' data-vimeo-desc-id="' . $all_atts['vimeo-desc-id'] . '"';
 		}
 		$o .= '>';
 
 		// enclosing tags.
 		if ( ! is_null( $content ) ) {
-			// run shortcode parser recursively
+			// run shortcode parser recursively.
 			$o .= do_shortcode( $content );
 		}
 
@@ -198,7 +201,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		return $o;
 	}
 }
-add_shortcode('ableplayer', 'ableplayer_shortcode');
+add_shortcode( 'ableplayer', 'ableplayer_shortcode' );
 
 /**
  * Get unique ID for a specific Ableplayer instance.
@@ -213,12 +216,14 @@ function ableplayer_get_unique_id() {
 	$this_player = 1;
 	$num_players = get_option( 'able_player_count' );
 	if ( empty( $num_players ) ) {
-		update_option('able_player_count', $this_player, false);
+		update_option( 'able_player_count', $this_player, false );
+
 		return 'able_player_' . $this_player;
 	} else {
-		// there's already at least one player
+		// there's already at least one player.
 		$this_player = $num_players + 1;
-		update_option( 'able_player_count', $this_player, false);
+		update_option( 'able_player_count', $this_player, false );
+
 		return 'able_player_' . $this_player;
 	}
 }
@@ -232,7 +237,7 @@ function ableplayer_get_unique_id() {
  */
 function ableplayer_is_true( $var ) {
 	// check for all variations that might be considered 'true'.
-	if ( $var === '1' || $var === 'yes' || $var === 'true' || $var === 1 || $var === true ) {
+	if ( '1' === $var || 'yes' === $var || 'true' === $var || 1 === $var || true === $var ) {
 		return true;
 	} else {
 		return false;
