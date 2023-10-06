@@ -10,6 +10,22 @@ Description: This plug-in uses Able Player, an open-source fully-accessible cros
 License: MIT
 */
 
+register_activation_hook( __FILE__, 'ableplayer_activation' );
+/**
+ * Configure plugin on activation.
+ */
+function ableplayer_activation() {
+	// Handle plugin activation.
+}
+
+register_deactivation_hook( __FILE__, 'ableplayer_plugin_deactivated' );
+/**
+ * On plugin deactivation.
+ */
+function ableplayer_plugin_deactivated() {
+	// Handle plugin deactivation.
+}
+
 /**
  * Load styles and scripts to head.
  */

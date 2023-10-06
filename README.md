@@ -1,16 +1,30 @@
-Able Player WordPress Plugin
-============================
+# Able Player for WordPress
 
-*Able Player* is a fully accessible cross-browser HTML5 media player for audio and video. 
+Run Able Player in WordPress, an accessible HTML5 media player
 
-This plugin is designed to simplify the process of adding Able Player to WordPress websites. 
+[![Code Linting](https://github.com/ableplayer/ableplayer-wordpress/actions/workflows/main.yml/badge.svg)](https://github.com/ableplayer/ableplayuer-wordpress/actions/workflows/main.yml) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
 
-See the [Able Player WordPress plug-in](https://wordpress.org/plugins/ableplayer/) site to download the latest stable version, rate the plugin, and report issues via the Support Forum.  
+## AblePlayer for WordPress Build Environment
 
-This GitHub repo is for development between stable versions.  
+* Tags: html5,media,audio,video,accessibility
+* Requires at least: 4.9
+* Tested up to: 6.3
+* Stable tag: `1.1`
+* License: MIT
+* License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
-See the main [Able Player](http://ableplayer.github.io/ableplayer) project page for more details about Able Player.
+This is the development environment for Able Player for WordPress
 
+## Contact
 
+Bugs or feature development contributions should be made through the [GitHub repository](https://github.com/ableplayer/ableplayer-wordpress/issues)
 
+## Authors
 
+* [Terrill Thompson](https://terrillthompson.com)
+
+## Contributors
+
+[Github Contributors](https://github.com/ableplayer/ableplayer-wordpress/graphs/contributors)
+
+* [Joe Dolson](https://www.joedolson.com)

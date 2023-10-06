@@ -1,3 +1,56 @@
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
 .DS_Store
-thirdparty/jwplayer.*
-thirdparty/jquery-*.js
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# JetBrains
+.idea
+src/.idea/workspace.xml
+src/todo.txt
+src/todo.txt
+src/.idea/php.xml
+src/.idea/workspace.xml
+src/.idea/php.xml
+src/.idea/workspace.xml
+src/todo.txt
+src/.idea/php.xml
+src/.idea/workspace.xml
