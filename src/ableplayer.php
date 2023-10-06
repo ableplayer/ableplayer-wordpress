@@ -1,14 +1,23 @@
 <?php
-/*
-Plugin Name: Able Player
-Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
-Version: 1.1
-Author Name: Terrill Thompson
-Author URI: http://terrillthompson.com
-Contributors: terrillthompson
-Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
-License: MIT
-*/
+/**
+ * Able Player WordPress plugin, accessible HTML5 media player 
+ *
+ * @package     Able Player
+ * @author      Terrill Thompson
+ * @license     MIT
+ *
+ * @wordpress-plugin
+ * Plugin Name: Able Player
+ * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
+ * Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
+ * Author:      Terrill Thompson
+ * Author URI:  http://terrillthompson.com
+ * Text Domain: ableplayer
+ * License:     MIT
+ * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
+ * Domain Path: lang
+ * Version:     1.1
+ */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
@@ -32,7 +41,7 @@ function ableplayer_plugin_deactivated() {
 /**
  * Load styles and scripts to head.
  */
-function ableplayer_enqueue_scripts(){
+function ableplayer_enqueue_scripts() {
 	// Documentation: http://codex.wordpress.org/Function_Reference/wp_enqueue_script.
 	// Register/enqueue common scripts that can be called automatically with just their handles (as of WP 3.5).
 	wp_enqueue_script( 'jquery' );
