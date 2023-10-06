@@ -10,6 +10,9 @@ Description: This plug-in uses Able Player, an open-source fully-accessible cros
 License: MIT
 */
 
+// Configure debugging mode.
+define( 'ABLEPLAYER_DEBUG', false );
+
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**
  * Configure plugin on activation.

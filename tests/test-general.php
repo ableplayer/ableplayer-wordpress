@@ -1,19 +1,19 @@
 <?php
 /**
- * Class Tests_My_Tickets_General
+ * Class Tests_AblePlayer_General
  *
- * @package My Tickets
+ * @package AblePlayer
  */
 
 /**
  * Sample test case.
  */
-class Tests_My_Tickets_General extends WP_UnitTestCase {
+class Tests_AblePlayer_General extends WP_UnitTestCase {
 	/**
 	 * Verify not in debug mode.
 	 */
-	public function test_mt_not_in_debug_mode() {
-		// Verify that the constant MT_DEBUG is false.
-		$this->assertFalse( MT_DEBUG );
+	public function test_ableplayer_not_in_debug_mode() {
+		// Verify that the constant ABLEPLAYER_DEBUG is false.
+		$this->assertFalse( ABLEPLAYER_DEBUG );
 	}
 }
