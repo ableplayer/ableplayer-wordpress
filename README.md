@@ -16,8 +16,8 @@ See the main [Able Player](http://ableplayer.github.io/ableplayer) project page 
 
 * Tags: html5,media,audio,video,accessibility
 * Requires at least: 4.9
-* Tested up to: 6.3
-* Stable tag: `1.1`
+* Tested up to: 6.4
+* Stable tag: `1.2`
 * License: MIT
 * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 

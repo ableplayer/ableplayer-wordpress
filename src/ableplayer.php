@@ -16,14 +16,14 @@
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:     1.1
+ * Version:     1.2
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '1.1' );
+define( 'ABLEPLAYER_VERSION', '1.2' );
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**

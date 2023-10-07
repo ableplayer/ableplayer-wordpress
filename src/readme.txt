@@ -4,12 +4,11 @@ Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
 Author URI: http://terrillthompson.com
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
-Tested up to: 5.8.2
+Tested up to: 6.4
 Requires PHP: 5.2
-Stable tag: 1.1
+Stable tag: 1.2
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
-
 
 Accessible HTML5 media player
 
@@ -107,6 +106,17 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 1. Interface directly with WordPress media libraries so users can select their media files and other assets rather than typing in URLs.
 
 == Changelog ==
+
+= 1.2 =
+
+* Update Able Player to 4.5.0, while retaining 4.4.1 scripts.
+* Make scripts sensitive to SCRIPT_DEBUG or `wp_get_environment_type()` for easier debugging.
+* Add unminified versions of CSS.
+* Add filters to customize JS and CSS urls.
+* Add filter documentation.
+* Add DEBUG constant.
+* Add activation and deactivation routines.
+* Update to WordPress PHPCS standards.
 
 = 1.1 =
 * Update Able Player to 4.4.1
