@@ -53,9 +53,25 @@ function ableplayer_enqueue_scripts() {
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ) );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
 
-	// Register/enqueue Able Player JavaScript (if debugging, unminified).
+	/**
+	 * Filter the Able Player build directory JS.
+	 *
+	 * @hook able_player_js
+	 *
+	 * @param string $url URL to Able Player root directory.
+	 *
+	 * @return string
+	 */
 	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) );
-	// Register/enqueue Able Player CSS (if debugging, unminified)).
+	/**
+	 * Filter the Able Player build directory CSS.
+	 *
+	 * @hook able_player_css
+	 *
+	 * @param string $url URL to Able Player root directory.
+	 *
+	 * @return string
+	 */
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) );
 
 	$is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
@@ -116,7 +132,8 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'nowplaying'       => 'false',
 			'skin'             => '2020',
 		),
-		$atts
+		$atts,
+		'ableplayer'
 	);
 
 	// output.
