@@ -1,22 +1,22 @@
 <?php
 /**
- * Able Player WordPress plugin, accessible HTML5 media player 
+ * Able Player WordPress plugin, accessible HTML5 media player
  *
- * @package		 Able Player
- * @author			Terrill Thompson
- * @license		 MIT
+ * @package     Able Player
+ * @author      Terrill Thompson
+ * @license     MIT
  *
  * @wordpress-plugin
  * Plugin Name: Able Player
- * Plugin URI:	https://github.com/ableplayer/ableplayer-wordpress
+ * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
  * Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
- * Author:			Terrill Thompson
- * Author URI:	http://terrillthompson.com
+ * Author:      Terrill Thompson
+ * Author URI:  http://terrillthompson.com
  * Text Domain: ableplayer
- * License:		 MIT
+ * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:		 1.1
+ * Version:     1.1
  */
 
 // Configure debugging mode.
@@ -46,22 +46,22 @@ function ableplayer_enqueue_scripts() {
 	// Register/enqueue common scripts that can be called automatically with just their handles (as of WP 3.5).
 	wp_enqueue_script( 'jquery' );
 
-	// Register/enqueue other dependencies
+	// Register/enqueue other dependencies.
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ) );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
 
-	// Register/enqueue Able Player JavaScript (if debugging, unminified)
+	// Register/enqueue Able Player JavaScript (if debugging, unminified).
 	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) );
-	// Register/enqueue Able Player CSS (if debugging, unminified))
+	// Register/enqueue Able Player CSS (if debugging, unminified)).
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) );
 
-	$is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() == 'production' ) ? true : SCRIPT_DEBUG;
+	$is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
 	if ( SCRIPT_DEBUG === true || ! $is_production_environment ) {
 		// JS Option 2: human-readable, for debugging.
 		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.js', array( 'jquery' ) );
 
 		// CSS Option 2: human-readable; use this if you intend to change the styles and customize the player.
-		wp_enqueue_style( 'ableplayer', $css_dir .'/ableplayer.css');
+		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.css');
 	} else {
 		// JS Option 1: minified, for production.
 		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.min.js', array( 'jquery' ) );
@@ -75,7 +75,7 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 /**
  * Add support for [ableplayer] shortcode.
  *
- * @param array	$atts Array of shortcode parameters.
+ * @param array  $atts Array of shortcode parameters.
  * @param string $content Content between shortcode opening and closing tags, if any.
  *
  * @return string.
@@ -84,10 +84,10 @@ function ableplayer_shortcode( $atts, $content = null ) {
 	// Each of the following attributes can be passed with the [ableplayer] shortcode.
 	// 'id' and 'type' (video or audio) is required.
 
-	// normalize attribute keys, lowercase
+	// normalize attribute keys, lowercase.
 	$atts = array_change_key_case( (array) $atts, CASE_LOWER );
 
-	// build complete array of all attributes; defaults will be overridden with user values
+	// build complete array of all attributes; defaults will be overridden with user values.
 	$all_atts = shortcode_atts(
 		array(
 			'id'               => ableplayer_get_unique_id(),
@@ -115,13 +115,13 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		$atts
 	);
 
-	// output
+	// output.
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] ) ) {
 		// required fields are missing.
 		return false;
 	} else {
 		// build a video player.
-		$o = '<video ';
+		$o  = '<video ';
 		$o .= ' id="' . $all_atts['id'] . '"';
 		$o .= ' data-able-player';
 		if ( ableplayer_is_true( $all_atts['autoplay'] ) ) {
@@ -142,7 +142,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['poster'] ) ) {
 			$o .= ' poster="' . $all_atts['poster'] . '"';
 		}
-		if ( ! empty($all_atts['width'] ) ) {
+		if ( ! empty( $all_atts['width'] ) ) {
 			$o .= ' width="' . $all_atts['width'] . '"';
 		}
 		if ( ! empty( $all_atts['height'] ) ) {
@@ -161,7 +161,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			$o .= ' data-start-time="' . $all_atts['start'] . '"';
 		}
 		if ( ! empty( $all_atts['volume'] ) ) {
-			$o .=	'data-volume="' . $all_atts['volume'] . '"';
+			$o .= 'data-volume="' . $all_atts['volume'] . '"';
 		}
 		if ( ! empty( $all_atts['seekinterval'] ) ) {
 			$o .= ' data-seek-interval="' . $all_atts['seekinterval'] . '"';
