@@ -45,10 +45,6 @@ function ableplayer_plugin_deactivated() {
  * Load styles and scripts to head.
  */
 function ableplayer_enqueue_scripts() {
-	// Documentation: http://codex.wordpress.org/Function_Reference/wp_enqueue_script.
-	// Register/enqueue common scripts that can be called automatically with just their handles (as of WP 3.5).
-	wp_enqueue_script( 'jquery' );
-
 	// Register/enqueue other dependencies.
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ) );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
