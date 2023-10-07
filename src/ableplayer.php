@@ -49,42 +49,38 @@ function ableplayer_enqueue_scripts() {
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ) );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
 
+	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
+	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
+
+	$js_file  = ( $is_production ) ? 'ableplayer.min.js' : 'ableplayer.js';
+	$css_file = ( $is_production ) ? 'ableplayer.min.css' : 'ableplayer.css';
 	/**
-	 * Filter the Able Player build directory JS.
+	 * Filter the Able Player JS URL.
 	 *
 	 * @hook able_player_js
 	 *
 	 * @param {string} $url URL to Able Player root directory.
+	 * @param {bool}   $is_production True if environment is designated as production.
 	 *
 	 * @return string
 	 */
-	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) );
+	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $is_production );
 	/**
-	 * Filter the Able Player build directory CSS.
+	 * Filter the Able Player CSS URL.
 	 *
 	 * @hook able_player_css
 	 *
 	 * @param {string} $url URL to Able Player root directory.
+	 * @param {bool}   $is_production True if environment is designated as production.
 	 *
 	 * @return string
 	 */
-	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) );
+	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
 
-	$is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
+	// Enqueue Able Player script and CSS.
+	wp_enqueue_script( 'ableplayer', $js_dir, array( 'jquery' ), ABLEPLAYER_VERSION );
+	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
 
-	if ( SCRIPT_DEBUG === true || ! $is_production_environment ) {
-		// JS Option 2: human-readable, for debugging.
-		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.js', array( 'jquery' ), ABLEPLAYER_VERSION );
-
-		// CSS Option 2: human-readable; use this if you intend to change the styles and customize the player.
-		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.css', array(), ABLEPLAYER_VERSION );
-	} else {
-		// JS Option 1: minified, for production.
-		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.min.js', array( 'jquery' ), ABLEPLAYER_VERSION );
-
-		// CSS Option 1: minified, for production.
-		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.min.css', array(), ABLEPLAYER_VERSION );
-	}
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 
