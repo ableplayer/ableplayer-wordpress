@@ -22,6 +22,9 @@
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
+// Get current version number.
+define( 'ABLEPLAYER_VERSION', '1.1' );
+
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**
  * Configure plugin on activation.
@@ -56,18 +59,19 @@ function ableplayer_enqueue_scripts() {
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) );
 
 	$is_production_environment = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
+
 	if ( SCRIPT_DEBUG === true || ! $is_production_environment ) {
 		// JS Option 2: human-readable, for debugging.
-		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.js', array( 'jquery' ) );
+		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.js', array( 'jquery' ), ABLEPLAYER_VERSION );
 
 		// CSS Option 2: human-readable; use this if you intend to change the styles and customize the player.
-		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.css');
+		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.css', array(), ABLEPLAYER_VERSION );
 	} else {
 		// JS Option 1: minified, for production.
-		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'ableplayer', $js_dir . '/ableplayer.min.js', array( 'jquery' ), ABLEPLAYER_VERSION );
 
 		// CSS Option 1: minified, for production.
-		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.min.css' );
+		wp_enqueue_style( 'ableplayer', $css_dir . '/ableplayer.min.css', array(), ABLEPLAYER_VERSION );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
