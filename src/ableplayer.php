@@ -58,7 +58,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_js
 	 *
-	 * @param string $url URL to Able Player root directory.
+	 * @param {string} $url URL to Able Player root directory.
 	 *
 	 * @return string
 	 */
@@ -68,7 +68,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_css
 	 *
-	 * @param string $url URL to Able Player root directory.
+	 * @param {string} $url URL to Able Player root directory.
 	 *
 	 * @return string
 	 */
