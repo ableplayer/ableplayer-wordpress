@@ -52,8 +52,8 @@ function ableplayer_enqueue_scripts() {
 	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
 	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
 
-	$js_file  = ( $is_production ) ? 'ableplayer.min.js' : 'ableplayer.js';
-	$css_file = ( $is_production ) ? 'ableplayer.min.css' : 'ableplayer.css';
+	$js_file  = ( $is_production ) ? 'ableplayer.min.4.5.0.js' : 'ableplayer.4.5.0.js';
+	$css_file = ( $is_production ) ? 'ableplayer.min.4.5.0.css' : 'ableplayer.4.5.0.css';
 	/**
 	 * Filter the Able Player JS URL.
 	 *

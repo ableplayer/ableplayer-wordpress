@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name: Able Player
  * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
- * Description: Able Player is a fully accessible cross-browser HTML5 media player for audio and video. 
+ * Description: Able Player is a fully accessible cross-browser HTML5 media player for audio and video.
  * Author:      Terrill Thompson
  * Author URI:  http://terrillthompson.com
  * Text Domain: ableplayer
