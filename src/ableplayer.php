@@ -120,7 +120,15 @@ function able_player_parameters() {
 		'heading'             => array(
 			'default'     => '',
 			'description' => __( 'Able Player injects an off-screen HTML heading “Media Player” at the top of the player so screen reader users can easily find the player. It automatically assigns a heading level that is one level deeper than the closest parent heading. This attribute can be used to manually set the heading level.', 'ableplayer' ),
-			'options'     => array( 'h1' => '1', 'h2' => '2', 'h3' => '3', 'h4' => '4', 'h5' => '5', 'h6' => '6', 'Omit' => '0' ),
+			'options'     => array(
+				'h1'   => '1',
+				'h2'   => '2',
+				'h3'   => '3',
+				'h4'   => '4',
+				'h5'   => '5',
+				'h6'   => '6',
+				'Omit' => '0'
+			),
 		),
 		'height'              => array(
 			'default'     => '',
