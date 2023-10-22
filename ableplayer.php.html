@@ -111,7 +111,7 @@ function ableplayer_enqueue_scripts() {
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 
 /**
- * Self-documenting array of AblePlayer attributes. 
+ * Self-documenting array of AblePlayer attributes.
  *
  * @return array
  */
@@ -216,7 +216,7 @@ function able_player_parameters() {
 			'default'     => '',
 			'description' => __( 'Allow keyboard shortcuts for controlling the player remotely within textarea form fields.', 'ableplayer' ),
 			'options'     => array( 'true' ),
-		), 
+		),
 		'start'               => array(
 			'default'     => '',
 			'description' => __( 'Time at which you want the media to start playing.', 'ableplayer' ),
@@ -225,16 +225,16 @@ function able_player_parameters() {
 		'transcript-div'      => array(
 			'default'     => '',
 			'description' => __( 'ID of a custom div in which to display an interactive transcript.', 'ableplayer' ),
-		), 
+		),
 		'transcript-src'      => array(
 			'default'     => '',
 			'description' => __( 'ID of an external div that contains a pre-existing manually coded transcript. Able Player will parse this transcript and interact with it during playback', 'ableplayer' ),
-		), 
+		),
 		'include-transcript'  => array(
 			'default'     => '',
 			'description' => __( 'Set to “false” to exclude transcript button from controller.', 'ableplayer' ),
 			'options'     => array( 'true' ),
-		), 
+		),
 		'transcript-title'    => array(
 			'default'     => '',
 			'description' => __( 'Override default transcript title (default is “Transcript”, or “Lyrics” if the data-lyrics-mode attribute is present)', 'ableplayer' ),
@@ -294,7 +294,7 @@ function able_player_parameters() {
 		'volume'              => array(
 			'default'     => '7',
 			'description' => __( 'Set the default volume from 0 to 10; default is 7 to avoid overpowering screen reader audio)', 'ableplayer' ),
-			'options'     => array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' );
+			'options'     => array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ),
 		),
 		'youtube-id'          => array(
 			'default'     => '',
