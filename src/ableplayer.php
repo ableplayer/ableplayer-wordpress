@@ -127,7 +127,7 @@ function able_player_parameters() {
 				'h4'   => '4',
 				'h5'   => '5',
 				'h6'   => '6',
-				'Omit' => '0'
+				'Omit' => '0',
 			),
 		),
 		'height'              => array(
