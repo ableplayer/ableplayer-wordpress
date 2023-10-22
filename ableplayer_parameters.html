@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Filter: able_player_js - Able Player for WordPress Hook Doumentation</title>
+    <title>Filter: ableplayer_parameters - Able Player for WordPress Hook Doumentation</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -15,7 +15,7 @@
 
 <div id="main">
 
-    <header><h1 class="page-title">Filter: able_player_js</h1></header>
+    <header><h1 class="page-title">Filter: ableplayer_parameters</h1></header>
 	<main>
     
 
@@ -36,14 +36,14 @@
 
     
 
-    <h4 class="name" id="able_player_js">apply_filters( 'able_player_js', <span class="signature">$url, $is_production )</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ableplayer_parameters">apply_filters( 'ableplayer_parameters', <span class="signature">$params )</span><span class="type-signature"> &rarr; {array}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the Able Player JS URL.</p>
+    <p>Filter the default values, options, and descriptions for all Able Player shortcode parameters.</p>
 </div>
 
 
@@ -77,13 +77,13 @@
 
         <tr>
             
-                <td class="name"><code>$url</code></td>
+                <td class="name"><code>$params</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">array</span>
 
 
             
@@ -93,30 +93,7 @@
 
             
 
-            <td class="description last"><p>URL to Able Player root directory.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>$is_production</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">bool</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>True if environment is designated as production.</p></td>
+            <td class="description last"><p>Array of default parameters.</p></td>
         </tr>
 
     
@@ -157,7 +134,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ableplayer.php.html">ableplayer.php</a>, <a href="ableplayer.php.html#line57">line 57</a>
+        <a href="ableplayer.php.html">ableplayer.php</a>, <a href="ableplayer.php.html#line287">line 287</a>
     </li></ul></dd>
     
 
@@ -184,10 +161,22 @@
 
         
 <div class="param-desc">
-    <p>string</p>
+    <p>.</p>
 </div>
 
 
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">array</span>
+
+
+    </dd>
+</dl>
 
     
 
