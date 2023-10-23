@@ -5,7 +5,7 @@ Author URI: http://terrillthompson.com
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.4
-Requires PHP: 5.2
+Requires PHP: 7.0
 Stable tag: 1.2
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
