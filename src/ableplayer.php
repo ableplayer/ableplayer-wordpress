@@ -16,14 +16,14 @@
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:     1.2
+ * Version:     1.2.0
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '1.2' );
+define( 'ABLEPLAYER_VERSION', '1.2.0' );
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**
@@ -52,8 +52,8 @@ function ableplayer_enqueue_scripts() {
 	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
 	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
 
-	$js_file  = ( $is_production ) ? 'ableplayer.min.4.5.0.js' : 'ableplayer.4.5.0.js';
-	$css_file = ( $is_production ) ? 'ableplayer.min.4.5.0.css' : 'ableplayer.4.5.0.css';
+	$js_file  = ( $is_production ) ? 'ableplayer.min.js' : 'ableplayer.js';
+	$css_file = ( $is_production ) ? 'ableplayer.min.css' : 'ableplayer.css';
 	/**
 	 * Filter the Able Player JS URL.
 	 *
@@ -293,13 +293,15 @@ function able_player_parameters() {
 		),
 	);
 	/**
-	 * Filter the default values, options, and descriptions for all Able Player shortcode parameters.
+	 * Filter the default values, options, and descriptions for all Able Player shortcode parameters. Not used yet in 1.2.0.
 	 *
 	 * @hook ableplayer_parameters
 	 *
-	 * @param {array} $params Array of default parameters.
+	 * @param {array} $params Array of default parameters. The array is a multidimensional array with the shortcode 
+	 *                        attribute as a key with array of `default` value, `description`, available `options`, 
+	 *(                       and alternate `parameter` name if the output isn't `data-{key}`.
 	 *
-	 * @return {array}.
+	 * @return {array} Array of parameters.
 	 */
 	return apply_filters( 'ableplayer_default_parameters', $params );
 }

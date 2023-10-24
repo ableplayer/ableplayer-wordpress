@@ -6,7 +6,7 @@ Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 1.2
+Stable tag: 1.2.0
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -117,6 +117,7 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 * Add DEBUG constant.
 * Add activation and deactivation routines.
 * Update to WordPress PHPCS standards.
+* Add generated documentation of hooks at http://ableplayer.github.io/ableplayer-wordpress/
 
 = 1.1 =
 * Update Able Player to 4.4.1
