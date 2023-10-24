@@ -107,9 +107,10 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 
 == Changelog ==
 
-= 1.2 =
+= 1.2.0 =
 
 * Update Able Player to 4.5.0, while retaining 4.4.1 scripts.
+* Add support to pass YouTube URLs into shortcode as well as YouTube IDs.
 * Make scripts sensitive to SCRIPT_DEBUG or `wp_get_environment_type()` for easier debugging.
 * Add unminified versions of CSS.
 * Add filters to customize JS and CSS urls.

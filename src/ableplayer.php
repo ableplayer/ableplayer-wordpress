@@ -280,7 +280,7 @@ function able_player_parameters() {
 		),
 		'youtube-id'          => array(
 			'default'     => '',
-			'description' => __( '11-character YouTube ID', 'ableplayer' ),
+			'description' => __( '11-character YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
 		),
 		'youtube-desc-id'     => array(
 			'default'     => '',
@@ -408,10 +408,12 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			$o .= ' data-skin="' . $all_atts['skin'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-id'] ) ) {
-			$o .= ' data-youtube-id="' . $all_atts['youtube-id'] . '"';
+			$youtube_url = ableplayer_parse_youtube( $all_atts['youtube-id'] );
+			$o          .= ' data-youtube-id="' . $all_atts['youtube-id'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-desc-id'] ) ) {
-			$o .= ' data-youtube-desc-id="' . $all_atts['youtube-desc-id'] . '"';
+			$youtube_desc_url = ableplayer_parse_youtube( $all_atts['youtube-id'] );
+			$o               .= ' data-youtube-desc-id="' . $all_atts['youtube-desc-id'] . '"';
 		}
 		if ( ! empty( $all_atts['youtube-nocookie'] ) ) {
 			$o .= ' data-youtube-nocookie="' . $all_atts['youtube-nocookie'] . '"';
@@ -437,6 +439,28 @@ function ableplayer_shortcode( $atts, $content = null ) {
 	}
 }
 add_shortcode( 'ableplayer', 'ableplayer_shortcode' );
+
+/**
+ * Parse the value of a YouTube shortcode attribute to extract YouTube ID if necessary.
+ *
+ * @param string $attr Value of the attribute.
+ *
+ * @param string YouTube video ID.
+ */
+function ableplayer_parse_youtube( $attr  ) {
+	$query = parse_url( $attr );
+	if ( ! isset( $query['query'] ) ) {
+		$replace = array( 'http://youtu.be/', 'https://youtu.be/' );
+
+		return str_replace( $replace, '', $attr );
+	} else {
+		parse_str( $query['query'], $results );
+
+		return $results['v'];
+	}
+
+	return $attr;
+}
 
 /**
  * Get unique ID for a specific Ableplayer instance.
