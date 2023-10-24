@@ -1,4 +1,4 @@
-=== Able Player ===
+=== Able Player, accessible HTML5 media player ===
 Contributors: terrillthompson, joedolson
 Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
 Author URI: http://terrillthompson.com
