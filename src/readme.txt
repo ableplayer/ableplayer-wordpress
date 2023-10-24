@@ -41,28 +41,28 @@ The [ableplayer] shortcode supports the following attributes.
 
 = Required attributes (one of these) =
 
-* **youtube-id** - 11-character YouTube ID or YouTube URL.
-* **vimeo-id** - Vimeo ID or URL.
+* `youtube-id` - 11-character YouTube ID or YouTube URL.
+* `vimeo-id` - Vimeo ID or URL.
 
 = Optional attributes =
 
-* **youtube-desc-id** - YouTube URL or ID of a described version of the video
-* **vimeo-desc-id** - Vimeo URL or ID of a described version of the video
-* **youtube-nocookie** => "true" or "false" (use "true" to embed YouTube untracked, for added privacy)
-* **id** - a unique id for the player (if omitted, one will be automatically assigned)
-* **autoplay** - "true" or "false" (default is "false")
-* **loop** - "true" or "false" (default is "false")
-* **playsinline** - "true" or "false" (default is "true"). By setting to "false", some devices (e.g., iPhones) will play the video in their own media player rather than in Able Player.
-* **hidecontrols** - "true" or "false" (default is "false"). Set to "true" to enable the player controls to fade away during playback. They will appear again if the user hovers over the player or pressing a key, and they are always accessible to screen reader users.
-* **poster** - the URL of a poster image, displayed before the user presses Play
-* **width** - a value in pixels (by default, the player will be sized to fit its container)
-* **height** - a value in pixels (by default, the height of the player will be in proportion to the width)
-* **heading** - The HTML heading level (1-6) of the visually hidden "Media Player" heading that precedes the player (for the benefit of screen reader users). If omitted, a heading level will be intelligently assigned based on context.
-* **speed** - "animals" or "arrows" (default is "animals")
-* **start** - start time at which to start playing the media, in seconds. Some browsers do not support this.
-* **volume** - "0" to "10" (default is "7" to avoid overpowering screen reader audio). Some browsers do not support this.
-* **seekinterval** - number of seconds to forward/rewind with the Forward and Rewind buttons. If omitted, the interval will be intelligently assigned based on length of the video.
-* **nowplaying** - "true" or "false" to include a "Selected Track" section within the media player (default is "false").
+* `youtube-desc-id` - YouTube URL or ID of a described version of the video
+* `vimeo-desc-id` - Vimeo URL or ID of a described version of the video
+* `youtube-nocookie` - "true" or "false" (use "true" to embed YouTube untracked, for added privacy)
+* `id` - a unique id for the player (if omitted, one will be automatically assigned)
+* `autoplay` - "true" or "false" (default is "false")
+* `loop` - "true" or "false" (default is "false")
+* `playsinline` - "true" or "false" (default is "true"). By setting to "false", some devices (e.g., iPhones) will play the video in their own media player rather than in Able Player.
+* `hidecontrols` - "true" or "false" (default is "false"). Set to "true" to enable the player controls to fade away during playback. They will appear again if the user hovers over the player or pressing a key, and they are always accessible to screen reader users.
+* `poster` - the URL of a poster image, displayed before the user presses Play
+* `width` - a value in pixels (by default, the player will be sized to fit its container)
+* `height` - a value in pixels (by default, the height of the player will be in proportion to the width)
+* `heading` - The HTML heading level (1-6) of the visually hidden "Media Player" heading that precedes the player (for the benefit of screen reader users). If omitted, a heading level will be intelligently assigned based on context.
+* `speed` - "animals" or "arrows" (default is "animals")
+* `start` - start time at which to start playing the media, in seconds. Some browsers do not support this.
+* `volume` - "0" to "10" (default is "7" to avoid overpowering screen reader audio). Some browsers do not support this.
+* `seekinterval` - number of seconds to forward/rewind with the Forward and Rewind buttons. If omitted, the interval will be intelligently assigned based on length of the video.
+* `nowplaying` - "true" or "false" to include a "Selected Track" section within the media player (default is "false").
 
 == Examples ==
 
