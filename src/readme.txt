@@ -1,5 +1,5 @@
 === Able Player ===
-Contributors: terrillthompson
+Contributors: terrillthompson, joedolson
 Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
 Author URI: http://terrillthompson.com
 Tags: html5,media,audio,video,accessibility
