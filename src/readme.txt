@@ -33,11 +33,11 @@ There are currently two ways to add an Able Player instance to a WordPress site:
 
 1. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
 
-2. Enter an [ableplayer] shortcode. The shortcode is intended for adding videos hosted on YouTube or Vimeo, with captions and subtitles hosted on these services. For anything more complex, use HTML.
+2. Enter an `[ableplayer]` shortcode. The shortcode is intended for adding videos hosted on YouTube or Vimeo, with captions and subtitles hosted on these services. For anything more complex, use HTML.
 
 == The [ableplayer] shortcode ==
 
-The [ableplayer] shortcode supports the following attributes.
+The `[ableplayer]` shortcode supports the following attributes.
 
 = Required attributes (one of these) =
 
