@@ -41,13 +41,13 @@ The [ableplayer] shortcode supports the following attributes.
 
 = Required attributes (one of these) =
 
-* **youtube-id** - 11-character YouTube ID
-* **vimeo-id** - Vimeo ID
+* **youtube-id** - 11-character YouTube ID or YouTube URL.
+* **vimeo-id** - Vimeo ID or URL.
 
 = Optional attributes =
 
-* **youtube-desc-id** - YouTube ID of a described version of the video
-* **vimeo-desc-id** - Vimeo ID of a described version of the video
+* **youtube-desc-id** - YouTube URL or ID of a described version of the video
+* **vimeo-desc-id** - Vimeo URL or ID of a described version of the video
 * **youtube-nocookie** => "true" or "false" (use "true" to embed YouTube untracked, for added privacy)
 * **id** - a unique id for the player (if omitted, one will be automatically assigned)
 * **autoplay** - "true" or "false" (default is "false")
@@ -110,7 +110,6 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 = 1.2.0 =
 
 * Update Able Player to 4.5.0, while retaining 4.4.1 scripts.
-* Add support to pass YouTube URLs into shortcode as well as YouTube IDs.
 * Make scripts sensitive to SCRIPT_DEBUG or `wp_get_environment_type()` for easier debugging.
 * Add unminified versions of CSS.
 * Add filters to customize JS and CSS urls.
