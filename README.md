@@ -10,7 +10,7 @@ This GitHub repo is for development between stable versions.
 
 See the main [Able Player](http://ableplayer.github.io/ableplayer) project page for more details about Able Player.
 
-[![Code Linting](https://github.com/ableplayer/ableplayer-wordpress/actions/workflows/main.yml/badge.svg)](https://github.com/ableplayer/ableplayuer-wordpress/actions/workflows/main.yml) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
+[![Code Linting](https://github.com/ableplayer/ableplayer-wordpress/actions/workflows/main.yml/badge.svg)](https://github.com/ableplayer/ableplayer-wordpress/actions/workflows/main.yml) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
 
 ## AblePlayer for WordPress Build Environment
 
