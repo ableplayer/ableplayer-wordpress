@@ -7,7 +7,7 @@
     "authors": [{
         "name": "Terrill Thompson",
         "email": "test@test.com",
-        "homepage": "http://terrillthompson.com"
+        "homepage": "https://terrillthompson.com"
     }],
     "type": "wordpress-plugin",
     "require-dev": {
