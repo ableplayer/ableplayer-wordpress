@@ -16,14 +16,14 @@
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:     1.2.0
+ * Version:     1.3.0-beta1
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '1.2.0' );
+define( 'ABLEPLAYER_VERSION', '1.3.0-beta1' );
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**
@@ -278,6 +278,10 @@ function able_player_parameters() {
 			'description' => __( 'Set the default volume from 0 to 10; default is 7 to avoid overpowering screen reader audio)', 'ableplayer' ),
 			'options'     => array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ),
 		),
+		'sign-src'            => array(
+			'default'     => '',
+			'description' => __( 'Path to a local ASL video, synchronized with the main video.', 'ableplayer' ),
+		),
 		'youtube-id'          => array(
 			'default'     => '',
 			'description' => __( '11-character YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
@@ -345,6 +349,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'seekinterval'     => '',
 			'nowplaying'       => 'false',
 			'skin'             => '2020',
+			'sign-src'         => '',
 		),
 		$atts,
 		'ableplayer'
@@ -421,6 +426,9 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		if ( ! empty( $all_atts['vimeo-desc-id'] ) ) {
 			$o .= ' data-vimeo-desc-id="' . $all_atts['vimeo-desc-id'] . '"';
+		}
+		if ( ! empty( $all_atts['sign-src'] ) ) {
+			$o .= ' data-sign-src="' . esc_url( $all_atts['sign-src'] ) . '"';
 		}
 		$o .= '>';
 
