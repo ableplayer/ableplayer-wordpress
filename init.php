@@ -16,7 +16,7 @@
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
  * Domain Path: lang
- * Version:     1.2.0
+ * Version:     1.2.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
