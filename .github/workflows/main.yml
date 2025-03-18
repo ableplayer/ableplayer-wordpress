@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: styfle/cancel-workflow-action@0.8.0
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
@@ -38,7 +38,7 @@ jobs:
         id: composer-cache
         run: |
           echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
