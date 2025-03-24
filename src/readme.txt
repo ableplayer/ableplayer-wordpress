@@ -109,6 +109,10 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 
 = 1.2.1 =
 
+* Change: Updates Able Player to version 4.5.1.
+* Security: <a href="https://github.com/ableplayer/ableplayer/security">Upstream security update</a> to add DomPurify to AblePlayer.
+* API: Makes Able Player with DomPurify as an unincorporated dependency available, switchable using the `able_player_js` filter.
+
 = 1.2.0 =
 
 * Update Able Player to 4.5.0, while retaining 4.4.1 scripts.
