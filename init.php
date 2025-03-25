@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-include( dirname( __FILE__ ) . '/src/ableplayer.php' );
+require __DIR__ . '/src/ableplayer.php';
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 register_deactivation_hook( __FILE__, 'ableplayer_plugin_deactivated' );
