@@ -106,7 +106,6 @@ function ableplayer_enqueue_scripts() {
 	// Enqueue Able Player script and CSS.
 	wp_enqueue_script( 'ableplayer', $js_dir, array( 'jquery' ), ABLEPLAYER_VERSION );
 	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
-
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 
@@ -492,13 +491,13 @@ function ableplayer_get_unique_id() {
 /**
  * Test whether a given able player property is true.
  *
- * @param bool|string|int $var A boolean-like value that should be treated as boolean.
+ * @param bool|string|int $condition A boolean-like value that should be treated as boolean.
  *
  * @return bool
  */
-function ableplayer_is_true( $var ) {
+function ableplayer_is_true( $condition ) {
 	// check for all variations that might be considered 'true'.
-	if ( '1' === $var || 'yes' === $var || 'true' === $var || 1 === $var || true === $var ) {
+	if ( '1' === $condition || 'yes' === $condition || 'true' === $condition || 1 === $condition || true === $condition ) {
 		return true;
 	} else {
 		return false;
