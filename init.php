@@ -15,7 +15,7 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Domain Path: lang
+ * Domain Path: /lang
  * Version:     1.2.1
  */
 
