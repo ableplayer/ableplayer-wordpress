@@ -46,8 +46,8 @@ function ableplayer_plugin_deactivated() {
  */
 function ableplayer_enqueue_scripts() {
 	// Register/enqueue other dependencies.
-	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), ABLEPLAYER_VERSION );
-	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), ABLEPLAYER_VERSION );
+	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), ABLEPLAYER_VERSION, true );
+	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), ABLEPLAYER_VERSION, true );
 
 	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
 	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
@@ -78,7 +78,7 @@ function ableplayer_enqueue_scripts() {
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
 
 	// Enqueue Able Player script and CSS.
-	wp_enqueue_script( 'ableplayer', $js_dir, array( 'jquery' ), ABLEPLAYER_VERSION );
+	wp_enqueue_script( 'ableplayer', $js_dir, array( 'jquery' ), ABLEPLAYER_VERSION, true );
 	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
