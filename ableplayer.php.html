@@ -33,7 +33,7 @@
  * @license     MIT
  *
  * @wordpress-plugin
- * Plugin Name: Able Player
+ * Plugin Name:  Able Player WordPress plugin, accessible HTML5 media player
  * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
  * Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
  * Author:      Terrill Thompson
@@ -41,7 +41,7 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Domain Path: lang
+ * Domain Path: /lang
  * Version:     1.2.1
  */
 
@@ -72,8 +72,8 @@ function ableplayer_plugin_deactivated() {
  */
 function ableplayer_enqueue_scripts() {
 	// Register/enqueue other dependencies.
-	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ) );
-	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js' );
+	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), ABLEPLAYER_VERSION );
+	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), ABLEPLAYER_VERSION );
 
 	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
 	$is_production = ( function_exists( 'wp_get_environment_type' ) &amp;&amp; wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
