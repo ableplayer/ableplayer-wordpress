@@ -1,13 +1,13 @@
 <?php
 /**
- * Able Player WordPress Plugin
+ * Able Player WordPress plugin, accessible HTML5 media player
  *
  * @package     AblePlayer
  * @author      Terrill Thompson
  * @license     MIT
  *
  * @wordpress-plugin
- * Plugin Name: Able Player
+ * Plugin Name: Able Player WordPress plugin, accessible HTML5 media player
  * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
  * Description: Able Player is a fully accessible cross-browser HTML5 media player for audio and video.
  * Author:      Terrill Thompson
