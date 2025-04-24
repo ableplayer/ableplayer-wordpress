@@ -1,13 +1,13 @@
 <?php
 /**
- * Able Player WordPress plugin, accessible HTML5 media player
+ * Able Player, accessible HTML5 media player
  *
  * @package     Able Player
  * @author      Terrill Thompson
  * @license     MIT
  *
  * @wordpress-plugin
- * Plugin Name:  Able Player WordPress plugin, accessible HTML5 media player
+ * Plugin Name:  Able Player, accessible HTML5 media player
  * Plugin URI:  https://github.com/ableplayer/ableplayer-wordpress
  * Description: This plug-in uses Able Player, an open-source fully-accessible cross-browser HTML5 media player, to embed audio or video within your WordPress page.
  * Author:      Terrill Thompson
