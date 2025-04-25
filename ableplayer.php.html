@@ -41,14 +41,14 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Version:     1.2.1
+ * Version:     1.2.2
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '1.2.1' );
+define( 'ABLEPLAYER_VERSION', '1.2.2' );
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
 /**
@@ -355,7 +355,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'vimeo-id'         => '',
 			'vimeo-desc-id'    => '',
 			'autoplay'         => 'false',
-			'preload'          => 'auto',
+			'preload'          => 'metadata',
 			'loop'             => 'false',
 			'playsinline'      => 'true',
 			'hidecontrols'     => 'false',
@@ -381,7 +381,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 	} else {
 		// build a video player.
 		$o  = '&lt;video ';
-		$o .= ' id="' . $all_atts['id'] . '"';
+		$o .= ' id="' . esc_attr( $all_atts['id'] ) . '"';
 		$o .= ' data-able-player';
 		if ( ableplayer_is_true( $all_atts['autoplay'] ) ) {
 			$o .= ' autoplay';
@@ -395,56 +395,54 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ableplayer_is_true( $all_atts['hidecontrols'] ) ) {
 			$o .= ' data-hide-controls';
 		}
-		if ( ! empty( $all_atts['preload'] ) ) {
-			$o .= ' preload="' . $all_atts['preload'] . '"';
+		$preload = ( in_array( $all_atts['preload'], array( 'auto', 'metadata', 'none' ), true ) ) ? $all_atts['preload'] : '';
+		if ( $preload ) {
+			$o .= ' preload="' . esc_attr( $preload ) . '"';
 		}
 		if ( ! empty( $all_atts['poster'] ) ) {
-			$o .= ' poster="' . $all_atts['poster'] . '"';
+			$o .= ' poster="' . esc_attr( $all_atts['poster'] ) . '"';
 		}
 		if ( ! empty( $all_atts['width'] ) ) {
-			$o .= ' width="' . $all_atts['width'] . '"';
+			$o .= ' width="' . esc_attr( $all_atts['width'] ) . '"';
 		}
 		if ( ! empty( $all_atts['height'] ) ) {
-			$o .= ' height="' . $all_atts['height'] . '"';
-		}
-		if ( ! empty( $all_atts['poster'] ) ) {
-			$o .= ' poster="' . $all_atts['poster'] . '"';
+			$o .= ' height="' . esc_attr( $all_atts['height'] ) . '"';
 		}
 		if ( ! empty( $all_atts['heading'] ) ) {
-			$o .= ' data-heading-level="' . $all_atts['heading'] . '"';
+			$o .= ' data-heading-level="' . esc_attr( $all_atts['heading'] ) . '"';
 		}
 		if ( ! empty( $all_atts['speed'] ) ) {
-			$o .= ' data-speed-icons="' . $all_atts['speed'] . '"';
+			$o .= ' data-speed-icons="' . esc_attr( $all_atts['speed'] ) . '"';
 		}
 		if ( ! empty( $all_atts['start'] ) ) {
-			$o .= ' data-start-time="' . $all_atts['start'] . '"';
+			$o .= ' data-start-time="' . esc_attr( $all_atts['start'] ) . '"';
 		}
 		if ( ! empty( $all_atts['volume'] ) ) {
-			$o .= 'data-volume="' . $all_atts['volume'] . '"';
+			$o .= 'data-volume="' . esc_attr( $all_atts['volume'] ) . '"';
 		}
 		if ( ! empty( $all_atts['seekinterval'] ) ) {
-			$o .= ' data-seek-interval="' . $all_atts['seekinterval'] . '"';
+			$o .= ' data-seek-interval="' . esc_attr( $all_atts['seekinterval'] ) . '"';
 		}
 		if ( ! empty( $all_atts['nowplaying'] ) ) {
-			$o .= ' data-show-now-playing="' . $all_atts['nowplaying'] . '"';
+			$o .= ' data-show-now-playing="' . esc_attr( $all_atts['nowplaying'] ) . '"';
 		}
 		if ( ! empty( $all_atts['skin'] ) ) {
-			$o .= ' data-skin="' . $all_atts['skin'] . '"';
+			$o .= ' data-skin="' . esc_attr( $all_atts['skin'] ) . '"';
 		}
 		if ( ! empty( $all_atts['youtube-id'] ) ) {
-			$o .= ' data-youtube-id="' . $all_atts['youtube-id'] . '"';
+			$o .= ' data-youtube-id="' . esc_attr( $all_atts['youtube-id'] ) . '"';
 		}
 		if ( ! empty( $all_atts['youtube-desc-id'] ) ) {
-			$o .= ' data-youtube-desc-id="' . $all_atts['youtube-desc-id'] . '"';
+			$o .= ' data-youtube-desc-id="' . esc_attr( $all_atts['youtube-desc-id'] ) . '"';
 		}
 		if ( ! empty( $all_atts['youtube-nocookie'] ) ) {
-			$o .= ' data-youtube-nocookie="' . $all_atts['youtube-nocookie'] . '"';
+			$o .= ' data-youtube-nocookie="' . esc_attr( $all_atts['youtube-nocookie'] ) . '"';
 		}
 		if ( ! empty( $all_atts['vimeo-id'] ) ) {
-			$o .= ' data-vimeo-id="' . $all_atts['vimeo-id'] . '"';
+			$o .= ' data-vimeo-id="' . esc_attr( $all_atts['vimeo-id'] ) . '"';
 		}
 		if ( ! empty( $all_atts['vimeo-desc-id'] ) ) {
-			$o .= ' data-vimeo-desc-id="' . $all_atts['vimeo-desc-id'] . '"';
+			$o .= ' data-vimeo-desc-id="' . esc_attr( $all_atts['vimeo-desc-id'] ) . '"';
 		}
 		$o .= '>';
 
