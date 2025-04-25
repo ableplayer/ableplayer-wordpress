@@ -6,7 +6,7 @@ Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -106,6 +106,10 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 1. Interface directly with WordPress media libraries so users can select their media files and other assets rather than typing in URLs.
 
 == Changelog ==
+
+= 1.2.2 =
+
+* Security: Stored Cross Site Scripting vulnerability in shortcode. Props Peter Thaleikis, reported via WordFence. Also reported by Johska via Patchstack.
 
 = 1.2.1 =
 
