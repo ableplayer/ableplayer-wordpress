@@ -235,7 +235,11 @@ function ableplayer_update_options( $settings ) {
 	if ( empty( $settings ) ) {
 		return false;
 	}
-	$options  = get_option( 'ableplayer_settings' );
+	$defaults = ableplayer_default_settings();
+	$options  = get_option( 'ableplayer_settings', ableplayer_default_settings() );
+	if ( ! is_array( $options ) ) {
+		$options = $defaults;
+	}
 	$settings = array_merge( $options, $settings );
 
 	return update_option( 'ableplayer_settings', $settings );
@@ -247,8 +251,14 @@ function ableplayer_update_options( $settings ) {
  * @param array $post POST data.
  */
 function ableplayer_update_settings( $post ) {
-	$setting                 = ( ! empty( $post['example'] ) && 'on' === $post['example'] ) ? 'true' : 'false';
-	$settings['api_enabled'] = $setting;
+	$settings          = array();
+	$replace_video     = ( ! empty( $post['replace_video'] ) && 'on' === $post['replace_video'] ) ? 'true' : 'false';
+	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
+	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
+
+	$settings['replace_video']     = $replace_video;
+	$settings['replace_audio']     = $replace_audio;
+	$settings['replace_playlists'] = $replace_playlists;
 
 	ableplayer_update_options( $settings );
 }
@@ -290,7 +300,39 @@ function ableplayer_settings_form() {
 						<div class="inside">
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=ableplayer#ableplayer-settings' ) ); ?>">
 								<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>" />
-
+								<p>
+									<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'replace_video',
+											'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+									?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'replace_audio',
+											'label' => __( 'Use Able Player for all <code>audio</code> elements.', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+									?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'replace_playlists',
+											'label' => __( 'Use Able Player for WordPress media playlists.', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+									?>
+								</p>
 								<p>
 									<input type="submit" name="ableplayer_settings" class="button-primary" value="<?php esc_html_e( 'Save Settings', 'ableplayer' ); ?>"/>
 								</p>
@@ -351,7 +393,7 @@ function ableplayer_show_sidebar() {
 						// Translators: URL for AblePlayer github docs.
 						echo wp_kses_post( sprintf( __( 'Learn more about the <a href="%s">AblePlayer accessible media player</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) );
 						// Translators: URL for Joe Dolson donate page.
-						echo wp_kses_post( sprintf( __( '<a href="%s">Support Joe Dolson</a>, AblePlayer lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) );
+						echo ' ' . wp_kses_post( sprintf( __( 'Help support Able Player! <a href="%s">Sponsor Joe Dolson</a>, AblePlayer lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) );
 						?>
 					</p>
 					<ul class="ableplayer-flex ableplayer-social">
@@ -386,5 +428,11 @@ function ableplayer_show_sidebar() {
  * @return array
  */
 function ableplayer_default_settings() {
-	return array();
+	$settings = array(
+		'replace_video'     => 'false',
+		'replace_audio'     => 'false',
+		'replace_playlists' => 'false',
+	);
+
+	return $settings;
 }
