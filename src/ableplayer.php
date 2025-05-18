@@ -48,7 +48,13 @@ function ableplayer_enqueue_scripts() {
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), ABLEPLAYER_VERSION, true );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), ABLEPLAYER_VERSION, true );
 	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/video.js', array(), ABLEPLAYER_VERSION, true );
-
+	wp_localize_script(
+		'ableplayer-video',
+		'ableplayer',
+		array(
+			'settings' => ableplayer_get_settings(),
+		)
+	);
 	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
 	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
 
@@ -77,9 +83,7 @@ function ableplayer_enqueue_scripts() {
 	 */
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
 
-	// Enqueue Able Player script and CSS.
 	$dependencies = array( 'jquery', 'ableplayer-video' );
-	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $is_production );
 	/**
 	 * Filter the Able Player script dependencies.
 	 *
@@ -95,6 +99,31 @@ function ableplayer_enqueue_scripts() {
 	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
+
+/**
+ * Get Able Player settings.
+ *
+ * @param string $setting A specific setting key. Default empty string.
+ *
+ * @return array|mixed The full settings array or a specific setting value.
+ */
+function ableplayer_get_settings( $setting = '' ) {
+	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings() );
+	if ( $setting && isset( $settings[ $setting ] ) ) {
+		return $settings[ $setting ];
+	}
+
+	return $settings;
+}
+
+/**
+ * Get Able Player default settings.
+ *
+ * @return array
+ */
+function ableplayer_default_settings() {
+	return array();
+}
 
 /**
  * Self-documenting array of AblePlayer attributes.
