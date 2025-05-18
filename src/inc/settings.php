@@ -21,7 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array|mixed The full settings array or a specific setting value.
  */
 function ableplayer_get_settings( $setting = '' ) {
-	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings() );
+	$settings = get_option( 'ableplayer_settings', array() );
+	$settings = array_merge( $settings, ableplayer_default_settings() );
 	if ( $setting && isset( $settings[ $setting ] ) ) {
 		return $settings[ $setting ];
 	}
@@ -334,6 +335,71 @@ function ableplayer_settings_form() {
 									?>
 								</p>
 								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'youtube_nocookie',
+											'label' => __( 'Set YouTube videos to use the nocookie parameter for increased privacy.', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+								?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'default_poster',
+											'label' => __( 'Set a default Poster image for videos.', 'ableplayer' ),
+											'type'  => 'media-upload',
+										)
+									);
+								?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'default_speed',
+											'label' => __( 'Preferred speed control icon', 'ableplayer' ),
+											'type'  => 'select',
+											'default' => array(
+												'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
+												'arrows'  => __( 'Arrows', 'ableplayer' ),
+											)
+										)
+									);
+								?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'hide_controls',
+											'label' => __( 'Hide controls when not interacting with player', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+								?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'    => 'default_heading',
+											'label'   => __( 'Default hidden heading level', 'ableplayer' ),
+											'type'    => 'select',
+											'default' => array(
+												'auto' => 'Automatically set',
+												'h2'   => 'H2',
+												'h3'   => 'H3',
+												'h4'   => 'H4',
+											)
+										)
+									);
+								?>
+								</p>
+								<p>
 									<input type="submit" name="ableplayer_settings" class="button-primary" value="<?php esc_html_e( 'Save Settings', 'ableplayer' ); ?>"/>
 								</p>
 							</form>
@@ -346,7 +412,31 @@ function ableplayer_settings_form() {
 						<div class="inside">
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=ableplayer-config#ableplayer-text' ) ); ?>">
 								<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>" />
-
+								<?php
+								// For video references, only collect URLs; parse source from there.
+								// youtube-id, vimeo-id (required)
+								// youtube-desc-id - separate, described video
+								// vimeo-desc-id - separate, described video
+								// youtube-nocookie - embed YouTube untracked for privacy.
+								// id - unique ID. Required if you want it to be persistent.
+								// autoplay - true/false
+								// loop - true/false
+								// playsinline - true/false. Setting 'false' will let some mobile devices use their own internal media players.
+								// hidecontrols - true/false.
+								// poster - URL for poster image. (Media selector)
+								// width - value in pixels. (OMIT)
+								// height - pixels (OMIT)
+								// heading level
+								// speed - animals/arrows.
+								// start - media start time
+								// volume - starting volume
+								// seekinterval - travel period for forward/rewind.
+								// nowplaying - true/false to include "selected track" section. [not clear what this does]
+								// subtitles - upload
+								// language - upload & name
+								// audio description - upload
+								// chapters - upload
+								?>
 								<p>
 									<input type="submit" name="save" class="button-primary" value="<?php esc_html_e( 'Save Custom Text', 'ableplayer' ); ?>"/>
 								</p>
@@ -432,6 +522,11 @@ function ableplayer_default_settings() {
 		'replace_video'     => 'false',
 		'replace_audio'     => 'false',
 		'replace_playlists' => 'false',
+		'youtube_nocookie'  => 'false',
+		'default_poster'    => '',
+		'default_speed'     => 'animals',
+		'hide_controls'     => 'false',
+		'default_heading'   => 'auto',
 	);
 
 	return $settings;
