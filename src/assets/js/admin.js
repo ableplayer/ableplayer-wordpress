@@ -1,6 +1,6 @@
 jQuery(document).ready(function ($) {
 	let firstItem = window.location.hash;
-	const tabGroups = document.querySelectorAll( '.mc-tabs' );
+	const tabGroups = document.querySelectorAll( '.ableplayer-tabs' );
 	for ( let i = 0; i < tabGroups.length; i++ ) {
 		const panel = $( tabGroups[i] ).find( firstItem );
 		if ( panel.length !== 0 ) {
@@ -10,7 +10,7 @@ jQuery(document).ready(function ($) {
 			showPanel( '#' + firstItem );
 		}
 	}
-	const tabs = document.querySelectorAll('.mc-tabs [role=tab]'); // get all role=tab elements as a variable.
+	const tabs = document.querySelectorAll('.ableplayer-tabs [role=tab]'); // get all role=tab elements as a variable.
 	for ( let i = 0; i < tabs.length; i++) {
 		tabs[i].addEventListener( 'click', showTabPanel );
 		tabs[i].addEventListener( 'keydown', handleKeyPress );
@@ -23,7 +23,7 @@ jQuery(document).ready(function ($) {
 	function showTabPanel(e) {
 		const tabContainer   = $( e.currentTarget ).closest( '.tabs' );
 		const tabs           = tabContainer.find( '[role=tab]' );
-		const container      = $( e.currentTarget ).closest( '.mc-tabs' );
+		const container      = $( e.currentTarget ).closest( '.ableplayer-tabs' );
 		const inside         = $( e.currentTarget ).parents( '.inside' );
 		const tabPanelToOpen = e.target.getAttribute('aria-controls');
 		const iframes        = $( 'iframe.mc-iframe' );
@@ -63,7 +63,7 @@ jQuery(document).ready(function ($) {
 		const control      = $( 'button[aria-controls=' + id + ']' );
 		const tabContainer = $( hash ).closest( '.tabs' );
 		const tabs         = tabContainer.find( '[role=tab]' );
-		const container    = $( hash ).closest( '.mc-tabs' );
+		const container    = $( hash ).closest( '.ableplayer-tabs' );
 		const tabPanels    = container.find( '[role=tabpanel]' );
 		const currentPanel = document.getElementById(id);
 

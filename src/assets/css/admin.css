@@ -47,18 +47,18 @@
 	display: block;
 }
 
-.mc-tabs .tabs, .mc-tablinks {
+.ableplayer-tabs .tabs, .mc-tablinks {
 	position: relative;
 	border-bottom: 1px solid #c3c4c7;
 	margin-bottom: 0;
 	margin-top: 20px;
 }
 
-.mc-tabs.vertical .tabs {
+.ableplayer-tabs.vertical .tabs {
 	border-bottom: none;
 }
 
-.mc-tabs .tabs button, .mc-tablinks a {
+.ableplayer-tabs .tabs button, .mc-tablinks a {
 	display: inline-block;
 	padding: 6px 12px;
 	font-size: 14px;
@@ -69,7 +69,7 @@
 	border-bottom: 2px solid transparent;
 }
 
-.mc-tabs .tabs button[aria-selected=true]:after,
+.ableplayer-tabs .tabs button[aria-selected=true]:after,
 .mc-tablinks a[aria-current=page]:after {
 	content: '';
 	position: absolute;
@@ -83,7 +83,7 @@
 	clear: both;
 }
 
-.mc-tabs .tabs button[aria-selected=true]:before,
+.ableplayer-tabs .tabs button[aria-selected=true]:before,
 .mc-tablinks a[aria-current=page]:before {
 	content: '';
 	position: absolute;
@@ -98,8 +98,8 @@
 }
 
 @media screen and ( width >= 481px ) {
-	.mc-tabs.vertical .tabs button[aria-selected=true]:after,
-	.mc-tabs.vertical .tabs button[aria-selected=true]:before {
+	.ableplayer-tabs.vertical .tabs button[aria-selected=true]:after,
+	.ableplayer-tabs.vertical .tabs button[aria-selected=true]:before {
 		left: 100%;
 		top: 50%;
 		border-left: 10px solid #fff;
@@ -108,7 +108,7 @@
 		margin-top: -10px;
 	}
 
-	.mc-tabs.vertical .tabs button[aria-selected=true]:before {
+	.ableplayer-tabs.vertical .tabs button[aria-selected=true]:before {
 		left: calc( 100% + 1px );
 		top: 50%;
 		border-left: 10px solid #a2a4a7;
@@ -118,28 +118,28 @@
 }
 
 
-.mc-tabs .tabs button:hover,
-.mc-tabs .tabs button:focus,
+.ableplayer-tabs .tabs button:hover,
+.ableplayer-tabs .tabs button:focus,
 .mc-tablinks a:hover,
 .mc-tablinks a:focus {
 	border-bottom: 2px solid #000;
 }
 
-.mc-tabs .tabs button[aria-selected=true],
+.ableplayer-tabs .tabs button[aria-selected=true],
 .mc-tablinks a[aria-current=page] {
 	background: #fff;
 }
 
-.mc-tabs.vertical {
+.ableplayer-tabs.vertical {
 	display: grid;
 	grid-template-columns: 12em 1fr;
 }
 
-.mc-tabs.vertical .tabs {
+.ableplayer-tabs.vertical .tabs {
 	margin-top: 0;
 }
 
-.mc-tabs.vertical .tabs button {
+.ableplayer-tabs.vertical .tabs button {
 	display: block;
 	border: 1px solid #c3c4c7;
 	border-right: none;
@@ -149,36 +149,36 @@
 	text-align: left;
 }
 
-.mc-tabs.vertical .tabs button:last-of-type {
+.ableplayer-tabs.vertical .tabs button:last-of-type {
 	border-bottom: 1px solid #c3c4c7;
 }
 
-.mc-tabs.vertical .wptab {
+.ableplayer-tabs.vertical .wptab {
 	border-left: 1px solid #c3c4c7;
 	padding: 10px;
 }
 
 @media screen and ( width < 481px ) {
-	.mc-tabs.vertical {
+	.ableplayer-tabs.vertical {
 		display: flex;
 		flex-wrap: wrap;
 	}
-	.mc-tabs.vertical .tabs {
+	.ableplayer-tabs.vertical .tabs {
 		display: flex;
 		flex-wrap: wrap;
 	}
-	.mc-tabs.vertical .tabs button {
+	.ableplayer-tabs.vertical .tabs button {
 		border: 1px solid #c3c4c7;
 	}
-	.mc-tabs.vertical .wptab {
+	.ableplayer-tabs.vertical .wptab {
 		padding: 0;
 		margin-top: 10px;
 	}
-	.mc-tabs.vertical .tabs button[aria-selected="true"]::before,
-	.mc-tabs.vertical .tabs button[aria-selected="true"]::after {
+	.ableplayer-tabs.vertical .tabs button[aria-selected="true"]::before,
+	.ableplayer-tabs.vertical .tabs button[aria-selected="true"]::after {
 		display: none;
 	}
-	.mc-tabs.vertical .tabs button[aria-selected="true"] {
+	.ableplayer-tabs.vertical .tabs button[aria-selected="true"] {
 		border-bottom: 2px solid black;
 	}
 }

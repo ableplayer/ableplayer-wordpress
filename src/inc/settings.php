@@ -41,7 +41,7 @@ function ableplayer_update_setting( $key, $value = '' ) {
 	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings() );
 
 	$settings[ $key ] = $value;
-	$return          = update_option( 'ableplayer_settings', $settings );
+	$return           = update_option( 'ableplayer_settings', $settings );
 
 	return $return;
 }
@@ -224,6 +224,22 @@ function ableplayer_settings_field( $args = array() ) {
 	}
 }
 
+/**
+ * Save a group of AblePlayer settings.
+ *
+ * @param array $settings An array of settings.
+ *
+ * @return bool
+ */
+function ableplayer_update_options( $settings ) {
+	if ( empty( $settings ) ) {
+		return false;
+	}
+	$options  = get_option( 'ableplayer_settings' );
+	$settings = array_merge( $options, $settings );
+
+	return update_option( 'ableplayer_settings', $settings );
+}
 
 /**
  * Update AblePlayer settings.
@@ -231,7 +247,10 @@ function ableplayer_settings_field( $args = array() ) {
  * @param array $post POST data.
  */
 function ableplayer_update_settings( $post ) {
+	$setting                 = ( ! empty( $post['example'] ) && 'on' === $post['example'] ) ? 'true' : 'false';
+	$settings['api_enabled'] = $setting;
 
+	ableplayer_update_options( $settings );
 }
 
 /**
@@ -257,7 +276,7 @@ function ableplayer_settings_form() {
 	?>
 	<div class="wrap ableplayer-admin ableplayer-settings-page" id="ableplayer_settings">
 		<h1><?php esc_html_e( 'My Calendar Settings', 'ableplayer' ); ?></h1>
-		<div class="mc-tabs">
+		<div class="ableplayer-tabs">
 		<div class="tabs" role="tablist" data-default="ableplayer-settings">
 			<button type="button" role="tab" aria-selected="false" id="tab_settings" aria-controls="ableplayer-settings"><?php esc_html_e( 'Settings', 'ableplayer' ); ?></button>
 			<button type="button" role="tab" aria-selected="false" id="tab_shortcode" aria-controls="ableplayer-shortcode"><?php esc_html_e( 'Shortcodes', 'ableplayer' ); ?></button>
@@ -328,8 +347,12 @@ function ableplayer_show_sidebar() {
 
 				<div class="inside">
 					<p>
-						<?php echo wp_kses_post( sprintf( __( 'Learn more about the <a href="%s">AblePlayer accessible media player</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) ); ?>
-						<?php echo wp_kses_post( sprintf( __( '<a href="%s">Support Joe Dolson</a>, AblePlayer lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) ); ?>
+						<?php
+						// Translators: URL for AblePlayer github docs.
+						echo wp_kses_post( sprintf( __( 'Learn more about the <a href="%s">AblePlayer accessible media player</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) );
+						// Translators: URL for Joe Dolson donate page.
+						echo wp_kses_post( sprintf( __( '<a href="%s">Support Joe Dolson</a>, AblePlayer lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) );
+						?>
 					</p>
 					<ul class="ableplayer-flex ableplayer-social">
 						<li><a href="https://toot.io/@joedolson">
