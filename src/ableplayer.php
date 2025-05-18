@@ -62,7 +62,7 @@ function ableplayer_enqueue_scripts() {
 	 * @param {string} $url URL to Able Player root directory.
 	 * @param {bool}   $is_production True if environment is designated as production.
 	 *
-	 * @return string
+	 * @return {string}
 	 */
 	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $is_production );
 	/**
@@ -73,12 +73,25 @@ function ableplayer_enqueue_scripts() {
 	 * @param {string} $url URL to Able Player root directory.
 	 * @param {bool}   $is_production True if environment is designated as production.
 	 *
-	 * @return string
+	 * @return {string}
 	 */
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
 
 	// Enqueue Able Player script and CSS.
-	wp_enqueue_script( 'ableplayer', $js_dir, array( 'jquery', 'ableplayer-video' ), ABLEPLAYER_VERSION, true );
+	$dependencies = array( 'jquery', 'ableplayer-video' );
+	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $is_production );
+	/**
+	 * Filter the Able Player script dependencies.
+	 *
+	 * @hook ableplayer_dependencies
+	 *
+	 * @param {array} $dependencies Array of scripts required by the main AblePlayer script.
+	 * @param {bool}  $is_production True if environment is designated as production.
+	 *
+	 * @return {array}
+	 */
+	$dependencies = apply_filters( 'ableplayer_dependencies', $dependencies, $is_production );
+	wp_enqueue_script( 'ableplayer', $js_dir, $dependencies, ABLEPLAYER_VERSION, true );
 	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
