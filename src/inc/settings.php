@@ -329,7 +329,7 @@ function ableplayer_menu() {
 		__( 'Able Player', 'ableplayer' ),
 		'manage_options',
 		'ableplayer',
-		'ableplayer_settings_form',
+		'ableplayer_settings_form'
 	);
 }
 add_action( 'admin_menu', 'ableplayer_menu' );
