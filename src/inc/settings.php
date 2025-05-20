@@ -261,7 +261,6 @@ function ableplayer_update_settings( $post ) {
 	$hide_controls     = ( ! empty( $post['hide_controls'] ) && 'on' === $post['hide_controls'] ) ? 'true' : 'false';
 	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
 	$default_heading   = ( isset( $post['default_heading'] ) ) ? $post['default_heading'] : 'auto';
-	$default_poster    = ( isset( $post['default_poster_id'] ) ) ? absint( $post['default_poster_id'] ) : '';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
@@ -271,7 +270,6 @@ function ableplayer_update_settings( $post ) {
 	$settings['hide_controls']     = $hide_controls;
 	$settings['default_speed']     = $default_speed;
 	$settings['default_heading']   = $default_heading;
-	$settings['default_poster']    = $default_poster;
 
 	ableplayer_update_options( $settings );
 }
@@ -364,17 +362,6 @@ function ableplayer_settings_form() {
 										'name'  => 'render_transcript',
 										'label' => __( 'Insert interactive transcript container.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
-									)
-								);
-								?>
-								</p>
-								<p>
-								<?php
-								ableplayer_settings_field(
-									array(
-										'name'  => 'default_poster',
-										'label' => __( 'Set a default Poster image for videos.', 'ableplayer' ),
-										'type'  => 'media-upload',
 									)
 								);
 								?>
@@ -548,7 +535,6 @@ function ableplayer_default_settings() {
 		'replace_playlists' => 'false',
 		'youtube_nocookie'  => 'false',
 		'render_transcript' => 'true',
-		'default_poster'    => '',
 		'default_speed'     => 'animals',
 		'hide_controls'     => 'false',
 		'default_heading'   => 'auto',
