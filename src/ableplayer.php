@@ -47,10 +47,12 @@ function ableplayer_plugin_deactivated() {
  * Load styles and scripts to head.
  */
 function ableplayer_enqueue_scripts() {
+	$version = ABLEPLAYER_VERSION;
+	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000,9999 ) : $version;
 	// Register/enqueue other dependencies.
-	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), ABLEPLAYER_VERSION, true );
-	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), ABLEPLAYER_VERSION, true );
-	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/media.js', array(), ABLEPLAYER_VERSION, true );
+	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), $version, true );
+	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), $version, true );
+	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/media.js', array(), $version, true );
 	wp_localize_script(
 		'ableplayer-video',
 		'ableplayer',
@@ -98,8 +100,8 @@ function ableplayer_enqueue_scripts() {
 	 * @return {array}
 	 */
 	$dependencies = apply_filters( 'ableplayer_dependencies', $dependencies, $is_production );
-	wp_enqueue_script( 'ableplayer', $js_dir, $dependencies, ABLEPLAYER_VERSION, true );
-	wp_enqueue_style( 'ableplayer', $css_dir, array(), ABLEPLAYER_VERSION );
+	wp_enqueue_script( 'ableplayer', $js_dir, $dependencies, $version, true );
+	wp_enqueue_style( 'ableplayer', $css_dir, array(), $version );
 }
 add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 
@@ -107,7 +109,9 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
  * Enqueue admin JS and CSS.
  */
 function ableplayer_admin_scripts() {
-	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/admin.js', __FILE__ ), array( 'jquery' ), ABLEPLAYER_VERSION, true );
+	$version = ABLEPLAYER_VERSION;
+	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000,9999 ) : $version;
+	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/admin.js', __FILE__ ), array( 'jquery' ), $version, true );
 	wp_localize_script(
 		'ableplayer-js',
 		'ableplayer',
@@ -115,7 +119,7 @@ function ableplayer_admin_scripts() {
 			'firstItem' => 'tab_settings',
 		)
 	);
-	wp_enqueue_style( 'ableplayer', plugins_url( '/assets/css/admin.css', __FILE__ ), array(), ABLEPLAYER_VERSION );
+	wp_enqueue_style( 'ableplayer', plugins_url( '/assets/css/admin.css', __FILE__ ), array(), $version );
 }
 add_action( 'admin_enqueue_scripts', 'ableplayer_admin_scripts' );
 

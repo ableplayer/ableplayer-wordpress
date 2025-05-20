@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array|mixed The full settings array or a specific setting value.
  */
 function ableplayer_get_settings( $setting = '' ) {
-	$settings = get_option( 'ableplayer_settings', array() );
-	$settings = array_merge( $settings, ableplayer_default_settings() );
+	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings()  );
+	$settings = array_merge(  ableplayer_default_settings(), $settings );
 	if ( $setting && isset( $settings[ $setting ] ) ) {
 		return $settings[ $setting ];
 	}
@@ -133,7 +133,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'email':
 			if ( $note ) {
 				$note = sprintf( str_replace( '%', '', $note ), "<code>$value</code>" );
-				$note = "<span id='$id-note' class='mc-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -149,7 +149,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'textarea':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='mc-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -160,7 +160,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'checkbox-single':
 			$checked = checked( 'true', ableplayer_get_settings( $name ), false );
 			if ( $note ) {
-				$note = "<div id='$id-note' class='mc-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>" . sprintf( $note, "<code>$value</code>" ) . '</div>';
+				$note = "<div id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>" . sprintf( $note, "<code>$value</code>" ) . '</div>';
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -172,7 +172,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'radio':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='mc-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -197,7 +197,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'select':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='mc-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -237,7 +237,7 @@ function ableplayer_update_options( $settings ) {
 		return false;
 	}
 	$defaults = ableplayer_default_settings();
-	$options  = get_option( 'ableplayer_settings', ableplayer_default_settings() );
+	$options  = get_option( 'ableplayer_settings' );
 	if ( ! is_array( $options ) ) {
 		$options = $defaults;
 	}
@@ -256,10 +256,20 @@ function ableplayer_update_settings( $post ) {
 	$replace_video     = ( ! empty( $post['replace_video'] ) && 'on' === $post['replace_video'] ) ? 'true' : 'false';
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
+	$youtube_nocookie  = ( ! empty( $post['youtube_nocookie'] ) && 'on' === $post['youtube_nocookie'] ) ? 'true' : 'false';
+	$hide_controls     = ( ! empty( $post['hide_controls'] ) && 'on' === $post['hide_controls'] ) ? 'true' : 'false';
+	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
+	$default_heading   = ( isset( $post['default_heading'] ) ) ? $post['default_heading'] : 'auto';
+	$default_poster    = ( isset( $post['default_poster_id'] ) ) ? absint( $post['default_poster_id'] ) : '';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
 	$settings['replace_playlists'] = $replace_playlists;
+	$settings['youtube_nocookie']  = $youtube_nocookie;
+	$settings['hide_controls']     = $hide_controls;
+	$settings['default_speed']     = $default_speed;
+	$settings['default_heading']   = $default_heading;
+	$settings['default_poster']    = $default_poster;
 
 	ableplayer_update_options( $settings );
 }
@@ -376,7 +386,7 @@ function ableplayer_settings_form() {
 									ableplayer_settings_field(
 										array(
 											'name'  => 'hide_controls',
-											'label' => __( 'Hide controls when not interacting with player', 'ableplayer' ),
+											'label' => __( 'Visually hide controls during playback', 'ableplayer' ),
 											'type'  => 'checkbox-single',
 										)
 									);
@@ -390,10 +400,11 @@ function ableplayer_settings_form() {
 											'label'   => __( 'Default hidden heading level', 'ableplayer' ),
 											'type'    => 'select',
 											'default' => array(
-												'auto' => 'Automatically set',
-												'h2'   => 'H2',
-												'h3'   => 'H3',
-												'h4'   => 'H4',
+												'auto' => __( 'Automatically set', 'ableplayer' ),
+												'0'    => __( 'No heading', 'ableplayer' ),
+												'2'    => 'H2',
+												'3'    => 'H3',
+												'4'    => 'H4',
 											)
 										)
 									);
