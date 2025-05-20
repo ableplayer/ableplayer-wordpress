@@ -9,6 +9,7 @@ if ( 0 !== ableplayer_selectors.length ) {
 	const mediaEls = document.querySelectorAll( ableplayer_selectors );
 	if ( mediaEls ) {
 		mediaEls.forEach((el,index,listObj) => {
+			el.removeAttribute( 'controls' );
 			if ( ! el.hasAttribute( 'data-able-player' ) ) {
 				el.setAttribute( 'data-able-player', 'true' );
 			}
