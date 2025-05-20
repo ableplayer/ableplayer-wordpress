@@ -401,13 +401,13 @@ function ableplayer_settings_form() {
 								<?php
 								ableplayer_settings_field(
 									array(
-										'name'    => 'seek_interval',
-										'label'   => __( 'Default seek interval in seconds.', 'ableplayer' ),
-										'type'    => 'number',
-										'atts'    => array(
+										'name'  => 'seek_interval',
+										'label' => __( 'Default seek interval in seconds.', 'ableplayer' ),
+										'type'  => 'number',
+										'atts'  => array(
 											'min'  => 5,
 											'step' => 5,
-										)
+										),
 									)
 								);
 								?>
