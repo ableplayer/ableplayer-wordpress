@@ -257,6 +257,7 @@ function ableplayer_update_settings( $post ) {
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
 	$youtube_nocookie  = ( ! empty( $post['youtube_nocookie'] ) && 'on' === $post['youtube_nocookie'] ) ? 'true' : 'false';
+	$render_transcript = ( ! empty( $post['render_transcript'] ) && 'on' === $post['render_transcript'] ) ? 'true' : 'false';
 	$hide_controls     = ( ! empty( $post['hide_controls'] ) && 'on' === $post['hide_controls'] ) ? 'true' : 'false';
 	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
 	$default_heading   = ( isset( $post['default_heading'] ) ) ? $post['default_heading'] : 'auto';
@@ -266,6 +267,7 @@ function ableplayer_update_settings( $post ) {
 	$settings['replace_audio']     = $replace_audio;
 	$settings['replace_playlists'] = $replace_playlists;
 	$settings['youtube_nocookie']  = $youtube_nocookie;
+	$settings['render_transcript'] = $render_transcript;
 	$settings['hide_controls']     = $hide_controls;
 	$settings['default_speed']     = $default_speed;
 	$settings['default_heading']   = $default_heading;
@@ -350,6 +352,17 @@ function ableplayer_settings_form() {
 										array(
 											'name'  => 'youtube_nocookie',
 											'label' => __( 'Set YouTube videos to use the nocookie parameter for increased privacy.', 'ableplayer' ),
+											'type'  => 'checkbox-single',
+										)
+									);
+								?>
+								</p>
+								<p>
+								<?php
+									ableplayer_settings_field(
+										array(
+											'name'  => 'render_transcript',
+											'label' => __( 'Insert interactive transcript container.', 'ableplayer' ),
 											'type'  => 'checkbox-single',
 										)
 									);
@@ -534,6 +547,7 @@ function ableplayer_default_settings() {
 		'replace_audio'     => 'false',
 		'replace_playlists' => 'false',
 		'youtube_nocookie'  => 'false',
+		'render_transcript' => 'true',
 		'default_poster'    => '',
 		'default_speed'     => 'animals',
 		'hide_controls'     => 'false',
