@@ -383,13 +383,13 @@ function ableplayer_settings_form() {
 								<?php
 								ableplayer_settings_field(
 									array(
-										'name'  => 'default_speed',
-										'label' => __( 'Preferred speed control icon', 'ableplayer' ),
-										'type'  => 'select',
+										'name'    => 'default_speed',
+										'label'   => __( 'Preferred speed control icon', 'ableplayer' ),
+										'type'    => 'select',
 										'default' => array(
 											'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
 											'arrows'  => __( 'Arrows', 'ableplayer' ),
-										)
+										),
 									)
 								);
 								?>
