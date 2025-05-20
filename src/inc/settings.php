@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return array|mixed The full settings array or a specific setting value.
  */
 function ableplayer_get_settings( $setting = '' ) {
-	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings()  );
-	$settings = array_merge(  ableplayer_default_settings(), $settings );
+	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings() );
+	$settings = array_merge( ableplayer_default_settings(), $settings );
 	if ( $setting && isset( $settings[ $setting ] ) ) {
 		return $settings[ $setting ];
 	}
@@ -314,113 +314,113 @@ function ableplayer_settings_form() {
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=ableplayer#ableplayer-settings' ) ); ?>">
 								<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>" />
 								<p>
-									<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'replace_video',
-											'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
-									?>
-								</p>
-								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'replace_audio',
-											'label' => __( 'Use Able Player for all <code>audio</code> elements.', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
-									?>
-								</p>
-								<p>
-								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'replace_playlists',
-											'label' => __( 'Use Able Player for WordPress media playlists.', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
-									?>
-								</p>
-								<p>
-								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'youtube_nocookie',
-											'label' => __( 'Set YouTube videos to use the nocookie parameter for increased privacy.', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
+								ableplayer_settings_field(
+									array(
+										'name'  => 'replace_video',
+										'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
 								?>
 								</p>
 								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'render_transcript',
-											'label' => __( 'Insert interactive transcript container.', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
+								ableplayer_settings_field(
+									array(
+										'name'  => 'replace_audio',
+										'label' => __( 'Use Able Player for all <code>audio</code> elements.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
 								?>
 								</p>
 								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'default_poster',
-											'label' => __( 'Set a default Poster image for videos.', 'ableplayer' ),
-											'type'  => 'media-upload',
-										)
-									);
+								ableplayer_settings_field(
+									array(
+										'name'  => 'replace_playlists',
+										'label' => __( 'Use Able Player for WordPress media playlists.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
 								?>
 								</p>
 								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'default_speed',
-											'label' => __( 'Preferred speed control icon', 'ableplayer' ),
-											'type'  => 'select',
-											'default' => array(
-												'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
-												'arrows'  => __( 'Arrows', 'ableplayer' ),
-											)
-										)
-									);
+								ableplayer_settings_field(
+									array(
+										'name'  => 'youtube_nocookie',
+										'label' => __( 'Set YouTube videos to use the nocookie parameter for increased privacy.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
 								?>
 								</p>
 								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'  => 'hide_controls',
-											'label' => __( 'Visually hide controls during playback', 'ableplayer' ),
-											'type'  => 'checkbox-single',
-										)
-									);
+								ableplayer_settings_field(
+									array(
+										'name'  => 'render_transcript',
+										'label' => __( 'Insert interactive transcript container.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
 								?>
 								</p>
 								<p>
 								<?php
-									ableplayer_settings_field(
-										array(
-											'name'    => 'default_heading',
-											'label'   => __( 'Default hidden heading level', 'ableplayer' ),
-											'type'    => 'select',
-											'default' => array(
-												'auto' => __( 'Automatically set', 'ableplayer' ),
-												'0'    => __( 'No heading', 'ableplayer' ),
-												'2'    => 'H2',
-												'3'    => 'H3',
-												'4'    => 'H4',
-											)
+								ableplayer_settings_field(
+									array(
+										'name'  => 'default_poster',
+										'label' => __( 'Set a default Poster image for videos.', 'ableplayer' ),
+										'type'  => 'media-upload',
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'  => 'default_speed',
+										'label' => __( 'Preferred speed control icon', 'ableplayer' ),
+										'type'  => 'select',
+										'default' => array(
+											'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
+											'arrows'  => __( 'Arrows', 'ableplayer' ),
 										)
-									);
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'  => 'hide_controls',
+										'label' => __( 'Visually hide controls during playback', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'    => 'default_heading',
+										'label'   => __( 'Default hidden heading level', 'ableplayer' ),
+										'type'    => 'select',
+										'default' => array(
+											'auto' => __( 'Automatically set', 'ableplayer' ),
+											'0'    => __( 'No heading', 'ableplayer' ),
+											'2'    => 'H2',
+											'3'    => 'H3',
+											'4'    => 'H4',
+										),
+									)
+								);
 								?>
 								</p>
 								<p>
@@ -438,28 +438,28 @@ function ableplayer_settings_form() {
 								<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>" />
 								<?php
 								// For video references, only collect URLs; parse source from there.
-								// youtube-id, vimeo-id (required)
-								// youtube-desc-id - separate, described video
-								// vimeo-desc-id - separate, described video
+								// youtube-id, vimeo-id (required).
+								// youtube-desc-id - separate, described video.
+								// vimeo-desc-id - separate, described video.
 								// youtube-nocookie - embed YouTube untracked for privacy.
 								// id - unique ID. Required if you want it to be persistent.
-								// autoplay - true/false
-								// loop - true/false
+								// autoplay - true/false.
+								// loop - true/false.
 								// playsinline - true/false. Setting 'false' will let some mobile devices use their own internal media players.
 								// hidecontrols - true/false.
-								// poster - URL for poster image. (Media selector)
-								// width - value in pixels. (OMIT)
-								// height - pixels (OMIT)
-								// heading level
+								// poster - URL for poster image. (Media selector).
+								// width - value in pixels. (OMIT).
+								// height - pixels (OMIT).
+								// heading level.
 								// speed - animals/arrows.
-								// start - media start time
-								// volume - starting volume
+								// start - media start time.
+								// volume - starting volume.
 								// seekinterval - travel period for forward/rewind.
-								// nowplaying - true/false to include "selected track" section. [not clear what this does]
-								// subtitles - upload
-								// language - upload & name
-								// audio description - upload
-								// chapters - upload
+								// nowplaying - true/false to include "selected track" section. [not clear what this does].
+								// subtitles - upload.
+								// language - upload & name.
+								// audio description - upload.
+								// chapters - upload.
 								?>
 								<p>
 									<input type="submit" name="save" class="button-primary" value="<?php esc_html_e( 'Save Custom Text', 'ableplayer' ); ?>"/>
