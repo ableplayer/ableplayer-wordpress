@@ -43,6 +43,11 @@ if ( ablePlayers ) {
 				el.setAttribute( 'data-hide-controls', 'true' );
 			}
 		}
+		if ( ableplayer.settings.seek_interval ) {
+			if ( ! el.hasAttribute( 'data-seek-interval' ) ) {
+				el.setAttribute( 'data-seek-interval', ableplayer.settings.seek_interval );
+			}
+		}
 		if ( 'true' === ableplayer.settings.render_transcript ) {
 			if ( ! el.hasAttribute( 'data-transcript-div' ) ) {
 				el.setAttribute( 'data-transcript-div', 'ableplayer-transcript-' + el.getAttribute( 'id' ) );

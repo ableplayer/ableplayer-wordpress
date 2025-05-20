@@ -131,6 +131,7 @@ function ableplayer_settings_field( $args = array() ) {
 		case 'text':
 		case 'url':
 		case 'email':
+		case 'number':
 			if ( $note ) {
 				$note = sprintf( str_replace( '%', '', $note ), "<code>$value</code>" );
 				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
@@ -257,15 +258,19 @@ function ableplayer_update_settings( $post ) {
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
 	$youtube_nocookie  = ( ! empty( $post['youtube_nocookie'] ) && 'on' === $post['youtube_nocookie'] ) ? 'true' : 'false';
+	$play_inline       = ( ! empty( $post['play_inline'] ) && 'on' === $post['play_inline'] ) ? 'true' : 'false';
 	$render_transcript = ( ! empty( $post['render_transcript'] ) && 'on' === $post['render_transcript'] ) ? 'true' : 'false';
 	$hide_controls     = ( ! empty( $post['hide_controls'] ) && 'on' === $post['hide_controls'] ) ? 'true' : 'false';
 	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
-	$default_heading   = ( isset( $post['default_heading'] ) ) ? $post['default_heading'] : 'auto';
+	$seek_interval     = ( isset( $post['seek_interval'] ) && $post['seek_interval'] > 5 ) ? absint( $post['seek_interval'] ) : '';
+	$default_heading   = ( isset( $post['default_heading'] ) ) ? absint( $post['default_heading'] ) : 'auto';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
 	$settings['replace_playlists'] = $replace_playlists;
 	$settings['youtube_nocookie']  = $youtube_nocookie;
+	$settings['seek_interval']     = $seek_interval;
+	$settings['play_inline']       = $play_inline;
 	$settings['render_transcript'] = $render_transcript;
 	$settings['hide_controls']     = $hide_controls;
 	$settings['default_speed']     = $default_speed;
@@ -359,6 +364,17 @@ function ableplayer_settings_form() {
 								<?php
 								ableplayer_settings_field(
 									array(
+										'name'  => 'play_inline',
+										'label' => __( 'Force mobile devices to play inline, instead of using their own media player.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
 										'name'  => 'render_transcript',
 										'label' => __( 'Insert interactive transcript container.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
@@ -377,6 +393,21 @@ function ableplayer_settings_form() {
 											'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
 											'arrows'  => __( 'Arrows', 'ableplayer' ),
 										),
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'    => 'seek_interval',
+										'label'   => __( 'Default seek interval in seconds.', 'ableplayer' ),
+										'type'    => 'number',
+										'atts'    => array(
+											'min'  => 5,
+											'step' => 5,
+										)
 									)
 								);
 								?>
@@ -534,8 +565,10 @@ function ableplayer_default_settings() {
 		'replace_audio'     => 'false',
 		'replace_playlists' => 'false',
 		'youtube_nocookie'  => 'false',
+		'play_inline'       => 'true',
 		'render_transcript' => 'true',
 		'default_speed'     => 'animals',
+		'seek_interval'     => '30',
 		'hide_controls'     => 'false',
 		'default_heading'   => 'auto',
 	);
