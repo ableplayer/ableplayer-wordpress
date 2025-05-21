@@ -249,6 +249,7 @@ function ableplayer_update_settings( $post ) {
 	$settings          = array();
 	$replace_video     = ( ! empty( $post['replace_video'] ) && 'on' === $post['replace_video'] ) ? 'true' : 'false';
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
+	$exclude_class     = ( ! empty( $post['exclude_class'] ) ) ? sanitize_text_field( $post['exclude_class'] ) : '';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
 	$youtube_nocookie  = ( ! empty( $post['youtube_nocookie'] ) && 'on' === $post['youtube_nocookie'] ) ? 'true' : 'false';
 	$play_inline       = ( ! empty( $post['play_inline'] ) && 'on' === $post['play_inline'] ) ? 'true' : 'false';
@@ -260,6 +261,7 @@ function ableplayer_update_settings( $post ) {
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
+	$settings['exclude_class']     = $exclude_class;
 	$settings['replace_playlists'] = $replace_playlists;
 	$settings['youtube_nocookie']  = $youtube_nocookie;
 	$settings['seek_interval']     = $seek_interval;
@@ -327,6 +329,18 @@ function ableplayer_settings_form() {
 										'name'  => 'replace_audio',
 										'label' => __( 'Use Able Player for all <code>audio</code> elements.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'    => 'exclude_class',
+										'label'   => __( 'Exclude class from Able Player parsing', 'ableplayer' ),
+										'note'    => __( 'Disable Able Player on <code>video</code> or <code>audio</code> elements with this class or with a parent element with the class.', 'ableplayer' ),
+										'type'    => 'text',
 									)
 								);
 								?>
@@ -556,6 +570,7 @@ function ableplayer_default_settings() {
 	$settings = array(
 		'replace_video'     => 'false',
 		'replace_audio'     => 'false',
+		'exclude_class'     => '',
 		'replace_playlists' => 'false',
 		'youtube_nocookie'  => 'false',
 		'play_inline'       => 'true',

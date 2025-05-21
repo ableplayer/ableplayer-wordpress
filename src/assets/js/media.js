@@ -9,12 +9,18 @@ if ( 0 !== ableplayer_selectors.length ) {
 	const mediaEls = document.querySelectorAll( ableplayer_selectors );
 	if ( mediaEls ) {
 		mediaEls.forEach((el,index,listObj) => {
-			el.removeAttribute( 'controls' );
-			if ( ! el.hasAttribute( 'data-able-player' ) ) {
-				el.setAttribute( 'data-able-player', 'true' );
-			}
-			if ( ! el.hasAttribute( 'id' ) ) {
-				el.setAttribute( 'id', 'able-player-id-' + index );
+			let excludeClass = ableplayer.settings.exclude_class;
+			if ( excludeClass !== '' && el.classList.contains( excludeClass ) || el.closest( 'figure' ).classList.contains( excludeClass ) ) {
+				el.classList.add( 'ableplayer-skipped' );
+			} else {
+				el.removeAttribute( 'controls' );
+
+				if ( ! el.hasAttribute( 'data-able-player' ) ) {
+					el.setAttribute( 'data-able-player', 'true' );
+				}
+				if ( ! el.hasAttribute( 'id' ) ) {
+					el.setAttribute( 'id', 'able-player-id-' + index );
+				}
 			}
 		});
 	}

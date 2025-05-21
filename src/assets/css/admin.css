@@ -158,6 +158,20 @@
 	padding: 10px;
 }
 
+.ableplayer-tabs .label-number,
+.ableplayer-tabs .label-select,
+.ableplayer-tabs .label-text {
+	display: block;
+}
+
+.ableplayer-input-description {
+	display: inline-flex;
+	align-items: center;
+	border-left: 4px solid #72aee6;
+	box-shadow: 0 3px 6px #ddd;
+	padding: 4px;
+}
+
 @media screen and ( width < 481px ) {
 	.ableplayer-tabs.vertical {
 		display: flex;
