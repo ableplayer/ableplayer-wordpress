@@ -346,6 +346,18 @@ function able_player_parameters() {
 }
 
 /**
+ * Remove Media Element scripts.
+ */
+function ableplayer_remove_scripts() {
+	$elements = ableplayer_get_settings( 'disable_elements' );
+	if ( 'true' === $elements ) {
+		wp_deregister_script( 'mediaelement' );
+		wp_deregister_script( 'wp-playlist' );
+	}
+}
+add_action( 'init', 'ableplayer_remove_scripts' );
+
+/**
  * Add support for [ableplayer] shortcode.
  *
  * @param array  $atts Array of shortcode parameters.

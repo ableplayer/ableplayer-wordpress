@@ -251,6 +251,7 @@ function ableplayer_update_settings( $post ) {
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
 	$exclude_class     = ( ! empty( $post['exclude_class'] ) ) ? sanitize_text_field( $post['exclude_class'] ) : '';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
+	$disable_elements  = ( ! empty( $post['disable_elements'] ) && 'on' === $post['disable_elements'] ) ? 'true' : 'false';
 	$youtube_nocookie  = ( ! empty( $post['youtube_nocookie'] ) && 'on' === $post['youtube_nocookie'] ) ? 'true' : 'false';
 	$play_inline       = ( ! empty( $post['play_inline'] ) && 'on' === $post['play_inline'] ) ? 'true' : 'false';
 	$render_transcript = ( ! empty( $post['render_transcript'] ) && 'on' === $post['render_transcript'] ) ? 'true' : 'false';
@@ -263,6 +264,7 @@ function ableplayer_update_settings( $post ) {
 	$settings['replace_audio']     = $replace_audio;
 	$settings['exclude_class']     = $exclude_class;
 	$settings['replace_playlists'] = $replace_playlists;
+	$settings['disable_elements']  = $disable_elements;
 	$settings['youtube_nocookie']  = $youtube_nocookie;
 	$settings['seek_interval']     = $seek_interval;
 	$settings['play_inline']       = $play_inline;
@@ -351,6 +353,17 @@ function ableplayer_settings_form() {
 									array(
 										'name'  => 'replace_playlists',
 										'label' => __( 'Use Able Player for WordPress media playlists.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'  => 'disable_elements',
+										'label' => __( 'Disable MediaElement JS.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
 									)
 								);
@@ -572,6 +585,7 @@ function ableplayer_default_settings() {
 		'replace_audio'     => 'false',
 		'exclude_class'     => '',
 		'replace_playlists' => 'false',
+		'disable_elements'  => 'false',
 		'youtube_nocookie'  => 'false',
 		'play_inline'       => 'true',
 		'render_transcript' => 'true',

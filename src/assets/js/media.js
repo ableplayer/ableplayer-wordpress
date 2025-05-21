@@ -11,7 +11,9 @@ if ( 0 !== ableplayer_selectors.length ) {
 	if ( mediaEls ) {
 		mediaEls.forEach((el,index,listObj) => {
 			let excludeClass = ableplayer.settings.exclude_class;
-			if ( excludeClass !== '' && el.classList.contains( excludeClass ) || el.closest( 'figure' ).classList.contains( excludeClass ) ) {
+			let parentEl     = el.closest( 'figure' );
+			let parentHasClass = ( parentEl ) ? parentEl.classList.contains( excludeClass ) : false;
+			if ( excludeClass !== '' && el.classList.contains( excludeClass ) || parentHasClass ) {
 				el.classList.add( 'ableplayer-skipped' );
 			} else {
 				el.removeAttribute( 'controls' );
@@ -30,6 +32,42 @@ if ( 0 !== ableplayer_selectors.length ) {
 			});
 		});
 	}
+}
+
+if ( 'true' === ableplayer.settings.replace_playlists) {
+	const audioPlaylists = document.querySelectorAll( '.wp-audio-playlist' );
+	if ( audioPlaylists.length > 0 ) {
+		audioPlaylists.forEach((playlist,index,listObj) => {
+			renderPlaylist( playlist, index );
+		});
+	}
+}
+
+function renderPlaylist( el, index ) {
+	let contents = JSON.parse( el.querySelector( '.wp-playlist-script' ).textContent );
+	let player   = ( el.classList.contains( 'wp-audio-playlist' ) ) ? el.querySelector( 'audio' ) : el.querySelector( 'video' );
+	let tracks   = contents.tracks;
+	let list     = document.createElement( 'ul' );
+	list.classList.add( 'able-playlist' );
+	list.setAttribute( 'data-player', player.getAttribute( 'id' ) );
+	list.setAttribute( 'data-embedded', true );
+	let listItem, source, button;
+	tracks.forEach((track,index,listObj) => {
+		listItem = document.createElement( 'li' );
+		source   = document.createElement( 'span' );
+		source.classList.add( 'able-source' );
+		source.setAttribute( 'data-type', track.type );
+		source.setAttribute( 'data-src', track.src );
+		button  = document.createElement( 'button' );
+		button.setAttribute( 'type', 'button' );
+		button.innerText = track.title;
+		listItem.insertAdjacentElement( 'afterbegin', source );
+		listItem.insertAdjacentElement( 'beforeend', button );
+		list.insertAdjacentElement( 'beforeend', listItem );
+	});
+	el.insertAdjacentElement( 'beforeend', list );
+
+	el.querySelector( '.wp-playlist-current-item' ).remove();
 }
 
 const ablePlayers = document.querySelectorAll( '[data-able-player]' );
