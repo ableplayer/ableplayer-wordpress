@@ -339,10 +339,10 @@ function ableplayer_settings_form() {
 								<?php
 								ableplayer_settings_field(
 									array(
-										'name'    => 'exclude_class',
-										'label'   => __( 'Exclude class from Able Player parsing', 'ableplayer' ),
-										'note'    => __( 'Disable Able Player on <code>video</code> or <code>audio</code> elements with this class or with a parent element with the class.', 'ableplayer' ),
-										'type'    => 'text',
+										'name'  => 'exclude_class',
+										'label' => __( 'Exclude class from Able Player parsing', 'ableplayer' ),
+										'note'  => __( 'Disable Able Player on <code>video</code> or <code>audio</code> elements with this class or with a parent element with the class.', 'ableplayer' ),
+										'type'  => 'text',
 									)
 								);
 								?>
