@@ -52,6 +52,7 @@ if ( 'true' === ableplayer.settings.replace_playlists) {
  * @param Element el Playlist wrapper element.
  */
 function renderPlaylist( el ) {
+	el.classList.add( 'has-ableplayer' );
 	let contents = JSON.parse( el.querySelector( '.wp-playlist-script' ).textContent );
 	let player   = ( el.classList.contains( 'wp-audio-playlist' ) ) ? el.querySelector( 'audio' ) : el.querySelector( 'video' );
 	let tracks   = contents.tracks;
