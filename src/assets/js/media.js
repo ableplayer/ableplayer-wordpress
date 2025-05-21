@@ -38,15 +38,20 @@ if ( 0 !== ableplayer_selectors.length ) {
 }
 
 if ( 'true' === ableplayer.settings.replace_playlists) {
-	const audioPlaylists = document.querySelectorAll( '.wp-audio-playlist' );
-	if ( audioPlaylists.length > 0 ) {
-		audioPlaylists.forEach((playlist,index,listObj) => {
-			renderPlaylist( playlist, index );
+	const playlists = document.querySelectorAll( '.wp-playlist' );
+	if ( playlists.length > 0 ) {
+		playlists.forEach((playlist,index,listObj) => {
+			renderPlaylist( playlist );
 		});
 	}
 }
 
-function renderPlaylist( el, index ) {
+/**
+ * Render the AblePlayer playlist over WP Playlist data sources.
+ *
+ * @param Element el Playlist wrapper element.
+ */
+function renderPlaylist( el ) {
 	let contents = JSON.parse( el.querySelector( '.wp-playlist-script' ).textContent );
 	let player   = ( el.classList.contains( 'wp-audio-playlist' ) ) ? el.querySelector( 'audio' ) : el.querySelector( 'video' );
 	let tracks   = contents.tracks;
@@ -57,6 +62,7 @@ function renderPlaylist( el, index ) {
 	let listItem, source, button;
 	tracks.forEach((track,index,listObj) => {
 		listItem = document.createElement( 'li' );
+		listItem.setAttribute( 'data-poster', track.image.src );
 		source   = document.createElement( 'span' );
 		source.classList.add( 'able-source' );
 		source.setAttribute( 'data-type', track.type );
@@ -64,13 +70,24 @@ function renderPlaylist( el, index ) {
 		button  = document.createElement( 'button' );
 		button.setAttribute( 'type', 'button' );
 		button.innerText = track.title;
+		if ( track.image.src ) {
+			img     = document.createElement( 'img' );
+			img.setAttribute( 'src', track.image.src );
+			img.setAttribute( 'alt', '' );
+			img.setAttribute( 'height', track.image.height );
+			img.setAttribute( 'width', track.image.width );
+			button.insertAdjacentElement( 'afterbegin', img );
+		}
 		listItem.insertAdjacentElement( 'afterbegin', source );
 		listItem.insertAdjacentElement( 'beforeend', button );
 		list.insertAdjacentElement( 'beforeend', listItem );
 	});
 	el.insertAdjacentElement( 'beforeend', list );
 
-	el.querySelector( '.wp-playlist-current-item' ).remove();
+	let wpCurrent = el.querySelector( '.wp-playlist-current-item' );
+	if ( wpCurrent ) {
+		wpCurrent.remove();
+	}
 }
 
 const ablePlayers = document.querySelectorAll( '[data-able-player]' );
