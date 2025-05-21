@@ -7,6 +7,7 @@ if ( ableplayer.settings.replace_audio === 'true' ) {
 }
 if ( 0 !== ableplayer_selectors.length ) {
 	const mediaEls = document.querySelectorAll( ableplayer_selectors );
+	let childTracks;
 	if ( mediaEls ) {
 		mediaEls.forEach((el,index,listObj) => {
 			let excludeClass = ableplayer.settings.exclude_class;
@@ -14,7 +15,6 @@ if ( 0 !== ableplayer_selectors.length ) {
 				el.classList.add( 'ableplayer-skipped' );
 			} else {
 				el.removeAttribute( 'controls' );
-
 				if ( ! el.hasAttribute( 'data-able-player' ) ) {
 					el.setAttribute( 'data-able-player', 'true' );
 				}
@@ -22,6 +22,12 @@ if ( 0 !== ableplayer_selectors.length ) {
 					el.setAttribute( 'id', 'able-player-id-' + index );
 				}
 			}
+			childTracks = el.querySelectorAll( 'track' );
+			childTracks.forEach((track,index,listObj) => {
+				if ( ! track.hasAttribute( 'kind' ) ) {
+					track.setAttribute( 'kind', 'subtitles' );
+				}
+			});
 		});
 	}
 }
