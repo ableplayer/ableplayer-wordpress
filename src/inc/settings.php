@@ -93,13 +93,6 @@ function ableplayer_settings_field( $args = array() ) {
 		$close   = "</$el>";
 	}
 
-	if ( is_string( $args ) ) {
-		_doing_it_wrong(
-			__FUNCTION__,
-			esc_html__( 'Since My Calendar 3.4.0, these function arguments must be an array.', 'ableplayer' ),
-			'3.4.0'
-		);
-	}
 	$options    = '';
 	$attributes = '';
 	$return     = '';
@@ -301,7 +294,7 @@ function ableplayer_settings_form() {
 	}
 	?>
 	<div class="wrap ableplayer-admin ableplayer-settings-page" id="ableplayer_settings">
-		<h1><?php esc_html_e( 'My Calendar Settings', 'ableplayer' ); ?></h1>
+		<h1><?php esc_html_e( 'Able Player Settings', 'ableplayer' ); ?></h1>
 		<div class="ableplayer-tabs">
 		<div class="tabs" role="tablist" data-default="ableplayer-settings">
 			<button type="button" role="tab" aria-selected="false" id="tab_settings" aria-controls="ableplayer-settings"><?php esc_html_e( 'Settings', 'ableplayer' ); ?></button>
