@@ -8,7 +8,12 @@
         "name": "Terrill Thompson",
         "email": "test@test.com",
         "homepage": "https://terrillthompson.com"
-    }],
+    },
+	{
+		"name": "Joe Dolson",
+		"email": "plugins@joedolson.com",
+		"homepage": "https://www.joedolson.com"
+	}],
     "type": "wordpress-plugin",
     "require-dev": {
         "phpcompatibility/php-compatibility": "^9.3",
