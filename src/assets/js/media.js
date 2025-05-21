@@ -23,6 +23,9 @@ if ( 0 !== ableplayer_selectors.length ) {
 				if ( ! el.hasAttribute( 'id' ) ) {
 					el.setAttribute( 'id', 'able-player-id-' + index );
 				}
+				if ( ! el.hasAttribute( 'data-skin' ) ) {
+					el.setAttribute( 'data-skin', '2020' );
+				}
 			}
 			childTracks = el.querySelectorAll( 'track' );
 			childTracks.forEach((track,index,listObj) => {
