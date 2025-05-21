@@ -1,4 +1,4 @@
-let   ableplayer_selectors = [];
+let ableplayer_selectors = [];
 if ( ableplayer.settings.replace_video === 'true' ) {
 	ableplayer_selectors.push( 'video' );
 }
