@@ -260,7 +260,7 @@ function ableplayer_update_settings( $post ) {
 	$hide_controls     = ( ! empty( $post['hide_controls'] ) && 'on' === $post['hide_controls'] ) ? 'true' : 'false';
 	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
 	$seek_interval     = ( isset( $post['seek_interval'] ) && $post['seek_interval'] > 5 ) ? absint( $post['seek_interval'] ) : '';
-	$default_heading   = ( isset( $post['default_heading'] ) ) ? absint( $post['default_heading'] ) : 'auto';
+	$default_heading   = ( isset( $post['default_heading'] ) && 'auto' !== $post['default_heading'] ) ? absint( $post['default_heading'] ) : 'auto';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
