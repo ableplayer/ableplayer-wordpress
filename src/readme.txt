@@ -60,6 +60,14 @@ The `[ableplayer]` shortcode supports the following attributes.
 * `youtube-desc-id` - YouTube URL or ID of a described version of the video
 * `vimeo-desc-id` - Vimeo URL or ID of a described version of the video
 
+All captions, subtitles, chapters, and descriptions tracks must be in `.vtt` format. The shortcode only supports a single set of values for each type of data; to add multiple tracks of the same type you can use the Video block or add custom HTML.
+
+Either an attachment ID or a URL for your track `.vtt` is required; you can optionally add a language code and a custom label:
+
+`captions="/path/to/file.vtt|es|Español"`
+
+By default, the language will be your WordPress installation language, with the labels "Captions", "Subtitles", "Chapters" or "Audio Description".
+
 = Player Options =
 
 * `youtube-nocookie` - "true" or "false" (use "true" to embed YouTube untracked, for added privacy)
