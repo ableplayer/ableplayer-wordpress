@@ -267,10 +267,12 @@ input + .ableplayer-input-description {
 	align-self: start;
 }
 
+.ableplayer-media-preview .ableplayer-track-details,
 .ableplayer-media-preview .ableplayer-remove-preview {
 	display: none;
 }
 
+.ableplayer-media-preview.has-value .ableplayer-track-details,
 .ableplayer-media-preview.has-value .ableplayer-remove-preview {
 	display: block;
 }
