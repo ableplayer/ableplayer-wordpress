@@ -41,14 +41,14 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Version:     2.0.0
+ * Version:     2.0.0-beta1
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '2.0.0' );
+define( 'ABLEPLAYER_VERSION', '2.0.0-beta1' );
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'inc/generator.php';
@@ -80,7 +80,8 @@ function ableplayer_enqueue_scripts() {
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), $version, true );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), $version, true );
 	wp_enqueue_style( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/css/media.css', array(), $version );
-	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/media.js', array(), $version, true );
+	$media_js = ( SCRIPT_DEBUG ) ? 'media.js' : 'media.min.js';
+	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/' . $media_js, array(), $version, true );
 	wp_localize_script(
 		'ableplayer-video',
 		'ableplayer',
@@ -137,9 +138,10 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
  * Enqueue admin JS and CSS.
  */
 function ableplayer_admin_scripts() {
-	$version = ABLEPLAYER_VERSION;
-	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
-	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/admin.js', __FILE__ ), array( 'jquery', 'wp-a11y', 'clipboard' ), $version, true );
+	$version  = ABLEPLAYER_VERSION;
+	$version  = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
+	$admin_js = ( SCRIPT_DEBUG ) ? 'admin.js' : 'admin.min.js';
+	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/' . $admin_js, __FILE__ ), array( 'jquery', 'wp-a11y', 'clipboard' ), $version, true );
 	wp_localize_script(
 		'ableplayer-js',
 		'ableplayer',
