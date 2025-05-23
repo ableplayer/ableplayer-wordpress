@@ -421,6 +421,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		$atts,
 		'ableplayer'
 	);
+	$source = '';
 
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] || $all_atts['media-id'] ) ) {
 		// Shortcode must have one of YouTube, Vimeo, or local video source.
