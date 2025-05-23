@@ -17,7 +17,7 @@ See the main [Able Player](http://ableplayer.github.io/ableplayer) project page 
 * Tags: html5,media,audio,video,accessibility
 * Requires at least: 4.9
 * Tested up to: 6.8
-* Stable tag: `1.2.2`
+* Stable tag: `2.0.0`
 * License: MIT
 * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -29,6 +29,7 @@ Bugs or feature development contributions should be made through the [GitHub rep
 
 ## Authors
 
+* [Joe Dolson](https://www.joedolson.com)
 * [Terrill Thompson](https://terrillthompson.com)
 
 ## Contributors
