@@ -1,6 +1,6 @@
 {
   "name": "ableplayer-wordpress",
-  "version": "2.0.0",
+  "version": "2.0.0-beta1",
   "private": true,
   "description": "AblePlayer plugin for WordPress",
   "author": "Joe Dolson",
@@ -34,6 +34,8 @@
   },
   "scripts": {
     "presetup": "find .scripts -type f -exec chmod +x {} \\;",
+ 	"start": "esbuild admin.min=src/assets/js/admin.js media.min=src/assets/js/media.js --bundle --outdir=src/assets/js --target=chrome58,firefox57,safari11,edge18 --watch --sourcemap",
+    "build:js": "esbuild admin.min=src/assets/js/admin.js media.min=src/assets/js/media.js --bundle --outdir=src/assets/js --target=chrome58,firefox57,safari11,edge18 --minify",
     "build:docs": "rm -rf docs/ && jsdoc -c hookdoc-conf.json",
     "format-php": "wp-env run composer run-script format",
     "prelint-php": "wp-env run composer 'install --no-interaction'",
