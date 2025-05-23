@@ -54,3 +54,5 @@ src/.idea/workspace.xml
 src/todo.txt
 src/.idea/php.xml
 src/.idea/workspace.xml
+/node_modules
+/vendor
