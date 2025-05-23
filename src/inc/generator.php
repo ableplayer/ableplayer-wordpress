@@ -85,7 +85,7 @@ function ableplayer_shortcode_track( $kind, $post ) {
 	$kinds          = array(
 		'captions'    => __( 'Captions', 'ableplayer' ),
 		'subtitles'   => __( 'Subtitles', 'ableplayer' ),
-		'description' => __( 'Description', 'ableplayer' ),
+		'description' => __( 'Audio Description', 'ableplayer' ),
 		'chapters'    => __( 'Chapters', 'ableplayer' ),
 	);
 
@@ -137,7 +137,7 @@ function ableplayer_generator_fields( $data ) {
 	$kinds          = array(
 		'captions'    => __( 'Captions', 'ableplayer' ),
 		'subtitles'   => __( 'Subtitles', 'ableplayer' ),
-		'description' => __( 'Description', 'ableplayer' ),
+		'description' => __( 'Audio Description', 'ableplayer' ),
 		'chapters'    => __( 'Chapters', 'ableplayer' ),
 	);
 	?>
