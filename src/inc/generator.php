@@ -38,10 +38,10 @@ function ableplayer_generate( $format = 'shortcode' ) {
 		}
 		foreach ( $post as $key => $v ) {
 			if ( in_array( $key, $keys, true ) ) {
-				if ( 'speed' === $key && $v === ableplayer_get_settings( 'default_speed' ) ) {
+				if ( 'speed' === $key && ableplayer_get_settings( 'default_speed' ) === $v ) {
 					continue;
 				}
-				if ( 'heading' === $key && $v === ableplayer_get_settings( 'default_heading' ) ) {
+				if ( 'heading' === $key && ableplayer_get_settings( 'default_heading' ) === $v ) {
 					continue;
 				}
 				if ( '' !== $v ) {
@@ -81,8 +81,8 @@ function ableplayer_generate( $format = 'shortcode' ) {
  */
 function ableplayer_shortcode_track( $kind, $post ) {
 	// Handle track srclang and label.
-	$default_lang   = str_replace( '_', '-', get_locale() );
-	$kinds          = array(
+	$default_lang = str_replace( '_', '-', get_locale() );
+	$kinds        = array(
 		'captions'    => __( 'Captions', 'ableplayer' ),
 		'subtitles'   => __( 'Subtitles', 'ableplayer' ),
 		'description' => __( 'Audio Description', 'ableplayer' ),
@@ -90,8 +90,8 @@ function ableplayer_shortcode_track( $kind, $post ) {
 	);
 
 	$v       = '';
-	$srclang = isset( $post[ $kind . '-srclang'] ) ? $post[ $kind . '-srclang'] : '';
-	$label   = isset( $post[ $kind . '-label'] ) ? $post[ $kind . '-label'] : '';
+	$srclang = isset( $post[ $kind . '-srclang' ] ) ? $post[ $kind . '-srclang' ] : '';
+	$label   = isset( $post[ $kind . '-label' ] ) ? $post[ $kind . '-label' ] : '';
 	if ( $srclang && $srclang !== $default_lang ) {
 		$v .= '|' . $srclang;
 	}
@@ -105,7 +105,7 @@ function ableplayer_shortcode_track( $kind, $post ) {
 /**
  * Form to create a shortcode
  *
- * @param array  $data Data submitted from shortcode generator.
+ * @param array $data Data submitted from shortcode generator.
  */
 function ableplayer_generator( $data = array() ) {
 	?>
