@@ -182,6 +182,7 @@ jQuery(document).ready(function ($) {
 					displayField.innerHTML = img;
 				} else {
 					displayField.innerHTML = '<pre>' + selection.first().attributes.url.replace( ableplayer.homeUrl, '' ) + '</pre>';
+					idField.value          = id;
 				}
 				container.addClass( 'has-value' );
 			}
