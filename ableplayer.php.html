@@ -453,8 +453,8 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		return false;
 	} else {
 		if ( $all_atts['media-id'] ) {
-			// If Video ID is set but is not a valid URL, 
-			$media_id = ( is_numeric($all_atts['media-id'] ) ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
+			// If Video ID is set but is not a valid URL, return.
+			$media_id = ( is_numeric( $all_atts['media-id'] ) ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
 			if ( ! $media_id ) {
 				return false;
 			} else {
@@ -476,12 +476,12 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			foreach ( $kinds as $kind => $default_label ) {
 				$track = '';
 				if ( ! empty( $all_atts[ $kind ] ) ) {
-					$data     = explode( '|', $all_atts[ $kind ] );
+					$data = explode( '|', $all_atts[ $kind ] );
 					if ( empty( $data[0] ) ) {
 						continue;
 					}
 					// Optional lang and language.
-					$srclang  = (  isset( $data[1] ) &amp;&amp; ! empty( $data[1] ) ) ? $data[1] : $default_lang;
+					$srclang  = ( isset( $data[1] ) &amp;&amp; ! empty( $data[1] ) ) ? $data[1] : $default_lang;
 					$srclabel = ( isset( $data[2] ) &amp;&amp; ! empty( $data[2] ) ) ? $data[2] : $default_label;
 					$src      = ( is_numeric( $data[0] ) ) ? wp_get_attachment_url( $data[0] ) : $data[0];
 					$track    = '&lt;track kind="' . $kind . '" srclang="' . esc_attr( $srclang ) . '" srclabel="' . esc_attr( $srclabel ) . '" src="' . esc_url( $src ) . '">';
