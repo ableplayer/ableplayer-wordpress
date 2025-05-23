@@ -50,7 +50,7 @@ function ableplayer_update_setting( $key, $value = '' ) {
 /**
  * Generate input & field for an AblePlayer setting.
  *
- * @param array $args {
+ * @param array  $args {
  *     Array of settings arguments.
  *
  *     @type string       $name Name of the option used in name attribute. Required.

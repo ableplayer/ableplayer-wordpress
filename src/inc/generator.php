@@ -24,8 +24,8 @@ function ableplayer_generate( $format = 'shortcode' ) {
 		if ( ! wp_verify_nonce( $nonce, 'ableplayer-nonce' ) ) {
 			wp_die( 'Invalid nonce' );
 		}
-		$string = '';
-		$array  = array();
+		$string    = '';
+		$array     = array();
 		$shortcode = 'ableplayer';
 		$keys      = array( 'youtube-id', 'vimeo-id', 'media-id', 'poster', 'captions', 'subtitles', 'descriptions', 'chapters', 'autoplay', 'loop', 'playsinline', 'hidecontrols', 'heading', 'speed', 'start', 'volume', 'seekinterval' );
 		$post      = map_deep( $_POST, 'sanitize_text_field' );
@@ -73,7 +73,6 @@ function ableplayer_generate( $format = 'shortcode' ) {
 /**
  * Form to create a shortcode
  *
- * @param string $type Type of shortcode to reproduce.
  * @param array  $data Data submitted from shortcode generator.
  */
 function ableplayer_generator( $data = array() ) {
@@ -99,7 +98,7 @@ function ableplayer_generator_fields( $data ) {
 	}
 	$message        = isset( $params['message'] ) ? $params['message'] : __( 'Generate an <code>[ableplayer]</code> shortcode.', 'ableplayer' );
 	$message_type   = isset( $params['type'] ) ? $params['type'] : 'success';
-	$shortcode      = isset( $params['shortcode'] ) ? $params['shortcode'] : "[ableplayer]";
+	$shortcode      = isset( $params['shortcode'] ) ? $params['shortcode'] : '[ableplayer]';
 	$last_shortcode = ableplayer_get_settings( 'last_shortcode' );
 	$shortcode      = ( ! isset( $params['shortcode'] ) && $last_shortcode ) ? "[$last_shortcode]" : $shortcode;
 	?>
@@ -111,7 +110,7 @@ function ableplayer_generator_fields( $data ) {
 				array(
 					'type' => $message_type,
 				)
-				);
+			);
 			?>
 			<div><input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>"/></div>
 			<?php
@@ -131,9 +130,9 @@ function ableplayer_generator_fields( $data ) {
 				<?php
 				ableplayer_settings_field(
 					array(
-						'name'  => 'source_type',
-						'label' => __( 'Video Source Type', 'ableplayer' ),
-						'type'  => 'select',
+						'name'    => 'source_type',
+						'label'   => __( 'Video Source Type', 'ableplayer' ),
+						'type'    => 'select',
 						'default' => array(
 							'youtube' => 'YouTube',
 							'vimeo'   => 'Vimeo',
@@ -350,9 +349,9 @@ function ableplayer_generator_fields( $data ) {
 				<?php
 				ableplayer_settings_field(
 					array(
-						'name'     => 'heading',
-						'label'    => __( 'Hidden heading level', 'ableplayer' ),
-						'type'     => 'select',
+						'name'    => 'heading',
+						'label'   => __( 'Hidden heading level', 'ableplayer' ),
+						'type'    => 'select',
 						'default' => array(
 							'auto' => __( 'Automatically assigned', 'ableplayer' ),
 							'0'    => __( 'No heading', 'ableplayer' ),
@@ -369,12 +368,12 @@ function ableplayer_generator_fields( $data ) {
 				<?php
 				ableplayer_settings_field(
 					array(
-						'name'     => 'speed',
-						'label'    => __( 'Speed selection control', 'ableplayer' ),
-						'type'     => 'select',
+						'name'    => 'speed',
+						'label'   => __( 'Speed selection control', 'ableplayer' ),
+						'type'    => 'select',
 						'default' => array(
 							'animals' => __( 'Animals: Tortoise and Hare', 'ableplayer' ),
-							'arrows'    => __( 'Arrows', 'ableplayer' ),
+							'arrows'  => __( 'Arrows', 'ableplayer' ),
 						),
 					),
 					'generator'
