@@ -1,7 +1,7 @@
 === Able Player, accessible HTML5 media player ===
 Contributors: terrillthompson, joedolson
 Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
-Author URI: http://terrillthompson.com
+Author URI: https://www.joedolson.com
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
@@ -29,11 +29,17 @@ This plug-in uses Able Player, an open-source fully-accessible cross-browser HTM
 
 == Instructions for Use ==
 
-There are currently two ways to add an Able Player instance to a WordPress site:
+There are currently three ways to add an Able Player instance to a WordPress site:
 
-1. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
+1. Go to Settings > Able Player > Settings and enable the options to use Able Player for all video, audio, and playlists. Able Player will automatically replace MediaElement.jss or the default WordPress video/audio blocks with Able Player.
+2. Go to Settings > Able Player > Shortcodes to generate an `[ableplayer]` shortcode.
+3. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
 
-2. Enter an `[ableplayer]` shortcode. The shortcode is intended for adding videos hosted on YouTube or Vimeo, with captions and subtitles hosted on these services. For anything more complex, use HTML.
+Using the media rewriting in option #1, Able Player will replace any `audio` or `video` block. Any tracks added to that block will be automatically handled, giving you support for all the standard AblePlayer features: captions, navigable transcripts, subtitles, chapters, and audio description.
+
+Using option #2, you can create Able Player shortcodes that support most of the basic Able Player features, with support for Vimeo, YouTube, or local video.
+
+Option #3 supports the full scope of Able Player features.
 
 == The [ableplayer] shortcode ==
 
@@ -43,13 +49,20 @@ The `[ableplayer]` shortcode supports the following attributes.
 
 * `youtube-id` - 11-character YouTube ID or YouTube URL.
 * `vimeo-id` - Vimeo ID or URL.
+* `media-id' - An attachment ID for a media file in your WordPress media library or the URL to a hosted video.
 
-= Optional attributes =
+= Additional Player Content =
 
+* `captions` - Attachment ID or URL to `.vtt` captions file. Optional pipe separator for language code and label.
+* `subtitles` - Attachment ID or URL to `.vtt` subtitles file. Optional pipe separator for language code and label.
+* `chapters` - Attachment ID or URL to `.vtt` chapters file. Optional pipe separator for language code and label.
+* `descriptions` - Attachment ID or URL to `.vtt` audio descriptions file. Optional pipe separator for language code and label.
 * `youtube-desc-id` - YouTube URL or ID of a described version of the video
 * `vimeo-desc-id` - Vimeo URL or ID of a described version of the video
+
+= Player Options =
+
 * `youtube-nocookie` - "true" or "false" (use "true" to embed YouTube untracked, for added privacy)
-* `id` - a unique id for the player (if omitted, one will be automatically assigned)
 * `autoplay` - "true" or "false" (default is "false")
 * `loop` - "true" or "false" (default is "false")
 * `playsinline` - "true" or "false" (default is "true"). By setting to "false", some devices (e.g., iPhones) will play the video in their own media player rather than in Able Player.
@@ -63,6 +76,7 @@ The `[ableplayer]` shortcode supports the following attributes.
 * `volume` - "0" to "10" (default is "7" to avoid overpowering screen reader audio). Some browsers do not support this.
 * `seekinterval` - number of seconds to forward/rewind with the Forward and Rewind buttons. If omitted, the interval will be intelligently assigned based on length of the video.
 * `nowplaying` - "true" or "false" to include a "Selected Track" section within the media player (default is "false").
+* `id` - a unique id for the player (if omitted, one will be automatically assigned)
 
 == Examples ==
 
@@ -70,8 +84,7 @@ The `[ableplayer]` shortcode supports the following attributes.
 
 This example uses HTML to add an audio player to the page, with one source (an MP3 file).
 ```html
-  <audio id="audio1" preload="auto" data-able-player src="path_to_audio.mp3">
-  </audio>
+  <audio id="audio1" preload="auto" data-able-player src="path_to_audio.mp3"></audio>
 ```
 
 = Example 2 =
@@ -89,12 +102,19 @@ This example uses HTML to add a video player to the page, with one source (an MP
 
 = Example 3 =
 
+This example uses the shortcode to add a video player to the page, with one source (an MP4 file) and four tracks (for captions, descriptions, and chapters in English; and subtitles in Spanish). All sources are fetched as WordPress media attachments.
+```html
+  [ableplayer poster="21" video-id="24" captions="25|en|English" subtitles="26|es|Español" descriptions="27" chapters="28"]
+```
+
+= Example 4 =
+
 This example uses a shortcode to add a YouTube player to the page, with two versions of the video, one with audio description and the other without (the user can toggle between the two versions using the D button).
 ```
   [ableplayer youtube-id="XXXXXXXXXXX" youtube-desc-id="YYYYYYYYYYY"]
 ```
 
-= Example 4 =
+= Example 5 =
 
 This example uses a shortcode to add a Vimeo player to the page, with two versions of the video, one with audio description and the other without (the user can toggle between the two versions using the D button).
 ```

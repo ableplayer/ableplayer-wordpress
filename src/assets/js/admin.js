@@ -98,4 +98,96 @@ jQuery(document).ready(function ($) {
 			e.preventDefault();
 		}
 	};
+
+	const clipboard = new ClipboardJS('.ableplayer-copy-to-clipboard');
+	clipboard.on( 'success', function(e) {
+		let parent   = e.trigger.parentNode;
+		let response = parent.querySelector( '.ableplayer-notice-copied' );
+		let text     = response.textContent;
+		wp.a11y.speak( text );
+		response.classList.add( 'visible' );
+	});
+
+	$( '.media-sources' ).hide();
+	let active = $( '#source_type' ).val();
+	$( '.media-sources.' + active ).show();
+	$( '.media-sources.' + active ).find( 'input' ).attr( 'required', 'true' );
+	$( '#source_type' ).on( 'change', function(e) {
+		let current = $( this ).val();
+		$( '.media-sources' ).hide();
+		$( '.media-sources' ).find( 'input' ).removeAttr( 'required' );
+		$( '.media-sources.' + current ).show();
+		$( '.media-sources.' + current ).find( 'input' ).attr( 'required', 'true' );
+	});
+
+	var mediaPopup = '';
+
+	function clear_existing() {
+		if (typeof mediaPopup !== 'string') {
+			mediaPopup.detach();
+			mediaPopup = '';
+		}
+	}
+
+	$('.ableplayer-remove-preview').on( 'click', function (e) {
+		let controlled  = $( this ).data( 'input' );
+		const container = $( this ).parent().parent( '.ableplayer-media-preview' );
+		$( '#' + controlled ).val( '' );
+		$( '.preview-' + controlled + ' > *').remove();
+		container.removeClass( 'has-value' );
+		wp.a11y.speak( ableplayer.removed );
+	});
+
+	$('.upload-ableplayer-media').on( 'click', function (e) {
+		let input          = $( this ).data( 'input' );
+		const idField      = document.querySelector( 'input[name="' + input + '"]' );
+		const displayField = document.querySelector( '.preview-' + input );
+		const container    = $( this ).parent().parent( '.ableplayer-media-preview' );
+		console.log( container );
+		let library;
+		if ( 'media-id' === input ) {
+			library = [ 'audio', 'video' ];
+		} else if ( 'poster' === input ) {
+			library = ['image'];
+		} else {
+			library = ['text/vtt'];
+		}
+		clear_existing();
+		mediaPopup = wp.media({
+			multiple: false, // add, reset, false.
+			title: ableplayer[ input + 'Title'],
+			library: {
+				type: library,
+			},
+			button: {
+				text: ableplayer.buttonName,
+			}
+		});
+
+		mediaPopup.on('select', function () {
+			let selection = mediaPopup.state().get('selection'),
+				id = '',
+				img = '',
+				height = '',
+				width = '',
+				alt = '';
+			if (selection) {
+				id                     = selection.first().attributes.id;
+				if ( input === 'poster' ) {
+					height                 = ableplayer.thumbHeight;
+					width                  = Math.round( ( ( selection.first().attributes.width ) / ( selection.first().attributes.height ) ) * height );
+					alt                    = selection.first().attributes.alt;
+					img                    = "<img id='event_image' src='" + selection.first().attributes.url + "' width='" + width + "' height='" + height + "' alt='" + alt + "' />";
+					idField.value          = id;
+					displayField.innerHTML = img;
+				} else {
+					displayField.innerHTML = '<pre>' + selection.first().attributes.url.replace( ableplayer.homeUrl, '' ) + '</pre>';
+				}
+				container.addClass( 'has-value' );
+			}
+		});
+
+		mediaPopup.open();
+	});
+
 });

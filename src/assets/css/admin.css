@@ -164,12 +164,115 @@
 	display: block;
 }
 
+
+#ableplayer-generator .shortcode-preview {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	column-gap: 10px;
+	align-items: center;
+}
+
+@media screen and ( width <= 481px ) {
+	#ableplayer-generator .shortcode-preview {
+		grid-template-columns: 1fr;
+	}
+}
+
+input + .ableplayer-input-description {
+	margin-top: 4px;
+}
+
 .ableplayer-input-description {
 	display: inline-flex;
 	align-items: center;
 	border-left: 4px solid #72aee6;
-	box-shadow: 0 3px 6px #ddd;
+	box-shadow: 1px 3px 3px #bbb;
 	padding: 4px;
+	position: relative;
+}
+
+.ableplayer-copy-button {
+	display: flex;
+	align-items: center;
+	column-gap: 10px;
+}
+
+.ableplayer-notice-copied {
+	display: none;
+	background: #f5e6ab;
+	color: #000;
+	padding: 6px;
+	border-radius: 3px;
+	position: absolute;
+	top: 2rem;
+}
+
+.ableplayer-notice-copied.visible {
+	display: block;
+}
+
+.ableplayer-generator-inputs {
+	display: grid;
+	grid-template-columns: repeat( 2, 1fr );
+	column-gap: 20px;
+}
+
+@media screen and ( width < 1200px ) {
+	.ableplayer-generator-inputs {
+		grid-template-columns: 1fr;
+	}
+}
+
+.ableplayer-generator-inputs input[type=url],
+.ableplayer-generator-inputs input[type=text],
+.ableplayer-generator-inputs select,
+.ableplayer-generator-inputs textarea {
+	width: 100%;
+}
+
+.ableplayer-generator-inputs li label {
+	display: inline-block;
+}
+
+.ableplayer-tracks summary,
+.ableplayer-media-preview {
+	display: flex;
+	gap: 20px;
+	padding: 1rem;
+	border: 1px solid #c5d9ed;
+	background: #f0f6fc66;
+	margin-bottom: .5rem;
+}
+
+.ableplayer-tracks summary {
+	display: list-item;
+	font-weight: 700;
+}
+
+.ableplayer-tracks summary:hover {
+	border-color: #0a4b78;
+}
+
+.ableplayer-media-preview > div:has(button) {
+	display: grid;
+	gap: 4px;
+	align-items: center;
+}
+
+.ableplayer-media-preview button:nth-of-type(1) {
+	align-self: end;
+}
+
+.ableplayer-media-preview button:nth-of-type(2) {
+	align-self: start;
+}
+
+.ableplayer-media-preview .ableplayer-remove-preview {
+	display: none;
+}
+
+.ableplayer-media-preview.has-value .ableplayer-remove-preview {
+	display: block;
 }
 
 @media screen and ( width < 481px ) {

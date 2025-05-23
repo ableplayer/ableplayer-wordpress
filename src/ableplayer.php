@@ -25,6 +25,7 @@ define( 'ABLEPLAYER_DEBUG', false );
 define( 'ABLEPLAYER_VERSION', '1.2.2' );
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/settings.php';
+require_once plugin_dir_path( __FILE__ ) . 'inc/generator.php';
 require_once plugin_dir_path( __FILE__ ) . 'inc/kses.php';
 
 register_activation_hook( __FILE__, 'ableplayer_activation' );
@@ -112,14 +113,26 @@ add_action( 'wp_enqueue_scripts', 'ableplayer_enqueue_scripts' );
 function ableplayer_admin_scripts() {
 	$version = ABLEPLAYER_VERSION;
 	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
-	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/admin.js', __FILE__ ), array( 'jquery' ), $version, true );
+	wp_enqueue_script( 'ableplayer-js', plugins_url( '/assets/js/admin.js', __FILE__ ), array( 'jquery', 'wp-a11y', 'clipboard' ), $version, true );
 	wp_localize_script(
 		'ableplayer-js',
 		'ableplayer',
 		array(
-			'firstItem' => 'tab_settings',
+			'posterTitle'      => 'Select Poster Image',
+			'sourceTitle'      => 'Select Video',
+			'captionsTitle'    => 'Select Captions',
+			'subtitlesTitle'   => 'Select Subtitles',
+			'descriptionTitle' => 'Select Description',
+			'chaptersTitle'    => 'Select Chapters',
+			'buttonName'       => 'Choose Media',
+			'thumbHeight'      => '100',
+			'removed'          => __( 'Selected media removed', 'ableplayer' ),
+			'homeUrl'          => home_url(),
 		)
 	);
+	if ( function_exists( 'wp_enqueue_media' ) && ! did_action( 'wp_enqueue_media' ) ) {
+		wp_enqueue_media();
+	}
 	wp_enqueue_style( 'ableplayer', plugins_url( '/assets/css/admin.css', __FILE__ ), array(), $version );
 }
 add_action( 'admin_enqueue_scripts', 'ableplayer_admin_scripts' );
@@ -384,6 +397,11 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'youtube-nocookie' => '',
 			'vimeo-id'         => '',
 			'vimeo-desc-id'    => '',
+			'media-id'         => '',
+			'captions'         => '',
+			'subtitles'        => '',
+			'descriptions'     => '',
+			'chapters'         => '',
 			'autoplay'         => 'false',
 			'preload'          => 'metadata',
 			'loop'             => 'false',
@@ -404,11 +422,48 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		'ableplayer'
 	);
 
-	// output.
-	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] ) ) {
-		// required fields are missing.
+	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] || $all_atts['media-id'] ) ) {
+		// Shortcode must have one of YouTube, Vimeo, or local video source.
 		return false;
 	} else {
+		if ( $all_atts['media-id'] ) {
+			// If Video ID is set but is not a valid URL, 
+			$media_id = ( is_numeric($all_atts['media-id'] ) ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
+			if ( ! $media_id ) {
+				return false;
+			} else {
+				$type   = get_post_mime_type( $media_id );
+				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '">';
+			}
+		}
+
+		$tracks = array();
+		$kinds  = array(
+			'captions'    => __( 'Captions', 'ableplayer' ),
+			'subtitles'   => __( 'Subtitles', 'ableplayer' ),
+			'description' => __( 'Description', 'ableplayer' ),
+			'chapters'    => __( 'Chapters', 'ableplayer' ),
+		);
+		// Switch locale to BCP47 syntax.
+		$default_lang = str_replace( '_', '-', get_locale() );
+		if ( $all_atts['captions'] || $all_atts['subtitles'] || $all_atts['description'] || $all_atts['chapters'] ) {
+			foreach ( $kinds as $kind => $default_label ) {
+				$track = '';
+				if ( ! empty( $all_atts[ $kind ] ) ) {
+					$data     = explode( '|', $all_atts[ $kind ] );
+					if ( empty( $data[0] ) ) {
+						continue;
+					}
+					// Optional lang and language.
+					$srclang  = (  isset( $data[1] ) && ! empty( $data[1] ) ) ? $data[1] : $default_lang;
+					$srclabel = ( isset( $data[2] ) && ! empty( $data[2] ) ) ? $data[2] : $default_label;
+					$src      = ( is_numeric( $data[0] ) ) ? wp_get_attachment_url( $data[0] ) : $data[0];
+					$track    = '<track kind="' . $kind . '" srclang="' . esc_attr( $srclang ) . '" srclabel="' . esc_attr( $srclabel ) . '" src="' . esc_url( $src ) . '">';
+					$tracks[] = $track;
+				}
+			}
+		}
+
 		// build a video player.
 		$o  = '<video ';
 		$o .= ' id="' . esc_attr( $all_atts['id'] ) . '"';
@@ -476,6 +531,11 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		$o .= '>';
 
+		$o .= $source;
+
+		if ( ! empty( $tracks ) ) {
+			$o .= implode( PHP_EOL, $tracks );
+		}
 		// enclosing tags.
 		if ( ! is_null( $content ) ) {
 			// run shortcode parser recursively.

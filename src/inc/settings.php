@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 function ableplayer_get_settings( $setting = '' ) {
 	$settings = get_option( 'ableplayer_settings', ableplayer_default_settings() );
 	$settings = array_merge( ableplayer_default_settings(), $settings );
-	if ( $setting && isset( $settings[ $setting ] ) ) {
-		return $settings[ $setting ];
+	if ( $setting ) {
+		return ( isset( $settings[ $setting ] ) ) ? $settings[ $setting ] : '';
 	}
 
 	return $settings;
@@ -63,10 +63,11 @@ function ableplayer_update_setting( $key, $value = '' ) {
  *     @type array        $wrap Array of wrapper details (class, element, id).
  *     @type string       $id Override the default ID, which is derived from the name.
  * }
+ * @param string $context Default 'settings'. Set to 'generator' for rendering non-settings.
  *
  * @return string|void
  */
-function ableplayer_settings_field( $args = array() ) {
+function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 	$name     = ( isset( $args['name'] ) ) ? $args['name'] : '';
 	$label    = ( isset( $args['label'] ) ) ? $args['label'] : '';
 	$default  = ( isset( $args['default'] ) ) ? $args['default'] : '';
@@ -104,6 +105,7 @@ function ableplayer_settings_field( $args = array() ) {
 		$base_atts = $atts;
 	}
 	$value = ableplayer_get_settings( $name );
+	$value = ( 'generator' === $context && ! is_string( $value ) ) ? '' : $value;
 	$atts  = array_merge( $base_atts, $atts );
 	if ( is_array( $atts ) && ! empty( $atts ) ) {
 		foreach ( $atts as $key => $val ) {
@@ -116,7 +118,7 @@ function ableplayer_settings_field( $args = array() ) {
 		} else {
 			$hold = $default;
 		}
-		$value = ( '' !== $value ) ? esc_attr( stripslashes( $value ) ) : $hold;
+		$value = ( '' !== $value ) ? esc_attr( wp_unslash( $value ) ) : $hold;
 	} else {
 		$value = ( ! empty( $value ) ) ? (array) $value : $default;
 	}
@@ -472,37 +474,10 @@ function ableplayer_settings_form() {
 						<h2><?php esc_html_e( 'Create Shortcode', 'ableplayer' ); ?></h2>
 
 						<div class="inside">
-							<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=ableplayer-config#ableplayer-text' ) ); ?>">
-								<input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>" />
-								<?php
-								// For video references, only collect URLs; parse source from there.
-								// youtube-id, vimeo-id (required).
-								// youtube-desc-id - separate, described video.
-								// vimeo-desc-id - separate, described video.
-								// youtube-nocookie - embed YouTube untracked for privacy.
-								// id - unique ID. Required if you want it to be persistent.
-								// autoplay - true/false.
-								// loop - true/false.
-								// playsinline - true/false. Setting 'false' will let some mobile devices use their own internal media players.
-								// hidecontrols - true/false.
-								// poster - URL for poster image. (Media selector).
-								// width - value in pixels. (OMIT).
-								// height - pixels (OMIT).
-								// heading level.
-								// speed - animals/arrows.
-								// start - media start time.
-								// volume - starting volume.
-								// seekinterval - travel period for forward/rewind.
-								// nowplaying - true/false to include "selected track" section. [not clear what this does].
-								// subtitles - upload.
-								// language - upload & name.
-								// audio description - upload.
-								// chapters - upload.
-								?>
-								<p>
-									<input type="submit" name="save" class="button-primary" value="<?php esc_html_e( 'Save Custom Text', 'ableplayer' ); ?>"/>
-								</p>
-							</form>
+							<?php
+							$data = ableplayer_generate( 'array' );
+							ableplayer_generator( $data );
+							?>
 						</div>
 					</div>
 				</div>
@@ -593,6 +568,7 @@ function ableplayer_default_settings() {
 		'seek_interval'     => '30',
 		'hide_controls'     => 'false',
 		'default_heading'   => 'auto',
+		'last_shortcode'    => '',
 	);
 
 	return $settings;
