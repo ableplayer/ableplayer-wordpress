@@ -129,7 +129,7 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
   [ableplayer vimeo-id="XXXXXXXXX" vimeo-desc-id="YYYYYYYYY"]
 ```
 
-The AblePlayer plugin was originally created by Terrill Thompson(https://terrillthompson.com).
+The AblePlayer plugin was originally created by [Terrill Thompson](https://terrillthompson.com).
 
 == Changelog ==
 
