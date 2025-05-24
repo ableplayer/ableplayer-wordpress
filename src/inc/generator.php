@@ -65,6 +65,7 @@ function ableplayer_generate( $format = 'shortcode' ) {
 			}
 			$array['shortcode'] = "[$output]";
 			$array['message']   = __( 'New shortcode created.', 'ableplayer' );
+			$array['type']      = 'success';
 
 			return $array;
 		}
@@ -129,7 +130,7 @@ function ableplayer_generator_fields( $data ) {
 		$params = $data;
 	}
 	$message        = isset( $params['message'] ) ? $params['message'] : __( 'Generate an <code>[ableplayer]</code> shortcode.', 'ableplayer' );
-	$message_type   = isset( $params['type'] ) ? $params['type'] : 'success';
+	$message_type   = isset( $params['type'] ) ? $params['type'] : 'info';
 	$shortcode      = isset( $params['shortcode'] ) ? $params['shortcode'] : '[ableplayer]';
 	$last_shortcode = ableplayer_get_settings( 'last_shortcode' );
 	$shortcode      = ( ! isset( $params['shortcode'] ) && $last_shortcode ) ? "[$last_shortcode]" : $shortcode;
@@ -147,7 +148,8 @@ function ableplayer_generator_fields( $data ) {
 			wp_admin_notice(
 				$message,
 				array(
-					'type' => $message_type,
+					'type'               => $message_type,
+					'additional_classes' => array( 'inline' ),
 				)
 			);
 			?>
