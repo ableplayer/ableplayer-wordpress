@@ -335,11 +335,11 @@ function able_player_parameters() {
 		),
 		'youtube-id'          => array(
 			'default'     => '',
-			'description' => __( '11-character YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
+			'description' => __( 'YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
 		),
 		'youtube-desc-id'     => array(
 			'default'     => '',
-			'description' => __( '11-character YouTube ID of an alternative described version of a video.', 'ableplayer' ),
+			'description' => __( 'YouTube ID or URL of an alternative described version of a video.', 'ableplayer' ),
 		),
 		'youtube-nocookie'    => array(
 			'default'     => '',
