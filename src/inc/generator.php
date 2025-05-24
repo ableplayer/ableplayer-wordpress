@@ -27,7 +27,7 @@ function ableplayer_generate( $format = 'shortcode' ) {
 		$string    = '';
 		$array     = array();
 		$shortcode = 'ableplayer';
-		$keys      = array( 'youtube-id', 'vimeo-id', 'media-id', 'poster', 'captions', 'subtitles', 'descriptions', 'chapters', 'autoplay', 'loop', 'playsinline', 'hidecontrols', 'heading', 'speed', 'start', 'volume', 'seekinterval' );
+		$keys      = array( 'youtube-id', 'vimeo-id', 'media-id', 'youtube-desc-id', 'vimeo-desc-id', 'media-desc-id', 'media-asl-id', 'poster', 'captions', 'subtitles', 'descriptions', 'chapters', 'autoplay', 'loop', 'playsinline', 'hidecontrols', 'heading', 'speed', 'start', 'volume', 'seekinterval' );
 		$post      = map_deep( $_POST, 'sanitize_text_field' );
 
 		if ( empty( $post['youtube-id'] ) && empty( $post['vimeo-id'] ) && empty( $post['media-id'] ) ) {
@@ -197,6 +197,17 @@ function ableplayer_generator_fields( $data ) {
 					),
 					'generator'
 				);
+				ableplayer_settings_field(
+					array(
+						'name'  => 'youtube-desc-id',
+						'label' => __( 'YouTube Audio Described Source', 'ableplayer' ),
+						'type'  => 'url',
+						'atts'  => array(
+							'placeholder' => 'https://youtube.com',
+						),
+					),
+					'generator'
+				);
 				?>
 				</p>
 				<p class="media-sources vimeo">
@@ -212,6 +223,17 @@ function ableplayer_generator_fields( $data ) {
 					),
 					'generator'
 				);
+				ableplayer_settings_field(
+					array(
+						'name'  => 'vimeo-desc-id',
+						'label' => __( 'Vimeo Audio Described Source', 'ableplayer' ),
+						'type'  => 'url',
+						'atts'  => array(
+							'placeholder' => 'https://youtube.com',
+						),
+					),
+					'generator'
+				);
 				?>
 				</p>
 				<div class="ableplayer-media-preview media-sources local">
@@ -221,6 +243,22 @@ function ableplayer_generator_fields( $data ) {
 					</div>
 					<div class="preview-media-id"></div>
 					<input type="hidden" name="media-id" value="">
+				</div>
+				<div class="ableplayer-media-preview media-sources local">
+					<div>
+						<button type="button" class="button-primary upload-ableplayer-media upload-video" data-input="media-asl-id"><?php esc_html_e( 'Select Sign Language', 'ableplayer' ); ?></button>
+						<button type="button" class="button-secondary ableplayer-remove-preview" data-input="media-asl-id"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
+					</div>
+					<div class="preview-media-asl-id"></div>
+					<input type="hidden" name="media-asl-id" value="">
+				</div>
+				<div class="ableplayer-media-preview media-sources local">
+					<div>
+						<button type="button" class="button-primary upload-ableplayer-media upload-video" data-input="media-desc-id"><?php esc_html_e( 'Select Audio Described Media', 'ableplayer' ); ?></button>
+						<button type="button" class="button-secondary ableplayer-remove-preview" data-input="media-desc-id"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
+					</div>
+					<div class="preview-media-desc-id"></div>
+					<input type="hidden" name="media-desc-id" value="">
 				</div>
 				<div class="ableplayer-media-preview">
 					<div>

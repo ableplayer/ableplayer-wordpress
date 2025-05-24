@@ -180,7 +180,7 @@ jQuery(document).ready(function ($) {
 		const container    = $( this ).parent().parent( '.ableplayer-media-preview' );
 		console.log( container );
 		let library;
-		if ( 'media-id' === input ) {
+		if ( 'media-id' === input || 'media-desc-id' === input || 'media-asl-id' === input ) {
 			library = [ 'audio', 'video' ];
 		} else if ( 'poster' === input ) {
 			library = ['image'];
