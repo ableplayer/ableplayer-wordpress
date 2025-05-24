@@ -112,7 +112,7 @@ This example uses HTML to add a video player to the page, with one source (an MP
 
 This example uses the shortcode to add a video player to the page, with one source (an MP4 file) and four tracks (for captions, descriptions, and chapters in English; and subtitles in Spanish). All sources are fetched as WordPress media attachments.
 ```html
-  [ableplayer poster="21" video-id="24" captions="25|en|English" subtitles="26|es|Español" descriptions="27" chapters="28"]
+  [ableplayer poster="21" media-id="24" captions="25|en|English" subtitles="26|es|Español" descriptions="27" chapters="28"]
 ```
 
 = Example 4 =
