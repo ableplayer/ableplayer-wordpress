@@ -401,6 +401,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'vimeo-desc-id'    => '',
 			'media-id'         => '',
 			'media-desc-id'    => '',
+			'media-asl-id'     => '',
 			'captions'         => '',
 			'subtitles'        => '',
 			'descriptions'     => '',
@@ -446,6 +447,14 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			if ( $media_desc_id ) {
 				$type   = get_post_mime_type( $media_desc_id );
 				$source = '<source data-desc-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
+			}
+		}
+		if ( $all_atts['media-asl-id'] ) {
+			// If Video ID is set but is not a valid URL, return.
+			$media_desc_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
+			if ( $media_desc_id ) {
+				$type   = get_post_mime_type( $media_desc_id );
+				$source = '<source data-sign-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
 			}
 		}
 
