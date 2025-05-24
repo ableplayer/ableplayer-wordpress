@@ -108,6 +108,41 @@ jQuery(document).ready(function ($) {
 		response.classList.add( 'visible' );
 	});
 
+	let reset = document.querySelectorAll( '.reset-ableplayer' );
+	if ( null !== reset ) {
+		reset.forEach( (el) => {
+			el.addEventListener( 'click', resetShortcode );
+			function resetShortcode( e ) {
+				let control    = e.target;
+				const controls = document.querySelectorAll( '.ableplayer-generator-inputs input, .ableplayer-generator-inputs select' );
+				for (i = 0; i < controls.length; i++) {
+					switch ( controls[i].type ) {
+						case 'select-multiple':
+						case 'select-one':
+							controls[i].value = controls[i].querySelector( 'option:first-of-type' ).getAttribute( 'value' );
+							break;
+						case 'text':
+						case 'email':
+						case 'date':
+						case 'url':
+						case 'search':
+						case 'textarea':
+							controls[i].value = '';
+							break;
+						case 'checkbox':
+						case 'radio':
+							controls[i].checked = false;
+							break;
+					}
+				}
+				let shortcode = document.querySelectorAll( '.ableplayer-shortcode-container' );
+				shortcode.forEach( (el) => {
+					el.value = '[' + control.getAttribute( 'data-type' ) + ']';
+				});
+			}
+		});
+	}
+
 	$( '.media-sources' ).hide();
 	let active = $( '#source_type' ).val();
 	$( '.media-sources.' + active ).show();
