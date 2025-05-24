@@ -361,11 +361,11 @@ function able_player_parameters() {
 		),
 		'youtube-id'          => array(
 			'default'     => '',
-			'description' => __( '11-character YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
+			'description' => __( 'YouTube ID or a URL to a YouTube video page.', 'ableplayer' ),
 		),
 		'youtube-desc-id'     => array(
 			'default'     => '',
-			'description' => __( '11-character YouTube ID of an alternative described version of a video.', 'ableplayer' ),
+			'description' => __( 'YouTube ID or URL of an alternative described version of a video.', 'ableplayer' ),
 		),
 		'youtube-nocookie'    => array(
 			'default'     => '',
@@ -426,6 +426,8 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'vimeo-id'         => '',
 			'vimeo-desc-id'    => '',
 			'media-id'         => '',
+			'media-desc-id'    => '',
+			'media-asl-id'     => '',
 			'captions'         => '',
 			'subtitles'        => '',
 			'descriptions'     => '',
@@ -463,6 +465,22 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			} else {
 				$type   = get_post_mime_type( $media_id );
 				$source = '&lt;source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '">';
+			}
+		}
+		if ( $all_atts['media-desc-id'] ) {
+			// If Video ID is set but is not a valid URL, return.
+			$media_desc_id = ( is_numeric( $all_atts['media-desc-id'] ) ) ? wp_get_attachment_url( $all_atts['media-desc-id'] ) : $all_atts['media-desc-id'];
+			if ( $media_desc_id ) {
+				$type   = get_post_mime_type( $media_desc_id );
+				$source = '&lt;source data-desc-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
+			}
+		}
+		if ( $all_atts['media-asl-id'] ) {
+			// If Video ID is set but is not a valid URL, return.
+			$media_desc_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
+			if ( $media_desc_id ) {
+				$type   = get_post_mime_type( $media_desc_id );
+				$source = '&lt;source data-sign-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
 			}
 		}
 
