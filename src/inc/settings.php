@@ -31,7 +31,7 @@ function ableplayer_get_settings( $setting = '' ) {
 }
 
 /**
- * Save an AblePlayer setting.
+ * Save an Able Player setting.
  *
  * @param string $key Setting key.
  * @param mixed  $value Setting value.
@@ -48,7 +48,7 @@ function ableplayer_update_setting( $key, $value = '' ) {
 }
 
 /**
- * Generate input & field for an AblePlayer setting.
+ * Generate input & field for an Able Player setting.
  *
  * @param array  $args {
  *     Array of settings arguments.
@@ -222,7 +222,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 }
 
 /**
- * Save a group of AblePlayer settings.
+ * Save a group of Able Player settings.
  *
  * @param array $settings An array of settings.
  *
@@ -243,7 +243,7 @@ function ableplayer_update_options( $settings ) {
 }
 
 /**
- * Update AblePlayer settings.
+ * Update Able Player settings.
  *
  * @param array $post POST data.
  */
@@ -279,19 +279,19 @@ function ableplayer_update_settings( $post ) {
 }
 
 /**
- * Build AblePlayer settings form.
+ * Build Able Player settings form.
  */
 function ableplayer_settings_form() {
 	if ( ! empty( $_POST ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
 		if ( ! wp_verify_nonce( $nonce, 'ableplayer-nonce' ) ) {
-			wp_die( 'AblePlayer: Security check failed' );
+			wp_die( 'Able Player: Security check failed' );
 		}
 		$post = map_deep( $_POST, 'sanitize_textarea_field' );
 		if ( isset( $post['ableplayer_settings'] ) ) {
 			ableplayer_update_settings( $post );
 			wp_admin_notice(
-				__( 'AblePlayer Default Settings saved', 'ableplayer' ),
+				__( 'Able Player Default Settings saved', 'ableplayer' ),
 				array(
 					'type' => 'success',
 				)
@@ -310,7 +310,7 @@ function ableplayer_settings_form() {
 			<div class="metabox-holder">
 				<div class="ui-sortable meta-box-sortables">
 					<div class="wptab postbox" aria-labelledby="tab_settings" role="tabpanel" id="ableplayer-settings">
-						<h2><?php esc_html_e( 'AblePlayer Settings', 'ableplayer' ); ?></h2>
+						<h2><?php esc_html_e( 'Able Player Settings', 'ableplayer' ); ?></h2>
 
 						<div class="inside">
 							<form method="post" action="<?php echo esc_url( admin_url( 'admin.php?page=ableplayer#ableplayer-settings' ) ); ?>">
@@ -490,7 +490,7 @@ function ableplayer_settings_form() {
 }
 
 /**
- * Add AblePlayer menu items to main admin menu
+ * Add Able Player menu items to main admin menu
  */
 function ableplayer_menu() {
 	add_options_page(
@@ -504,7 +504,7 @@ function ableplayer_menu() {
 add_action( 'admin_menu', 'ableplayer_menu' );
 
 /**
- * Produce AblePlayer admin sidebar
+ * Produce Able Player admin sidebar
  */
 function ableplayer_show_sidebar() {
 	?>
@@ -512,15 +512,19 @@ function ableplayer_show_sidebar() {
 	<div class="metabox-holder">
 		<div class="ui-sortable meta-box-sortables">
 			<div class="postbox">
-				<h2><?php esc_html_e( 'AblePlayer Resources', 'ableplayer' ); ?></h2>
+				<h2><?php esc_html_e( 'Able Player Resources', 'ableplayer' ); ?></h2>
 
 				<div class="inside">
 					<p>
 						<?php
-						// Translators: URL for AblePlayer github docs.
-						echo wp_kses_post( sprintf( __( 'Learn more about the <a href="%s">AblePlayer accessible media player</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) );
+						// Translators: URL for Able Player github docs.
+						echo wp_kses_post( sprintf( __( 'Learn more about the <a href="%s">Able Player accessible media player</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) );
+						?>
+					</p>
+					<p>
+						<?php
 						// Translators: URL for Joe Dolson donate page.
-						echo ' ' . wp_kses_post( sprintf( __( 'Help support Able Player! <a href="%s">Sponsor Joe Dolson</a>, AblePlayer lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) );
+						echo wp_kses_post( sprintf( __( 'Help support Able Player! <a href="%s">Sponsor Joe Dolson</a>, Able Player lead developer.', 'ableplayer' ), 'https://www.joedolson.com/donate/' ) );
 						?>
 					</p>
 					<ul class="ableplayer-flex ableplayer-social">

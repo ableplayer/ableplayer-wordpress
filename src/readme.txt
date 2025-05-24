@@ -35,7 +35,7 @@ There are currently three ways to add an Able Player instance to a WordPress sit
 2. Go to Settings > Able Player > Shortcodes to generate an `[ableplayer]` shortcode.
 3. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
 
-Using the media rewriting in option #1, Able Player will replace any `audio` or `video` block. Any tracks added to that block will be automatically handled, giving you support for all the standard AblePlayer features: captions, navigable transcripts, subtitles, chapters, and audio description.
+Using the media rewriting in option #1, Able Player will replace any `audio` or `video` block. Any tracks added to that block will be automatically handled, giving you support for all the standard Able Player features: captions, navigable transcripts, subtitles, chapters, and audio description.
 
 Using option #2, you can create Able Player shortcodes that support most of the basic Able Player features, with support for Vimeo, YouTube, or local video.
 
@@ -129,7 +129,7 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
   [ableplayer vimeo-id="XXXXXXXXX" vimeo-desc-id="YYYYYYYYY"]
 ```
 
-The AblePlayer plugin was originally created by [Terrill Thompson](https://terrillthompson.com).
+The Able Player plugin was originally created by [Terrill Thompson](https://terrillthompson.com).
 
 == Changelog ==
 
@@ -151,7 +151,7 @@ The AblePlayer plugin was originally created by [Terrill Thompson](https://terri
 = 1.2.1 =
 
 * Change: Updates Able Player to version 4.5.1.
-* Security: <a href="https://github.com/ableplayer/ableplayer/security">Upstream security update</a> to add DomPurify to AblePlayer.
+* Security: <a href="https://github.com/ableplayer/ableplayer/security">Upstream security update</a> to add DomPurify to Able Player.
 * API: Makes Able Player with DomPurify as an unincorporated dependency available, switchable using the `able_player_js` filter.
 
 = 1.2.0 =

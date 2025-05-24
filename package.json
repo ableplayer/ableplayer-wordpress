@@ -2,7 +2,7 @@
   "name": "ableplayer-wordpress",
   "version": "2.0.0-beta1",
   "private": true,
-  "description": "AblePlayer plugin for WordPress",
+  "description": "Able Player plugin for WordPress",
   "author": "Joe Dolson",
   "license": "MIT",
   "keywords": [

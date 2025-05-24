@@ -97,7 +97,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook ableplayer_dependencies
 	 *
-	 * @param {array} $dependencies Array of scripts required by the main AblePlayer script.
+	 * @param {array} $dependencies Array of scripts required by the main Able Player script.
 	 * @param {bool}  $is_production True if environment is designated as production.
 	 *
 	 * @return {array}
@@ -140,7 +140,7 @@ function ableplayer_admin_scripts() {
 add_action( 'admin_enqueue_scripts', 'ableplayer_admin_scripts' );
 
 /**
- * Self-documenting array of AblePlayer attributes.
+ * Self-documenting array of Able Player attributes.
  *
  * @return array
  */

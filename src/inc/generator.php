@@ -120,7 +120,7 @@ function ableplayer_generator( $data = array() ) {
 }
 
 /**
- * Settings to configure AblePlayer shortcode.
+ * Settings to configure Able Player shortcode.
  *
  * @param array|string $data Data posted to shortcode builder.
  */
