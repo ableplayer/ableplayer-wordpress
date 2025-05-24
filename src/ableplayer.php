@@ -442,10 +442,10 @@ function ableplayer_shortcode( $atts, $content = null ) {
 
 		$tracks = array();
 		$kinds  = array(
-			'captions'    => __( 'Captions', 'ableplayer' ),
-			'subtitles'   => __( 'Subtitles', 'ableplayer' ),
-			'description' => __( 'Audio Description', 'ableplayer' ),
-			'chapters'    => __( 'Chapters', 'ableplayer' ),
+			'captions'     => __( 'Captions', 'ableplayer' ),
+			'subtitles'    => __( 'Subtitles', 'ableplayer' ),
+			'descriptions' => __( 'Audio Description', 'ableplayer' ),
+			'chapters'     => __( 'Chapters', 'ableplayer' ),
 		);
 		// Switch locale to BCP47 syntax.
 		$default_lang = str_replace( '_', '-', get_locale() );

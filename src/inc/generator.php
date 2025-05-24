@@ -83,10 +83,10 @@ function ableplayer_shortcode_track( $kind, $post ) {
 	// Handle track srclang and label.
 	$default_lang = str_replace( '_', '-', get_locale() );
 	$kinds        = array(
-		'captions'    => __( 'Captions', 'ableplayer' ),
-		'subtitles'   => __( 'Subtitles', 'ableplayer' ),
-		'description' => __( 'Audio Description', 'ableplayer' ),
-		'chapters'    => __( 'Chapters', 'ableplayer' ),
+		'captions'     => __( 'Captions', 'ableplayer' ),
+		'subtitles'    => __( 'Subtitles', 'ableplayer' ),
+		'descriptions' => __( 'Audio Description', 'ableplayer' ),
+		'chapters'     => __( 'Chapters', 'ableplayer' ),
 	);
 
 	$v       = '';
@@ -95,7 +95,7 @@ function ableplayer_shortcode_track( $kind, $post ) {
 	if ( $srclang && $srclang !== $default_lang ) {
 		$v .= '|' . $srclang;
 	}
-	if ( $label && $srclang !== $kinds['captions'] ) {
+	if ( $label && $label !== $kinds['captions'] ) {
 		$v .= '|' . $label;
 	}
 
@@ -135,10 +135,10 @@ function ableplayer_generator_fields( $data ) {
 	$shortcode      = ( ! isset( $params['shortcode'] ) && $last_shortcode ) ? "[$last_shortcode]" : $shortcode;
 	$default_lang   = str_replace( '_', '-', get_locale() );
 	$kinds          = array(
-		'captions'    => __( 'Captions', 'ableplayer' ),
-		'subtitles'   => __( 'Subtitles', 'ableplayer' ),
-		'description' => __( 'Audio Description', 'ableplayer' ),
-		'chapters'    => __( 'Chapters', 'ableplayer' ),
+		'captions'     => __( 'Captions', 'ableplayer' ),
+		'subtitles'    => __( 'Subtitles', 'ableplayer' ),
+		'descriptions' => __( 'Audio Description', 'ableplayer' ),
+		'chapters'     => __( 'Chapters', 'ableplayer' ),
 	);
 	?>
 	<div id="ableplayer-generator" class="generator">
