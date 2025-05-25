@@ -146,13 +146,13 @@ jQuery(document).ready(function ($) {
 	$( '.media-sources' ).hide();
 	let active = $( '#source_type' ).val();
 	$( '.media-sources.' + active ).show();
-	$( '.media-sources.' + active ).find( 'input' ).attr( 'required', 'true' );
+	$( '.media-sources.' + active ).find( 'input:nth-of-type(1)' ).attr( 'required', 'true' );
 	$( '#source_type' ).on( 'change', function(e) {
 		let current = $( this ).val();
 		$( '.media-sources' ).hide();
 		$( '.media-sources' ).find( 'input' ).removeAttr( 'required' );
 		$( '.media-sources.' + current ).show();
-		$( '.media-sources.' + current ).find( 'input' ).attr( 'required', 'true' );
+		$( '.media-sources.' + current ).find( 'input:nth-of-type(1)' ).attr( 'required', 'true' );
 	});
 
 	var mediaPopup = '';
