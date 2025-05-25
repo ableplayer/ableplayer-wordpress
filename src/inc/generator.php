@@ -229,7 +229,7 @@ function ableplayer_generator_fields( $data ) {
 						'label' => __( 'Vimeo Audio Described Source', 'ableplayer' ),
 						'type'  => 'url',
 						'atts'  => array(
-							'placeholder' => 'https://youtube.com',
+							'placeholder' => 'https://vimeo.com',
 						),
 					),
 					'generator'
