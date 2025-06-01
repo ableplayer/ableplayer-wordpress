@@ -467,7 +467,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		);
 		// Switch locale to BCP47 syntax.
 		$default_lang = str_replace( '_', '-', get_locale() );
-		if ( $all_atts['captions'] || $all_atts['subtitles'] || $all_atts['description'] || $all_atts['chapters'] ) {
+		if ( $all_atts['captions'] || $all_atts['subtitles'] || $all_atts['descriptions'] || $all_atts['chapters'] ) {
 			foreach ( $kinds as $kind => $default_label ) {
 				$track = '';
 				if ( ! empty( $all_atts[ $kind ] ) ) {
