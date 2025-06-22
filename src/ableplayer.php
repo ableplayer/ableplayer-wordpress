@@ -66,8 +66,8 @@ function ableplayer_enqueue_scripts() {
 		)
 	);
 
-	$js_file  = ( ! $debug ) ? 'ableplayer.min.js' : 'ableplayer.js';
-	$css_file = ( ! $debug ) ? 'build/ableplayer.min.css' : 'styles/ableplayer.css';
+	$js_file  = ( $debug ) ? 'ableplayer.js' : 'ableplayer.min.js';
+	$css_file = ( $debug ) ? 'styles/ableplayer.css' : 'build/ableplayer.min.css';
 	/**
 	 * Filter the Able Player JS URL.
 	 *
