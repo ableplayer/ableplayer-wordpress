@@ -74,11 +74,11 @@
 
 "preferences": "Indstillinger",
 
-"enterFullscreen": "Vis i fuldskærm",
+"enterFullScreen": "Vis i fuldskærm",
 
-"exitFullscreen": "Afslut fuldskærmsvisning",
+"exitFullScreen": "Afslut fuldskærmsvisning",
 
-"fullscreen": "Fuld skærm",
+"fullScreen": "Fuld skærm",
 
 "speed": "Hastighed",
 

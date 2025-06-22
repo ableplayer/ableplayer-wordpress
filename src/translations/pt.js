@@ -74,11 +74,11 @@
 
 "preferences": "Preferências",
 
-"enterFullscreen": "Ativar a vista de ecrã inteiro",
+"enterFullScreen": "Ativar a vista de ecrã inteiro",
 
-"exitFullscreen": "Sair da vista de ecrã inteiro",
+"exitFullScreen": "Sair da vista de ecrã inteiro",
 
-"fullscreen": "Ecrã inteiro",
+"fullScreen": "Ecrã inteiro",
 
 "speed": "Velocidade",
 
