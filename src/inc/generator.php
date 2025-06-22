@@ -244,7 +244,7 @@ function ableplayer_generator_fields( $data ) {
 					<div class="preview-media-id"></div>
 					<input type="hidden" name="media-id" value="">
 				</div>
-				<div class="ableplayer-media-preview media-sources local">
+				<div class="ableplayer-media-preview media-sources local youtube">
 					<div>
 						<button type="button" class="button-primary upload-ableplayer-media upload-video" data-input="media-asl-id"><?php esc_html_e( 'Select Sign Language', 'ableplayer' ); ?></button>
 						<button type="button" class="button-secondary ableplayer-remove-preview" data-input="media-asl-id"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
