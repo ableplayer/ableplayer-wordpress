@@ -77,7 +77,8 @@ function ableplayer_enqueue_scripts() {
 	$version = ABLEPLAYER_VERSION;
 	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
 	// Register/enqueue other dependencies.
-	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . '/js.cookie.js', array( 'jquery' ), $version, true );
+	$cookie_js = ( SCRIPT_DEBUG ) ? '/js.cookie.js' : '/js.cookie.min.js';
+	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . $cookie_js, array(), $version, true );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), $version, true );
 	wp_enqueue_style( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/css/media.css', array(), $version );
 	$media_js = ( SCRIPT_DEBUG ) ? 'media.js' : 'media.min.js';
@@ -117,7 +118,7 @@ function ableplayer_enqueue_scripts() {
 	 */
 	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
 
-	$dependencies = array( 'jquery', 'ableplayer-video' );
+	$dependencies = array( 'js-cookie', 'jquery', 'ableplayer-video' );
 	/**
 	 * Filter the Able Player script dependencies.
 	 *
