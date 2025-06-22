@@ -43,6 +43,12 @@
   text-align: left;
 }
 
+.ableplayer-transcript .able-window-toolbar input,
+.able-wrapper .able input {
+	margin: 0;
+	padding: 2px 4px;
+}
+
 .able {
   position: relative;
   margin: 0;
@@ -1059,8 +1065,15 @@ button.able-search-results-time:active {
   font-weight: bold;
 }
 #able-vts fieldset div {
-  display: inline-block;
-  padding-right: 1em;
+	float: left;
+	display: flex;
+	gap: .5rem;
+	align-items: center;
+	padding-right: 1em;
+}
+
+#able-vts thead tr {
+	background: #f0f0f0;
 }
 
 #able-vts table,
@@ -1086,6 +1099,9 @@ button.able-search-results-time:active {
   display: flex;
   align-items: center;
   float: left;
+  color: #323232;
+  background: #f6f6f6;
+  border-radius: 2px;
 }
 #able-vts table td button svg {
   width: 22px;

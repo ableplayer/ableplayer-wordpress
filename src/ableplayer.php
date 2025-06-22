@@ -48,14 +48,15 @@ function ableplayer_plugin_deactivated() {
  * Load styles and scripts to head.
  */
 function ableplayer_enqueue_scripts() {
+	$debug   = ( SCRIPT_DEBUG || ABLEPLAYER_DEBUG ) ? true : false;
 	$version = ABLEPLAYER_VERSION;
-	$version = ( SCRIPT_DEBUG ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
+	$version = ( $debug ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
 	// Register/enqueue other dependencies.
-	$cookie_js = ( SCRIPT_DEBUG ) ? '/js.cookie.js' : '/js.cookie.min.js';
+	$cookie_js = ( $debug ) ? '/js.cookie.js' : '/js.cookie.min.js';
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . $cookie_js, array(), $version, true );
 	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), $version, true );
 	wp_enqueue_style( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/css/media.css', array(), $version );
-	$media_js = ( SCRIPT_DEBUG ) ? 'media.js' : 'media.min.js';
+	$media_js = ( $debug ) ? 'media.js' : 'media.min.js';
 	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/' . $media_js, array(), $version, true );
 	wp_localize_script(
 		'ableplayer-video',
@@ -64,33 +65,31 @@ function ableplayer_enqueue_scripts() {
 			'settings' => ableplayer_get_settings(),
 		)
 	);
-	// if the environment is production, use minified files. Otherwise, inherit the value of SCRIPT_DEBUG.
-	$is_production = ( function_exists( 'wp_get_environment_type' ) && wp_get_environment_type() === 'production' ) ? true : SCRIPT_DEBUG;
 
-	$js_file  = ( $is_production ) ? 'ableplayer.min.js' : 'ableplayer.js';
-	$css_file = ( $is_production ) ? 'ableplayer.min.css' : 'ableplayer.css';
+	$js_file  = ( ! $debug ) ? 'ableplayer.min.js' : 'ableplayer.js';
+	$css_file = ( ! $debug ) ? 'build/ableplayer.min.css' : 'styles/ableplayer.css';
 	/**
 	 * Filter the Able Player JS URL.
 	 *
 	 * @hook able_player_js
 	 *
 	 * @param {string} $url URL to Able Player root directory.
-	 * @param {bool}   $is_production True if environment is designated as production.
+	 * @param {bool}   $debug True if environment is in debugging.
 	 *
 	 * @return {string}
 	 */
-	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $is_production );
+	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $debug );
 	/**
 	 * Filter the Able Player CSS URL.
 	 *
 	 * @hook able_player_css
 	 *
 	 * @param {string} $url URL to Able Player root directory.
-	 * @param {bool}   $is_production True if environment is designated as production.
+	 * @param {bool}   $debug True if environment is debugging.
 	 *
 	 * @return {string}
 	 */
-	$css_dir = apply_filters( 'able_player_css', plugins_url( 'build', __FILE__ ) . '/' . $css_file, $is_production );
+	$css_dir = apply_filters( 'able_player_css', plugins_url( '', __FILE__ ) . '/' . $css_file, $debug );
 
 	$dependencies = array( 'js-cookie', 'jquery', 'ableplayer-video' );
 	/**
@@ -99,11 +98,11 @@ function ableplayer_enqueue_scripts() {
 	 * @hook ableplayer_dependencies
 	 *
 	 * @param {array} $dependencies Array of scripts required by the main Able Player script.
-	 * @param {bool}  $is_production True if environment is designated as production.
+	 * @param {bool}  $debug True if environment is in debugging mode.
 	 *
 	 * @return {array}
 	 */
-	$dependencies = apply_filters( 'ableplayer_dependencies', $dependencies, $is_production );
+	$dependencies = apply_filters( 'ableplayer_dependencies', $dependencies, $debug );
 	wp_enqueue_script( 'ableplayer', $js_dir, $dependencies, $version, true );
 	wp_enqueue_style( 'ableplayer', $css_dir, array(), $version );
 }
