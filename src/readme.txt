@@ -143,6 +143,7 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 * Feature: Support for local video sources in shortcode.
 * Feature: Support for captions, subtitles, chapters, and audio description tracks in shortcode.
 * Feature: Automatically enable transcript div for Able Players with appropriate tracks.
+* Upgrade to Able Player v4.6.0
 
 = 1.2.2 =
 
