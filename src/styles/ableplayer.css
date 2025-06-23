@@ -43,7 +43,7 @@
   text-align: left;
 }
 
-.ableplayer-transcript .able-window-toolbar input,
+.able-player-transcript .able-window-toolbar input,
 .able-wrapper .able input {
 	margin: 0;
 	padding: 2px 4px;
@@ -63,6 +63,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 	align-items: center;
+	margin: 5px 0;
 }
 .able .able-vidcap-container {
   background-color: #000;
@@ -188,6 +189,7 @@
     vertical-align: middle;
 }
 .able-black-controls,
+.able-black-controls button,
 .able-black-controls div[role="button"],
 .able-black-controls label  {
   color: #000 !important;
@@ -196,6 +198,7 @@
   border: 1px solid #000;
 }
 .able-white-controls,
+.able-white-controls button,
 .able-white-controls div[role="button"],
 .able-black-controls label {
   color: #fff !important;
@@ -212,9 +215,12 @@
   padding: 0;
   font-size: 20px;
   min-width: 24px;
-/*  outline: 2px solid #464646; */ /* same color as .able-controller background-color */
+  min-height: 24px;
   border: none;
   overflow: visible !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 6600;
 }
 .able-controller div[role="button"] > span,
@@ -223,6 +229,7 @@
   margin: 0 auto;
   padding: 0;
   z-index: 6700;
+  display: block;
 }
 .able-controller .buttonOff {
   opacity: 0.5;
@@ -663,14 +670,14 @@ span.able-modkey {
   padding: 10px;
   border-style: solid;
   border-width: 0 0 1px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .able-draggable:hover {
   cursor: move;
 }
 .able-window-toolbar .able-button-handler-preferences {
-  position: absolute;
-  top: 0;
-  right: 0;
   font-size: 1.5em;
   background-color: transparent;
   border: none;
@@ -689,12 +696,18 @@ span.able-modkey {
 .able-window-toolbar .able-button-handler-preferences:focus {
   outline-color: #ffbb37 !important; /* yellow */
 }
+.able-window-toolbar .able-button-handler-preferences img {
+	display: block;
+}
 .able-window-toolbar .able-popup {
   position: absolute;
   cursor: default;
-  right: 0;
+  left: 0;
   top: 0;
   display: block;
+  border-radius: 0 0 5px 5px;
+  background: #464646;
+  opacity: .95;
 }
 .able-drag {
   border: 2px dashed #f90;
@@ -704,7 +717,7 @@ span.able-modkey {
   position: absolute;
   width: 20px;
   height: 20px;
-  padding: 5px 2px;
+  padding: 3px 3px;
   bottom: 0;
   right: 0;
   cursor: nwse-resize;
@@ -999,6 +1012,7 @@ ul.able-popup {
  width: 100px;
  float: left;
  margin-right: 10px;
+ display: block;
 }
 .able-playlist li.able-current { /* currently selected playlist item */
   background-color: #340449;
@@ -1205,7 +1219,7 @@ button#able-vts-save:focus {
 .able-modal-dialog div[role="button"] svg,
 .able-wrapper button svg,
 .able-modal-dialog button svg {
-  display: inline-block;
+  display: block;
   width: 1em;
   height: 1em;
   fill: currentColor;
