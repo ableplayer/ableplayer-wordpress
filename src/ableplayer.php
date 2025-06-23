@@ -506,7 +506,12 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			$o .= ' preload="' . esc_attr( $preload ) . '"';
 		}
 		if ( ! empty( $all_atts['poster'] ) ) {
-			$o .= ' poster="' . esc_attr( $all_atts['poster'] ) . '"';
+			// Allow passing an attachment ID as poster.
+			$poster = $all_atts['poster'];
+			if ( is_numeric( $poster ) ) {
+				$poster = wp_get_attachment_image_url( $poster, 'large' );
+			}
+			$o .= ' poster="' . esc_attr( $poster ) . '"';
 		}
 		if ( ! empty( $all_atts['width'] ) ) {
 			$o .= ' width="' . esc_attr( $all_atts['width'] ) . '"';
