@@ -426,7 +426,8 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		'ableplayer'
 	);
 
-	$source = '';
+	$source     = '';
+	$datasource = '';
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] || $all_atts['media-id'] ) ) {
 		// Shortcode must have one of YouTube, Vimeo, or local video source.
 		return false;
@@ -437,26 +438,27 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			if ( ! $media_id ) {
 				return false;
 			} else {
-				$type   = get_post_mime_type( $media_id );
-				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '">';
+				$type   = get_post_mime_type( $all_atts['media-id'] );
+				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
 		}
 		if ( $all_atts['media-desc-id'] ) {
 			// If Video ID is set but is not a valid URL, return.
 			$media_desc_id = ( is_numeric( $all_atts['media-desc-id'] ) ) ? wp_get_attachment_url( $all_atts['media-desc-id'] ) : $all_atts['media-desc-id'];
 			if ( $media_desc_id ) {
-				$type   = get_post_mime_type( $media_desc_id );
-				$source = '<source data-desc-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
+				$datatype    = get_post_mime_type( $all_atts['media-desc-id'] );
+				$datasource .= ( $type === $datatype ) ? ' data-desc-src="' . esc_url( $media_desc_id ) . '"' : '';
 			}
 		}
 		if ( $all_atts['media-asl-id'] ) {
 			// If Video ID is set but is not a valid URL, return.
-			$media_desc_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
-			if ( $media_desc_id ) {
-				$type   = get_post_mime_type( $media_desc_id );
-				$source = '<source data-sign-src type="' . esc_attr( $type ) . '" src="' . esc_url( $media_desc_id ) . '">';
+			$media_asl_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
+			if ( $media_asl_id ) {
+				$datatype    = get_post_mime_type( $all_atts['media-asl-id'] );
+				$datasource .= ( $type === $datatype ) ? ' data-sign-src="' . esc_url( $media_asl_id ) . '"' : '';
 			}
 		}
+		$source = str_replace( '%datasrc%', $datasource, $source );
 
 		$tracks = array();
 		$kinds  = array(
@@ -555,7 +557,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['vimeo-desc-id'] ) ) {
 			$o .= ' data-vimeo-desc-id="' . esc_attr( $all_atts['vimeo-desc-id'] ) . '"';
 		}
-		$o .= '>';
+		$o .= '>' . PHP_EOL;
 
 		$o .= $source;
 
@@ -569,7 +571,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 
 		// end media tag.
-		$o .= '</video>';
+		$o .= PHP_EOL . '</video>';
 
 		return $o;
 	}
