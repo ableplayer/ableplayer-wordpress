@@ -308,59 +308,63 @@ function ableplayer_generator_fields( $data ) {
 								<button type="button" class="button-secondary upload-ableplayer-media upload-subtitles" data-input="subtitles"><?php esc_html_e( 'Add Subtitles', 'ableplayer' ); ?></button>
 								<button type="button" class="button-secondary ableplayer-remove-preview" data-input="subtitles"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
 							</div>
-							<div class="preview-subtitles"></div>
-							<input type="hidden" name="subtitles" value="">
-							<div class="ableplayer-track-details">
-								<?php
-								ableplayer_settings_field(
-									array(
-										'name'    => 'subtitles-srclang',
-										'label'   => __( 'Language Code', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $default_lang,
-									),
-									'generator'
-								);
-								ableplayer_settings_field(
-									array(
-										'name'    => 'subtitles-label',
-										'label'   => __( 'Subtitles Label', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $kinds['subtitles'],
-									),
-									'generator'
-								);
-								?>
-							</div>		
+							<div>
+								<div class="preview-subtitles"></div>
+								<input type="hidden" name="subtitles" value="">
+								<div class="ableplayer-track-details">
+									<?php
+									ableplayer_settings_field(
+										array(
+											'name'    => 'subtitles-srclang',
+											'label'   => __( 'Language Code', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $default_lang,
+										),
+										'generator'
+									);
+									ableplayer_settings_field(
+										array(
+											'name'    => 'subtitles-label',
+											'label'   => __( 'Subtitles Label', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $kinds['subtitles'],
+										),
+										'generator'
+									);
+									?>
+								</div>
+							</div>
 						</div>
 						<div class="ableplayer-media-preview">
 							<div>
 								<button type="button" class="button-secondary upload-ableplayer-media upload-descriptions" data-input="descriptions"><?php esc_html_e( 'Add Audio Description', 'ableplayer' ); ?></button>
 								<button type="button" class="button-secondary ableplayer-remove-preview" data-input="descriptions"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
 							</div>
-							<div class="preview-descriptions"></div>
-							<input type="hidden" name="descriptions" value="">
-							<div class="ableplayer-track-details">
-								<?php
-								ableplayer_settings_field(
-									array(
-										'name'    => 'descriptions-srclang',
-										'label'   => __( 'Language Code', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $default_lang,
-									),
-									'generator'
-								);
-								ableplayer_settings_field(
-									array(
-										'name'    => 'descriptions-label',
-										'label'   => __( 'Descriptions Label', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $kinds['descriptions'],
-									),
-									'generator'
-								);
-								?>
+							<div>
+								<div class="preview-descriptions"></div>
+								<input type="hidden" name="descriptions" value="">
+								<div class="ableplayer-track-details">
+									<?php
+									ableplayer_settings_field(
+										array(
+											'name'    => 'descriptions-srclang',
+											'label'   => __( 'Language Code', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $default_lang,
+										),
+										'generator'
+									);
+									ableplayer_settings_field(
+										array(
+											'name'    => 'descriptions-label',
+											'label'   => __( 'Descriptions Label', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $kinds['descriptions'],
+										),
+										'generator'
+									);
+									?>
+								</div>
 							</div>
 						</div>
 						<div class="ableplayer-media-preview">
@@ -368,30 +372,32 @@ function ableplayer_generator_fields( $data ) {
 								<button type="button" class="button-secondary upload-ableplayer-media upload-chapters" data-input="chapters"><?php esc_html_e( 'Add Chapters', 'ableplayer' ); ?></button>
 								<button type="button" class="button-secondary ableplayer-remove-preview" data-input="chapters"><?php esc_html_e( 'Remove', 'ableplayer' ); ?></button>
 							</div>
-							<div class="preview-chapters"></div>
-							<input type="hidden" name="chapters" value="">
-							<div class="ableplayer-track-details">
-								<?php
-								ableplayer_settings_field(
-									array(
-										'name'    => 'chapter-srclang',
-										'label'   => __( 'Language Code', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $default_lang,
-									),
-									'generator'
-								);
-								ableplayer_settings_field(
-									array(
-										'name'    => 'chapter-label',
-										'label'   => __( 'Chapters Label', 'ableplayer' ),
-										'type'    => 'text',
-										'default' => $kinds['chapters'],
-									),
-									'generator'
-								);
-								?>
-							</div>	
+							<div>
+								<div class="preview-chapters"></div>
+								<input type="hidden" name="chapters" value="">
+								<div class="ableplayer-track-details">
+									<?php
+									ableplayer_settings_field(
+										array(
+											'name'    => 'chapter-srclang',
+											'label'   => __( 'Language Code', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $default_lang,
+										),
+										'generator'
+									);
+									ableplayer_settings_field(
+										array(
+											'name'    => 'chapter-label',
+											'label'   => __( 'Chapters Label', 'ableplayer' ),
+											'type'    => 'text',
+											'default' => $kinds['chapters'],
+										),
+										'generator'
+									);
+									?>
+								</div>
+							</div>
 						</div>
 					</details>
 				</div>
