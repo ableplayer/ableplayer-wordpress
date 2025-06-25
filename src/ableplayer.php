@@ -419,7 +419,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'start'            => '',
 			'volume'           => '',
 			'seekinterval'     => '',
-			'nowplaying'       => 'false',
+			'nowplaying'       => '',
 			'skin'             => '2020',
 		),
 		$atts,
