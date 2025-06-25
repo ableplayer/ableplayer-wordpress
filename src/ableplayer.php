@@ -439,6 +439,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 				return false;
 			} else {
 				$type   = get_post_mime_type( $all_atts['media-id'] );
+				$type   = ( 'video/quicktime' ) ? 'video/mp4' : $type;
 				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
 		}
@@ -447,6 +448,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			$media_desc_id = ( is_numeric( $all_atts['media-desc-id'] ) ) ? wp_get_attachment_url( $all_atts['media-desc-id'] ) : $all_atts['media-desc-id'];
 			if ( $media_desc_id ) {
 				$datatype    = get_post_mime_type( $all_atts['media-desc-id'] );
+				$datatype    = ( 'video/quicktime' ) ? 'video/mp4' : $datatype;
 				$datasource .= ( $type === $datatype ) ? ' data-desc-src="' . esc_url( $media_desc_id ) . '"' : '';
 			}
 		}
@@ -455,6 +457,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			$media_asl_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
 			if ( $media_asl_id ) {
 				$datatype    = get_post_mime_type( $all_atts['media-asl-id'] );
+				$datatype    = ( 'video/quicktime' ) ? 'video/mp4' : $datatype;
 				$datasource .= ( $type === $datatype ) ? ' data-sign-src="' . esc_url( $media_asl_id ) . '"' : '';
 			}
 		}
