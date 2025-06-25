@@ -420,7 +420,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'volume'           => '',
 			'seekinterval'     => '',
 			'nowplaying'       => '',
-			'skin'             => '2020',
+			'skin'             => '',
 		),
 		$atts,
 		'ableplayer'
@@ -542,7 +542,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['nowplaying'] ) ) {
 			$o .= ' data-show-now-playing="' . esc_attr( $all_atts['nowplaying'] ) . '"';
 		}
-		if ( ! empty( $all_atts['skin'] ) ) {
+		if ( ! empty( $all_atts['skin'] ) && '2020' !== $all_atts['skin'] ) {
 			$o .= ' data-skin="' . esc_attr( $all_atts['skin'] ) . '"';
 		}
 		if ( ! empty( $all_atts['youtube-id'] ) ) {
