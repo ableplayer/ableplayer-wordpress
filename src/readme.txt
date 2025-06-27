@@ -133,6 +133,12 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 == Changelog ==
 
+= 2.0.2 =
+
+* Bug fix: Default `nowplaying` attribute to empty, rather than false.
+* Bug fix: Omit skin attribute if empty or 2020.
+* Bug fix: If video mimetype is `video/quicktime`, override and set as `video/mp4`, as some browsers require this.
+
 = 2.0.1 =
 
 * Bug fix: Shortcode generator passed an ID, but required a URL.
