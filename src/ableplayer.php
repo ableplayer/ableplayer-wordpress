@@ -54,7 +54,6 @@ function ableplayer_enqueue_scripts() {
 	// Register/enqueue other dependencies.
 	$cookie_js = ( $debug ) ? '/js.cookie.js' : '/js.cookie.min.js';
 	wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . $cookie_js, array(), $version, true );
-	wp_enqueue_script( 'vimeo', 'https://player.vimeo.com/api/player.js', array(), $version, true );
 	wp_enqueue_style( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/css/media.css', array(), $version );
 	$media_js = ( $debug ) ? 'media.js' : 'media.min.js';
 	wp_register_script( 'ableplayer-video', plugins_url( 'assets', __FILE__ ) . '/js/' . $media_js, array(), $version, true );
@@ -425,6 +424,13 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		$atts,
 		'ableplayer'
 	);
+
+	if ( '' !== $all_atts['vimeo-id'] ) {
+		$debug   = ( SCRIPT_DEBUG || ABLEPLAYER_DEBUG ) ? true : false;
+		$version = ABLEPLAYER_VERSION;
+		$version = ( $debug ) ? $version . '-' . wp_rand( 1000, 9999 ) : $version;
+		wp_enqueue_script( 'vimeo-player', 'https://player.vimeo.com/api/player.js', array( 'ableplayer' ), $version, true );
+	}
 
 	$source     = '';
 	$datasource = '';
