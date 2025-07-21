@@ -9,7 +9,8 @@
 #ableplayer-settings form p {
 	display: flex;
 	align-items: center;
-	gap: 10px;
+	column-gap: 10px;
+	flex-wrap: wrap;
 }
 
 @media (max-width: 782px) {
@@ -182,6 +183,10 @@
 	#ableplayer-generator .shortcode-preview {
 		grid-template-columns: 1fr;
 	}
+}
+
+.ableplayer-text-input label {
+	flex-basis: 100%;
 }
 
 .ableplayer-input-description {

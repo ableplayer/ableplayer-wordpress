@@ -353,7 +353,7 @@ function ableplayer_settings_form() {
 								);
 								?>
 								</p>
-								<p>
+								<p class="ableplayer-text-input">
 								<?php
 								ableplayer_settings_field(
 									array(
@@ -383,7 +383,7 @@ function ableplayer_settings_form() {
 										'name'  => 'disable_elements',
 										'label' => __( 'Disable MediaElement JS.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
-										'note'  => __( 'Recommended if using any of the replacement options.', 'ableplayer' ),
+										'note'  => __( 'Recommended if using any element replacement options.', 'ableplayer' ),
 									)
 								);
 								?>
@@ -421,7 +421,7 @@ function ableplayer_settings_form() {
 								);
 								?>
 								</p>
-								<p>
+								<p class="ableplayer-text-input">
 								<?php
 								ableplayer_settings_field(
 									array(
@@ -436,7 +436,7 @@ function ableplayer_settings_form() {
 								);
 								?>
 								</p>
-								<p>
+								<p class="ableplayer-text-input">
 								<?php
 								ableplayer_settings_field(
 									array(
@@ -462,7 +462,7 @@ function ableplayer_settings_form() {
 								);
 								?>
 								</p>
-								<p>
+								<p class="ableplayer-text-input">
 								<?php
 								ableplayer_settings_field(
 									array(
