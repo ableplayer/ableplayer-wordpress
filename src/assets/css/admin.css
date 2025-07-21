@@ -184,10 +184,6 @@
 	}
 }
 
-input + .ableplayer-input-description {
-	margin-top: 4px;
-}
-
 .ableplayer-input-description {
 	display: inline-flex;
 	align-items: center;
