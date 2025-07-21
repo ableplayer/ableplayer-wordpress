@@ -556,7 +556,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['heading'] ) && 'auto' !== $all_atts['heading'] ) {
 			$o .= ' data-heading-level="' . esc_attr( $all_atts['heading'] ) . '"';
 		}
-		if ( ! empty( $all_atts['speed'] ) && $all_atts['speed'] !== ableplayer_get_settings( 'default_speed' ) ) {
+		if ( ! empty( $all_atts['speed'] ) && ableplayer_get_settings( 'default_speed' ) !== $all_atts['speed'] ) {
 			$o .= ' data-speed-icons="' . esc_attr( $all_atts['speed'] ) . '"';
 		}
 		if ( ! empty( $all_atts['start'] ) ) {
@@ -591,7 +591,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		$o .= '>' . PHP_EOL;
 
-		$o .=  "\t" . $source;
+		$o .= "\t" . $source;
 
 		if ( ! empty( $tracks ) ) {
 			$o .= implode( PHP_EOL . "\t", $tracks );
