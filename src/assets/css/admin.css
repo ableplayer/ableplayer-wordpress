@@ -6,6 +6,12 @@
     width: 20%;
 }
 
+#ableplayer-settings form p {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 @media (max-width: 782px) {
     .ableplayer-narrow {
         width: 100%;
