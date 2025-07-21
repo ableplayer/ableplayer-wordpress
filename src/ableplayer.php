@@ -440,7 +440,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 				return false;
 			} else {
 				$type    = get_post_mime_type( $all_atts['media-id'] );
-				$type    = ( $type === 'video/quicktime' ) ? 'video/mp4' : $type;
+				$type    = ( 'video/quicktime' === $type ) ? 'video/mp4' : $type;
 				$element = ( wp_attachment_is( 'audio', $all_atts['media-id'] ) ) ? 'audio' : 'video';
 				$source  = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
