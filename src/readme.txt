@@ -141,7 +141,7 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 * Bug fix: Invalid comparison set all video types to `video/mp4`.
 * Bug fix: Switch to `audio` player if file loaded is audio only.
 * Bug fix: Address a couple cases where attributes could be unnecessarily added to content.
-* Change: Load ableplayer and video scripts deferred.
+* Change: Load Able Player and video scripts deferred.
 
 = 2.0.2 =
 
