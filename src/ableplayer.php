@@ -520,7 +520,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 
 		// build a video player.
-		$o  = "<$element ";
+		$o  = PHP_EOL . "<$element";
 		$o .= ' id="' . esc_attr( $all_atts['id'] ) . '"';
 		$o .= ' data-able-player';
 		if ( ableplayer_is_true( $all_atts['autoplay'] ) ) {
@@ -553,10 +553,10 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['height'] ) ) {
 			$o .= ' height="' . esc_attr( $all_atts['height'] ) . '"';
 		}
-		if ( ! empty( $all_atts['heading'] ) ) {
+		if ( ! empty( $all_atts['heading'] ) && 'auto' !== $all_atts['heading'] ) {
 			$o .= ' data-heading-level="' . esc_attr( $all_atts['heading'] ) . '"';
 		}
-		if ( ! empty( $all_atts['speed'] ) ) {
+		if ( ! empty( $all_atts['speed'] ) && $all_atts['speed'] !== ableplayer_get_settings( 'default_speed' ) ) {
 			$o .= ' data-speed-icons="' . esc_attr( $all_atts['speed'] ) . '"';
 		}
 		if ( ! empty( $all_atts['start'] ) ) {
@@ -591,10 +591,10 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		$o .= '>' . PHP_EOL;
 
-		$o .= $source;
+		$o .=  "\t" . $source;
 
 		if ( ! empty( $tracks ) ) {
-			$o .= implode( PHP_EOL, $tracks );
+			$o .= implode( PHP_EOL . "\t", $tracks );
 		}
 		// enclosing tags.
 		if ( ! is_null( $content ) ) {
