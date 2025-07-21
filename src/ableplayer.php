@@ -429,7 +429,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 	$source     = '';
 	$datasource = '';
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] || $all_atts['media-id'] ) ) {
-		// Shortcode must have one of YouTube, Vimeo, or local video source.
+		// Shortcode must have one of YouTube, Vimeo, or a local source.
 		return false;
 	} else {
 		if ( $all_atts['media-id'] ) {
@@ -439,7 +439,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 				return false;
 			} else {
 				$type   = get_post_mime_type( $all_atts['media-id'] );
-				$type   = ( 'video/quicktime' ) ? 'video/mp4' : $type;
+				$type   = ( $type === 'video/quicktime' ) ? 'video/mp4' : $type;
 				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
 		}
