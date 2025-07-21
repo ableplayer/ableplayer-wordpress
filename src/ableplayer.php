@@ -428,6 +428,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 
 	$source     = '';
 	$datasource = '';
+	$element    = 'video';
 	if ( ! ( $all_atts['youtube-id'] || $all_atts['vimeo-id'] || $all_atts['media-id'] ) ) {
 		// Shortcode must have one of YouTube, Vimeo, or a local source.
 		return false;
@@ -438,9 +439,10 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			if ( ! $media_id ) {
 				return false;
 			} else {
-				$type   = get_post_mime_type( $all_atts['media-id'] );
-				$type   = ( $type === 'video/quicktime' ) ? 'video/mp4' : $type;
-				$source = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
+				$type    = get_post_mime_type( $all_atts['media-id'] );
+				$type    = ( $type === 'video/quicktime' ) ? 'video/mp4' : $type;
+				$element = ( wp_attachment_is( 'audio', $all_atts['media-id'] ) ) ? 'audio' : 'video';
+				$source  = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
 		}
 		if ( $all_atts['media-desc-id'] ) {
@@ -491,7 +493,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 
 		// build a video player.
-		$o  = '<video ';
+		$o  = "<$element ";
 		$o .= ' id="' . esc_attr( $all_atts['id'] ) . '"';
 		$o .= ' data-able-player';
 		if ( ableplayer_is_true( $all_atts['autoplay'] ) ) {
@@ -574,7 +576,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 
 		// end media tag.
-		$o .= PHP_EOL . '</video>';
+		$o .= PHP_EOL . "</$element>";
 
 		return $o;
 	}
