@@ -6,7 +6,7 @@ Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 2.0.2
+Stable tag: 2.1.0
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -132,6 +132,14 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 The Able Player plugin was originally created by [Terrill Thompson](https://terrillthompson.com).
 
 == Changelog ==
+
+= 2.1.0 =
+
+* Privacy: Only load Vimeo player.js if used in shortcode or enabled in settings.
+* Styling: Updates to shipped styling to better avoid layout conflicts.
+* Bug fix: Invalid comparison set all video types to `video/mp4`.
+* Bug fix: Switch to `audio` player if file loaded is audio only.
+* Change: Load ableplayer and video scripts deferred.
 
 = 2.0.2 =
 
