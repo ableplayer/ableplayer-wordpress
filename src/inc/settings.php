@@ -156,7 +156,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'checkbox-single':
 			$checked = checked( 'true', ableplayer_get_settings( $name ), false );
 			if ( $note ) {
-				$note = "<div id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>" . sprintf( $note, "<code>$value</code>" ) . '</div>';
+				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>" . sprintf( $note, "<code>$value</code>" ) . '</span>';
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -261,6 +261,7 @@ function ableplayer_update_settings( $post ) {
 	$default_speed     = ( isset( $post['default_speed'] ) ) ? $post['default_speed'] : 'animals';
 	$seek_interval     = ( isset( $post['seek_interval'] ) && $post['seek_interval'] > 5 ) ? absint( $post['seek_interval'] ) : '';
 	$default_heading   = ( isset( $post['default_heading'] ) && 'auto' !== $post['default_heading'] ) ? absint( $post['default_heading'] ) : 'auto';
+	$vimeo             = ( ! empty( $post['vimeo'] ) && 'on' === $post['vimeo'] ) ? 'true' : 'false';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
@@ -274,6 +275,7 @@ function ableplayer_update_settings( $post ) {
 	$settings['hide_controls']     = $hide_controls;
 	$settings['default_speed']     = $default_speed;
 	$settings['default_heading']   = $default_heading;
+	$settings['vimeo']             = $vimeo;
 
 	ableplayer_update_options( $settings );
 }
@@ -319,9 +321,22 @@ function ableplayer_settings_form() {
 								<?php
 								ableplayer_settings_field(
 									array(
+										'name'  => 'vimeo',
+										'label' => __( 'Load the Vimeo player scripts globally.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+										'note'  => __( 'Required to play media from Vimeo outside of the AblePlayer shortcode.', 'ableplayer' ),
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
 										'name'  => 'replace_video',
 										'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
+										'note'  => __( 'Does not replace Vimeo or YouTube Embed blocks', 'ableplayer' )
 									)
 								);
 								?>
@@ -367,6 +382,7 @@ function ableplayer_settings_form() {
 										'name'  => 'disable_elements',
 										'label' => __( 'Disable MediaElement JS.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
+										'note'  => __( 'Recommended if using any of the replacement options.', 'ableplayer' )
 									)
 								);
 								?>
@@ -573,6 +589,7 @@ function ableplayer_default_settings() {
 		'hide_controls'     => 'false',
 		'default_heading'   => 'auto',
 		'last_shortcode'    => '',
+		'vimeo'             => 'false',
 	);
 
 	return $settings;
