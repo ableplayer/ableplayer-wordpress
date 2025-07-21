@@ -2,6 +2,7 @@
 Contributors: terrillthompson, joedolson
 Plugin URI: https://github.com/ableplayer/ableplayer-wordpress
 Author URI: https://www.joedolson.com
+Donate link: https://www.joedolson.com/donate/
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
@@ -139,6 +140,7 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 * Styling: Updates to shipped styling to better avoid layout conflicts.
 * Bug fix: Invalid comparison set all video types to `video/mp4`.
 * Bug fix: Switch to `audio` player if file loaded is audio only.
+* Bug fix: Address a couple cases where attributes could be unnecessarily added to content.
 * Change: Load ableplayer and video scripts deferred.
 
 = 2.0.2 =
