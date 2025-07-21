@@ -336,7 +336,7 @@ function ableplayer_settings_form() {
 										'name'  => 'replace_video',
 										'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
-										'note'  => __( 'Does not replace Vimeo or YouTube Embed blocks', 'ableplayer' )
+										'note'  => __( 'Does not replace Vimeo or YouTube Embed blocks', 'ableplayer' ),
 									)
 								);
 								?>
@@ -382,7 +382,7 @@ function ableplayer_settings_form() {
 										'name'  => 'disable_elements',
 										'label' => __( 'Disable MediaElement JS.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
-										'note'  => __( 'Recommended if using any of the replacement options.', 'ableplayer' )
+										'note'  => __( 'Recommended if using any of the replacement options.', 'ableplayer' ),
 									)
 								);
 								?>
