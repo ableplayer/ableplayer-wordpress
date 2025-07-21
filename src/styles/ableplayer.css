@@ -133,7 +133,7 @@
 /*
   Controller Buttons & Controls
 */
-.able-big-play-button {
+.able-wrapper .able button.able-big-play-button {
     position: absolute;
     color: #fdfdfd;
     background-color: transparent;
