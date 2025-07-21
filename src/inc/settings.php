@@ -68,18 +68,19 @@ function ableplayer_update_setting( $key, $value = '' ) {
  * @return string|void
  */
 function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
-	$name     = ( isset( $args['name'] ) ) ? $args['name'] : '';
-	$label    = ( isset( $args['label'] ) ) ? $args['label'] : '';
-	$default  = ( isset( $args['default'] ) ) ? $args['default'] : '';
-	$note     = ( isset( $args['note'] ) ) ? $args['note'] : '';
-	$atts     = ( isset( $args['atts'] ) ) ? $args['atts'] : array();
-	$type     = ( isset( $args['type'] ) ) ? $args['type'] : 'text';
-	$echo     = ( isset( $args['echo'] ) ) ? $args['echo'] : true;
-	$wrap     = ( isset( $args['wrap'] ) ) ? $args['wrap'] : array();
-	$position = ( isset( $args['position'] ) ) ? $args['position'] : 'bottom';
-	$id       = ( isset( $args['id'] ) ) ? $args['id'] : $name;
-	$element  = '';
-	$close    = '';
+	$name      = ( isset( $args['name'] ) ) ? $args['name'] : '';
+	$label     = ( isset( $args['label'] ) ) ? $args['label'] : '';
+	$default   = ( isset( $args['default'] ) ) ? $args['default'] : '';
+	$note      = ( isset( $args['note'] ) ) ? $args['note'] : '';
+	$atts      = ( isset( $args['atts'] ) ) ? $args['atts'] : array();
+	$type      = ( isset( $args['type'] ) ) ? $args['type'] : 'text';
+	$echo      = ( isset( $args['echo'] ) ) ? $args['echo'] : true;
+	$wrap      = ( isset( $args['wrap'] ) ) ? $args['wrap'] : array();
+	$position  = ( isset( $args['position'] ) ) ? $args['position'] : 'bottom';
+	$id        = ( isset( $args['id'] ) ) ? $args['id'] : $name;
+	$help_icon = "<i class='dashicons dashicons-editor-help' aria-hidden='true'></i>";
+	$element   = '';
+	$close     = '';
 	if ( ! empty( $wrap ) ) {
 		$el    = isset( $wrap['element'] ) ? $wrap['element'] : 'p';
 		$class = '';
@@ -129,7 +130,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'number':
 			if ( $note ) {
 				$note = sprintf( str_replace( '%', '', $note ), "<code>$value</code>" );
-				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'>$help_icon$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -145,7 +146,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'textarea':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'>$help_icon$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -156,7 +157,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'checkbox-single':
 			$checked = checked( 'true', ableplayer_get_settings( $name ), false );
 			if ( $note ) {
-				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>" . sprintf( $note, "<code>$value</code>" ) . '</span>';
+				$note = "<span id='$id-note' class='ableplayer-input-description'>$help_icon" . sprintf( $note, "<code>$value</code>" ) . '</span>';
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -168,7 +169,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'radio':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'>$help_icon$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
@@ -193,7 +194,7 @@ function ableplayer_settings_field( $args = array(), $context = 'settings' ) {
 		case 'select':
 			if ( $note ) {
 				$note = sprintf( $note, "<code>$value</code>" );
-				$note = "<span id='$id-note' class='ableplayer-input-description'><i class='dashicons dashicons-editor-help' aria-hidden='true'></i>$note</span>";
+				$note = "<span id='$id-note' class='ableplayer-input-description'>$help_icon$note</span>";
 				$aria = " aria-describedby='$id-note'";
 			} else {
 				$note = '';
