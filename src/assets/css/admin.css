@@ -195,6 +195,7 @@ input + .ableplayer-input-description {
 	box-shadow: 1px 3px 3px #bbb;
 	padding: 4px;
 	position: relative;
+	color: #646970;
 }
 
 .ableplayer-copy-button {
