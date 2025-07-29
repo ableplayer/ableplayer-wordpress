@@ -121,11 +121,14 @@ if ( ablePlayers ) {
 		}
 		if ( 'true' === ableplayer.settings.render_transcript ) {
 			if ( ! el.hasAttribute( 'data-transcript-div' ) ) {
-				el.setAttribute( 'data-transcript-div', 'ableplayer-transcript-' + el.getAttribute( 'id' ) );
-				let transcriptContainer = document.createElement( 'div' );
-				transcriptContainer.setAttribute( 'id', 'ableplayer-transcript-' + el.getAttribute( 'id' ) );
-				transcriptContainer.classList.add( 'ableplayer-transcript' );
-				el.insertAdjacentElement( 'afterend', transcriptContainer );
+				let tracks = el.querySelectorAll( 'track' );
+				if ( tracks.length > 0 ) {
+					el.setAttribute( 'data-transcript-div', 'ableplayer-transcript-' + el.getAttribute( 'id' ) );
+					let transcriptContainer = document.createElement( 'div' );
+					transcriptContainer.setAttribute( 'id', 'ableplayer-transcript-' + el.getAttribute( 'id' ) );
+					transcriptContainer.classList.add( 'ableplayer-transcript' );
+					el.insertAdjacentElement( 'afterend', transcriptContainer );
+				}
 			}
 		}
 	});
