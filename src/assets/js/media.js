@@ -10,10 +10,12 @@ if ( 0 !== ableplayer_selectors.length ) {
 	let childTracks;
 	if ( mediaEls ) {
 		mediaEls.forEach((el,index,listObj) => {
-			let excludeClass = ableplayer.settings.exclude_class;
-			let parentEl     = el.closest( 'figure' );
-			let parentHasClass = ( parentEl ) ? parentEl.classList.contains( excludeClass ) : false;
-			if ( excludeClass !== '' && el.classList.contains( excludeClass ) || parentHasClass ) {
+			let excludeClass      = ableplayer.settings.exclude_class;
+			let parentEl          = el.closest( 'figure' );
+			let parentDiv         = el.closest( 'div' );
+			let parentHasClass    = ( parentEl ) ? parentEl.classList.contains( excludeClass ) : false;
+			let parentDivHasClass = ( parentDiv ) ? parentDiv.classList.contains( excludeClass ) : false;
+			if ( excludeClass !== '' && el.classList.contains( excludeClass ) || parentHasClass || parentDivHasClass ) {
 				el.classList.add( 'ableplayer-skipped' );
 			} else {
 				el.removeAttribute( 'controls' );
