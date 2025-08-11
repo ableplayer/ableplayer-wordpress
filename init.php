@@ -15,7 +15,7 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Version:     2.1.0
+ * Version:     2.2.0-beta1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

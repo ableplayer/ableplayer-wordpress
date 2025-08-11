@@ -134,6 +134,10 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 == Changelog ==
 
+= 2.2.0 =
+
+* Update to Able Player v4.7.0
+
 = 2.1.0 =
 
 * Privacy: Only load Vimeo player.js if used in shortcode or enabled in settings.

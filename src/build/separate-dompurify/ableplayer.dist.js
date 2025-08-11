@@ -1,4 +1,4 @@
-/*! ableplayer V4.6.0-beta - In this file, DOMPurify is not bundled in with AblePlayer, but is a required dependency that can be added to the project via a local copy or a CDN */
+/*! ableplayer V4.7.0-beta1 - In this file, DOMPurify is not bundled in with AblePlayer, but is a required dependency that can be added to the project via a local copy or a CDN */
 /*
 	// JavaScript for Able Player
 
@@ -61,9 +61,11 @@ var AblePlayerInstances = [];
 		}
 	});
 
-	// Construct an AblePlayer object
-	// Parameters are:
-	// media - jQuery selector or element identifying the media.
+	/**
+	 * Construct the AblePlayer object.
+	 *
+	 * @param object media jQuery selector or element identifying the media.
+	 */
 	window.AblePlayer = function(media) {
 
 		var thisObj = this;
@@ -77,82 +79,46 @@ var AblePlayerInstances = [];
 			return;
 		}
 
-		///////////////////////////////
-		//
 		// Default variables assignment
-		//
-		///////////////////////////////
-
 		// The following variables CAN be overridden with HTML attributes
 
 		// autoplay (Boolean; if present always resolves to true, regardless of value)
 		if ($(media).attr('autoplay') !== undefined) {
 			this.autoplay = true; // this value remains constant
 			this.okToPlay = true; // this value can change dynamically
-		}
-		else {
+		} else {
 			this.autoplay = false;
 			this.okToPlay = false;
 		}
 
 		// loop (Boolean; if present always resolves to true, regardless of value)
-		if ($(media).attr('loop') !== undefined) {
-			this.loop = true;
-		}
-		else {
-			this.loop = false;
-		}
+		this.loop = ($(media).attr('loop') !== undefined) ? true : false;
 
 		// playsinline (Boolean; if present always resolves to true, regardless of value)
-		if ($(media).attr('playsinline') !== undefined) {
-			this.playsInline = '1'; // this value gets passed to YT.Player contructor in youtube.js
-		}
-		else {
-			this.playsInline = '0';
-		}
+		this.playsInline = ($(media).attr('playsinline') !== undefined) ? '1' : '0';
 
 		// poster (Boolean, indicating whether media element has a poster attribute)
-		if ($(media).attr('poster')) {
-			this.hasPoster = true;
-		}
-		else {
-			this.hasPoster = false;
-		}
+		this.hasPoster = ($(media).attr('poster')) ? true : false;
 
 		// get height and width attributes, if present
 		// and add them to variables
 		// Not currently used, but might be useful for resizing player
-		if ($(media).attr('width')) {
-			this.width = $(media).attr('width');
-		}
-		if ($(media).attr('height')) {
-			this.height = $(media).attr('height');
-		}
+		this.width = $(media).attr('width') ?? 0;
+		this.height = $(media).attr('height') ?? 0;
 
 		// start-time
 		var startTime = $(media).data('start-time');
 		var isNumeric = ( typeof startTime === 'number' || ( typeof startTime === 'string' && value.trim() !== '' && ! isNaN(value) && isFinite( Number(value) ) ) ) ? true : false;
-		if ( startTime !== undefined && isNumeric ) {
-			this.startTime = $(media).data('start-time');
-		}
-		else {
-			this.startTime = 0;
-		}
+		this.startTime =  ( startTime !== undefined && isNumeric ) ? startTime : 0;
 
 		// debug
-		if ($(media).data('debug') !== undefined && $(media).data('debug') !== false) {
-			this.debug = true;
-		}
-		else {
-			this.debug = false;
-		}
+		this.debug = ($(media).data('debug') !== undefined && $(media).data('debug') !== false) ? true : false;
 
 		// Path to root directory of Able Player code
 		if ($(media).data('root-path') !== undefined) {
 			// add a trailing slash if there is none
 			this.rootPath = $(media).data('root-path').replace(/\/?$/, '/');
-		}
-		else {
+		} else {
 			this.rootPath = this.getRootPath();
 		}
 
@@ -174,8 +140,7 @@ var AblePlayerInstances = [];
 
 		if ($(media).data('use-chapters-button') !== undefined && $(media).data('use-chapters-button') === false) {
 			this.useChaptersButton = false;
-		}
-		else {
+		} else {
 			this.useChaptersButton = true;
 		}
 
@@ -187,12 +152,10 @@ var AblePlayerInstances = [];
 		// For that, see below (this.descMethod)
 		if ($(media).data('descriptions-audible') !== undefined && $(media).data('descriptions-audible') === false) {
 			this.readDescriptionsAloud = false;
-		}
-		else if ($(media).data('description-audible') !== undefined && $(media).data('description-audible') === false) {
+		} else if ($(media).data('description-audible') !== undefined && $(media).data('description-audible') === false) {
 			// support both singular and plural spelling of attribute
 			this.readDescriptionsAloud = false;
-		}
-		else {
+		} else {
 			this.readDescriptionsAloud = true;
 		}
 
@@ -206,40 +169,20 @@ var AblePlayerInstances = [];
 		// 'screenreader' - text-based audio description is always handled by screen readers
 		// The latter may be preferable by owners of websites in languages that are not well supported
 		// by the Web Speech API
-		if ($(media).data('desc-reader') == 'screenreader') {
-			this.descReader = 'screenreader';
-		}
-		else {
-			this.descReader = 'browser';
-		}
+		this.descReader = ($(media).data('desc-reader') == 'screenreader') ? 'screenreader' : 'browser';
 
 		// Default state of captions and descriptions
 		// This setting is overridden by user preferences, if they exist
 		// values for data-state-captions and data-state-descriptions are 'on' or 'off'
-		if ($(media).data('state-captions') == 'off') {
-			this.defaultStateCaptions = 0; // off
-		}
-		else {
-			this.defaultStateCaptions = 1; // on by default
-		}
-		if ($(media).data('state-descriptions') == 'on') {
-			this.defaultStateDescriptions = 1; // on
-		}
-		else {
-			this.defaultStateDescriptions = 0; // off by default
-		}
+		this.defaultStateCaptions = ($(media).data('state-captions') == 'off') ? 0 : 1;
+		this.defaultStateDescriptions = ($(media).data('state-descriptions') == 'on') ? 1 : 0;
 
 		// Default setting for prefDescPause
 		// Extended description (i.e., pausing during description) is on by default
 		// but this settings give website owners control over that
 		// since they know the nature of their videos, and whether pausing is necessary
 		// This setting is overridden by user preferences, if they exist
-		if ($(media).data('desc-pause-default') == 'off') {
-			this.defaultDescPause = 0; // off
-		}
-		else {
-			this.defaultDescPause = 1; // on by default
-		}
+		this.defaultDescPause = ($(media).data('desc-pause-default') == 'off') ? 0 : 1;
 
 		// Headings
 		// By default, an off-screen heading is automatically added to the top of the media player
@@ -258,74 +201,51 @@ var AblePlayerInstances = [];
 		// There are three types of interactive transcripts.
 		// In descending of order of precedence (in case there are conflicting tags), they are:
 		// 1. "manual" - A manually coded external transcript (requires data-transcript-src)
-		// 2. "external" - Automatically generated, written to an external div (requires data-transcript-div)
+		// 2. "external" - Automatically generated, written to an external div (requires data-transcript-div & a valid target element)
 		// 3. "popup" - Automatically generated, written to a draggable, resizable popup window that can be toggled on/off with a button
 		// If data-include-transcript="false", there is no "popup" transcript
-		if ($(media).data('transcript-div') !== undefined && $(media).data('transcript-div') !== "") {
-			this.transcriptDivLocation = $(media).data('transcript-div');
-		}
-		else {
+		var transcriptDivLocation = $(media).data('transcript-div');
+		if ( transcriptDivLocation !== undefined && transcriptDivLocation !== "" && null !== document.getElementById( transcriptDivLocation ) ) {
+			this.transcriptDivLocation = transcriptDivLocation;
+		} else {
 			this.transcriptDivLocation = null;
 		}
-		if ($(media).data('include-transcript') !== undefined && $(media).data('include-transcript') === false) {
-			this.hideTranscriptButton = true;
-		}
-		else {
-			this.hideTranscriptButton = null;
-		}
+		var includeTranscript = $(media).data('include-transcript');
+		this.hideTranscriptButton = ( includeTranscript !== undefined && includeTranscript === false) ? true : false;
 
 		this.transcriptType = null;
 		if ($(media).data('transcript-src') !== undefined) {
 			this.transcriptSrc = $(media).data('transcript-src');
 			if (this.transcriptSrcHasRequiredParts()) {
 				this.transcriptType = 'manual';
-			}
-			else {
+			} else {
 				
 			}
-		}
-		else if ($(media).find('track[kind="captions"], track[kind="subtitles"]').length > 0) {
+		} else if ($(media).find('track[kind="captions"],track[kind="subtitles"],track:not([kind])').length > 0) {
 			// required tracks are present. COULD automatically generate a transcript
-			if (this.transcriptDivLocation) {
-				this.transcriptType = 'external';
-			}
-			else {
-				this.transcriptType = 'popup';
-			}
+			this.transcriptType = (this.transcriptDivLocation) ? 'external' : 'popup';
 		}
 
 		// In "Lyrics Mode", line breaks in WebVTT caption files are supported in the transcript
-		// If false (default), line breaks are are removed from transcripts in order to provide a more seamless reading experience
+		// If false (default), line breaks are are removed from transcripts for a more seamless reading experience
 		// If true, line breaks are preserved, so content can be presented karaoke-style, or as lines in a poem
-		if ($(media).data('lyrics-mode') !== undefined && $(media).data('lyrics-mode') !== false) {
-			this.lyricsMode = true;
-		}
-		else {
-			this.lyricsMode = false;
-		}
+		this.lyricsMode = ($(media).data('lyrics-mode') !== undefined && $(media).data('lyrics-mode') !== false) ? true : false;
 
-		// Transcript Title
+		// Set Transcript Title if defined explicitly. See transcript.js.
 		if ($(media).data('transcript-title') !== undefined && $(media).data('transcript-title') !== "") {
 			this.transcriptTitle = $(media).data('transcript-title');
-		}
-		else {
-			// do nothing. The default title will be defined later (see transcript.js)
 		}
 
 		// Captions
 		// data-captions-position can be used to set the default captions position
 		// this is only the default, and can be overridden by user preferences
 		// valid values of data-captions-position are 'below' and 'overlay'
-		if ($(media).data('captions-position') === 'overlay') {
-			this.defaultCaptionsPosition = 'overlay';
-		}
-		else { // the default, even if not specified
-			this.defaultCaptionsPosition = 'below';
-		}
+		this.defaultCaptionsPosition = ($(media).data('captions-position') === 'overlay') ? 'overlay' : 'below';
 
 		// Chapters
-		if ($(media).data('chapters-div') !== undefined && $(media).data('chapters-div') !== "") {
-			this.chaptersDivLocation = $(media).data('chapters-div');
+		var chaptersDiv = $(media).data('chapters-div');
+		if ( chaptersDiv !== undefined && chaptersDiv !== "") {
+			this.chaptersDivLocation = chaptersDiv;
 		}
 
 		if ($(media).data('chapters-title') !== undefined) {
@@ -333,66 +253,53 @@ var AblePlayerInstances = [];
 			this.chaptersTitle = $(media).data('chapters-title');
 		}
 
-		if ($(media).data('chapters-default') !== undefined && $(media).data('chapters-default') !== "") {
-			this.defaultChapter = $(media).data('chapters-default');
-		}
-		else {
-			this.defaultChapter = null;
-		}
+		var defaultChapter = $(media).data('chapters-default');
+		this.defaultChapter = ( defaultChapter !== undefined && defaultChapter !== "") ? defaultChapter : null;
 
 		// Slower/Faster buttons
 		// valid values of data-speed-icons are 'animals' (default) and 'arrows'
 		// 'animals' uses turtle and rabbit; 'arrows' uses up/down arrows
-		if ($(media).data('speed-icons') === 'arrows') {
-			this.speedIcons = 'arrows';
-		}
-		else {
-			this.speedIcons = 'animals';
-		}
+		this.speedIcons = ($(media).data('speed-icons') === 'arrows') ? 'arrows' : 'animals';
 
 		// Seekbar
 		// valid values of data-seekbar-scope are 'chapter' and 'video'; will also accept 'chapters'
-		if ($(media).data('seekbar-scope') === 'chapter' || $(media).data('seekbar-scope') === 'chapters') {
-			this.seekbarScope = 'chapter';
-		}
-		else {
-			this.seekbarScope = 'video';
-		}
+		var seekbarScope = $(media).data('seekbar-scope');
+		this.seekbarScope = ( seekbarScope === 'chapter' || seekbarScope === 'chapters') ? 'chapter' : 'video';
 
 		// YouTube
-		if ($(media).data('youtube-id') !== undefined && $(media).data('youtube-id') !== "") {
-			this.youTubeId = this.getYouTubeId($(media).data('youtube-id'));
+		var youTubeId = $(media).data('youtube-id');
+		if ( youTubeId !== undefined && youTubeId !== "") {
+			this.youTubeId = this.getYouTubeId(youTubeId);
 		}
 
-		if ($(media).data('youtube-desc-id') !== undefined && $(media).data('youtube-desc-id') !== "") {
-			this.youTubeDescId = this.getYouTubeId($(media).data('youtube-desc-id'));
+		var youTubeDescId = $(media).data('youtube-desc-id');
+		if ( youTubeDescId !== undefined && youTubeDescId !== "") {
+			this.youTubeDescId = this.getYouTubeId(youTubeDescId);
 		}
 
-		if ($(media).data('youtube-nocookie') !== undefined && $(media).data('youtube-nocookie')) {
-			this.youTubeNoCookie = true;
+		var youTubeSignId = $(media).data('youtube-sign-src');
+		if ( youTubeSignId !== undefined && youTubeSignId !== "") {
+			this.youTubeSignId = this.getYouTubeId(youTubeSignId);
 		}
-		else {
-			this.youTubeNoCookie = false;
-		}
+
+		var youTubeNoCookie = $(media).data('youtube-nocookie');
+		this.youTubeNoCookie = (youTubeNoCookie !== undefined && youTubeNoCookie) ? true : false;
 
 		// Vimeo
-		if ($(media).data('vimeo-id') !== undefined && $(media).data('vimeo-id') !== "") {
-			this.vimeoId = this.getVimeoId($(media).data('vimeo-id'));
+		var vimeoId = $(media).data('vimeo-id');
+		if ( vimeoId !== undefined && vimeoId !== "") {
+			this.vimeoId = this.getVimeoId(vimeoId);
 		}
-		if ($(media).data('vimeo-desc-id') !== undefined && $(media).data('vimeo-desc-id') !== "") {
-			this.vimeoDescId = this.getVimeoId($(media).data('vimeo-desc-id'));
+		var vimeoDescId = $(media).data('vimeo-desc-id');
+		if ( vimeoDescId !== undefined && vimeoDescId !== "") {
+			this.vimeoDescId = this.getVimeoId(vimeoDescId);
 		}
 
 		// Skin
 		// valid values of data-skin are:
-		// '2020' (default as of 5.0), all buttons in one row beneath a full-width seekbar
+		// '2020' (default as of 4.6), all buttons in one row beneath a full-width seekbar
 		// 'legacy', two rows of controls; seekbar positioned in available space within top row
-		if ($(media).data('skin') == 'legacy') {
-			this.skin = 'legacy';
-		}
-		else {
-			this.skin = '2020';
-		}
+		this.skin = ($(media).data('skin') == 'legacy') ? 'legacy' : '2020';
 
 		// Size
 		// width of Able Player is determined using the following order of precedence:
@@ -401,14 +308,12 @@ var AblePlayerInstances = [];
 		// 3. Intrinsic size from video (video only, determined later)
 		if ($(media).data('width') !== undefined) {
 			this.playerWidth = parseInt($(media).data('width'));
-		}
-		else if ($(media)[0].getAttribute('width')) {
+		} else if ($(media)[0].getAttribute('width')) {
 			// NOTE: jQuery attr() returns null for all invalid HTML attributes
 			// (e.g., width on <audio>)
 			// but it can be acessed via JavaScript getAttribute()
 			this.playerWidth = parseInt($(media)[0].getAttribute('width'));
-		}
-		else {
+		} else {
 			this.playerWidth = null;
 		}
 
@@ -421,18 +326,15 @@ var AblePlayerInstances = [];
 		this.forceIconType = false;
 		if ($(media).data('icon-type') !== undefined && $(media).data('icon-type') !== "") {
 			var iconType = $(media).data('icon-type');
-			if (iconType === 'font' || iconType == 'image' || iconType == 'svg') {
+			if (iconType === 'font' || iconType === 'image' || iconType === 'svg') {
 				this.iconType = iconType;
 				this.forceIconType = true;
 			}
 		}
 
-		if ($(media).data('allow-fullscreen') !== undefined && $(media).data('allow-fullscreen') === false) {
-			this.allowFullscreen = false;
-		}
-		else {
-			this.allowFullscreen = true;
-		}
+		var allowFullScreen = $(media).data('allow-fullscreen');
+		this.allowFullscreen = (allowFullScreen !== undefined && allowFullScreen === false) ? false : true;
+
 		// Define other variables that are used in fullscreen program flow
 		this.clickedFullscreenButton = false;
 		this.restoringAfterFullscreen = false;
@@ -454,34 +356,25 @@ var AblePlayerInstances = [];
 		// Now Playing
 		// Shows "Now Playing:" plus the title of the current track above player
 		// Only used if there is a playlist
-		if ($(media).data('show-now-playing') !== undefined && $(media).data('show-now-playing') === false) {
-			this.showNowPlaying = false;
-		}
-		else {
-			this.showNowPlaying = true;
-		}
+		var showNowPlaying = $(media).data('show-now-playing');
+		this.showNowPlaying = (showNowPlaying !== undefined && showNowPlaying === false) ? false : true;
 
 		// TTML support (experimental); enabled for testing with data-use-ttml (Boolean)
 		if ($(media).data('use-ttml') !== undefined) {
 			this.useTtml = true;
 			// The following may result in a console error.
 			this.convert = require('xml-js');
-		}
-		else {
+		} else {
 			this.useTtml = false;
 		}
 
 		// Fallback
 		// The data-test-fallback attribute can be used to test the fallback solution in any browser
-		if ($(media).data('test-fallback') !== undefined && $(media).data('test-fallback') !== false) {
-			if ($(media).data('test-fallback') == '2') {
-				this.testFallback = 2; // emulate browser that doesn't support HTML5 media
-			}
-			else {
-				this.testFallback = 1; // emulate failure to load Able Player
-			}
-		}
-		else {
+		var testFallback = $(media).data('test-fallback');
+		if ( testFallback !== undefined && testFallback !== false) {
+			// 1: build error; 2: browser doesn't support media.
+			this.testFallback = ( testFallback == '2' ) ? 2 : 1;
+		} else {
 			this.testFallback = false;
 		}
 
@@ -491,54 +384,39 @@ var AblePlayerInstances = [];
 		// 2. Lang attribute on <html> or <body>, if a matching translation file is available
 		// 3. English
 		// Final calculation occurs in translation.js > getTranslationText()
-		if ($(media).data('lang') !== undefined && $(media).data('lang') !== "") {
-			this.lang = $(media).data('lang').toLowerCase();
-		}
-		else {
-			this.lang = null;
-		}
+		var lang = $(media).data('lang');
+		this.lang = ( lang !== undefined && lang !== "") ? lang.toLowerCase() : null;
 
 		// Metadata Tracks
-		if ($(media).data('meta-type') !== undefined && $(media).data('meta-type') !== "") {
-			this.metaType = $(media).data('meta-type');
+		var metaType = $(media).data('meta-type');
+		if ( metaType !== undefined && metaType !== "") {
+			this.metaType = metaType;
 		}
-
-		if ($(media).data('meta-div') !== undefined && $(media).data('meta-div') !== "") {
-			this.metaDiv = $(media).data('meta-div');
+		var metaDiv = $(media).data('meta-div');
+		if ( metaDiv !== undefined && metaDiv !== "") {
+			this.metaDiv = metaDiv;
 		}
 
 		// Search
 		// conducting a search requires an external div in which to write the results
-		if ($(media).data('search-div') !== undefined && $(media).data('search-div') !== "") {
+		var searchDiv = $(media).data('search-div');
+		if ( searchDiv !== undefined && searchDiv !== "") {
 
-			this.searchDiv = $(media).data('search-div');
+			this.searchDiv = searchDiv;
 
 			// Search term (optional; could be assigned later in a JavaScript application)
-			if ($(media).data('search') !== undefined && $(media).data('search') !== "") {
-				this.searchString = $(media).data('search');
+			var searchString = $(media).data('search');
+			if ( searchString !== undefined && searchString !== "") {
+				this.searchString = searchString;
 			}
 
 			// Search Language
-			if ($(media).data('search-lang') !== undefined && $(media).data('search-lang') !== "") {
-				this.searchLang = $(media).data('search-lang');
-			}
-			else {
-				this.searchLang = null; // will change to final value of this.lang in translation.js > getTranslationText()
-			}
+			var searchLang = $(media).data('search-lang');
+			this.searchLang = ( searchLang !== undefined && searchLang !== "") ? searchLang : null;
 
 			// Search option: Ignore capitalization in search terms
-			if ($(media).data('search-ignore-caps') !== undefined && $(media).data('search-ignore-caps') !== false) {
-				this.searchIgnoreCaps = true;
-			}
-			else {
-				this.searchIgnoreCaps = false;
-			}
-
-			// conducting a search currently requires an external div in which to write the results
-			if ($(media).data('search-div') !== undefined && $(media).data('search-div') !== "") {
-				this.searchString = $(media).data('search');
-				this.searchDiv = $(media).data('search-div');
-			}
+			var searchIgnoreCaps = $(media).data('search-ignore-caps');
+			this.searchIgnoreCaps = ( searchIgnoreCaps !== undefined && searchIgnoreCaps !== false) ? true : false;
 		}
 
 		// Hide controls when video starts playing
@@ -547,8 +425,7 @@ var AblePlayerInstances = [];
 		if ($(media).data('hide-controls') !== undefined && $(media).data('hide-controls') !== false) {
 			this.hideControls = true;
 			this.hideControlsOriginal = true; // a copy of hideControls, since the former may change if user enters full screen mode
-		}
-		else {
+		} else {
 			this.hideControls = false;
 			this.hideControlsOriginal = false;
 		}
@@ -567,13 +444,11 @@ var AblePlayerInstances = [];
 					this.stenoFrameId = null;
 					this.$stenoFrame = null;
 				}
-			}
-			else {
+			} else {
 				this.stenoFrameId = null;
 				this.$stenoFrame = null;
 			}
-		}
-		else {
+		} else {
 			this.stenoMode = false;
 			this.stenoFrameId = null;
 			this.$stenoFrame = null;
@@ -583,9 +458,7 @@ var AblePlayerInstances = [];
 		this.setDefaults();
 
 		////////////////////////////////////////
-		//
 		// End assignment of default variables
-		//
 		////////////////////////////////////////
 
 		this.ableIndex = AblePlayer.nextIndex;
@@ -602,8 +475,7 @@ var AblePlayerInstances = [];
 				if (thisObj.countProperties(thisObj.tt) > 50) {
 					// close enough to ensure that most text variables are populated
 					thisObj.setup();
-				}
-				else {
+				} else {
 					// can't continue loading player with no text
 					thisObj.provideFallback();
 				}
@@ -626,14 +498,12 @@ var AblePlayerInstances = [];
 			if (!thisObj.player) {
 				// No player for this media, show last-line fallback.
 				thisObj.provideFallback();
-			}
-			else {
+			} else {
 				thisObj.setupInstance().then(function () {
 					thisObj.setupInstancePlaylist();
 					if (thisObj.hasPlaylist) {
 						// for playlists, recreatePlayer() is called from within cuePlaylistItem()
-					}
-					else {
+					} else {
 						thisObj.recreatePlayer().then(function() {
 							thisObj.initializing = false;
 							thisObj.playerCreated = true; // remains true until browser is refreshed
@@ -656,13 +526,10 @@ var AblePlayerInstances = [];
 	};
 
 	AblePlayer.localGetElementById = function(element, id) {
-		if (element.getRootNode)
-		{
+		if (element.getRootNode) {
 			// Use getRootNode() and querySelector() where supported (for shadow DOM support)
 			return $(element.getRootNode().querySelector('#' + id));
-		}
-		else
-		{
+		} else {
 			// If getRootNode is not supported it should be safe to use document.getElementById (since there is no shadow DOM support)
 			return $(document.getElementById(id));
 		}
@@ -731,8 +598,7 @@ var AblePlayerInstances = [];
 				$el =	 $('<div>', {
 					'class': 'able-controller'
 				}).hide();
-			}
-			else if ($elements[i] === 'toolbar') {
+			} else if ($elements[i] === 'toolbar') {
 				$el =	 $('<div>', {
 					'class': 'able-window-toolbar'
 				}).hide();
@@ -747,16 +613,11 @@ var AblePlayerInstances = [];
 			blue = rgb[2];
 			luminance = (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
 			// range is 1 - 255; therefore 125 is the tipping point
-			if (luminance < 125) { // background is dark
-				iconColor = 'white';
-			}
-			else { // background is light
-				iconColor = 'black';
-			}
+			iconColor = (luminance < 125) ? 'white' : 'black';
+
 			if ($elements[i] === 'controller') {
 				this.iconColor = iconColor;
-			}
-			else if ($elements[i] === 'toolbar') {
+			} else if ($elements[i] === 'toolbar') {
 				this.toolbarIconColor = iconColor;
 			}
 			$el.remove();
@@ -769,20 +630,16 @@ var AblePlayerInstances = [];
 		this.imgPath = this.rootPath + 'button-icons/' + this.iconColor + '/';
 		this.playButtonImg = this.imgPath + 'play.png';
 		this.pauseButtonImg = this.imgPath + 'pause.png';
-
 		this.restartButtonImg = this.imgPath + 'restart.png';
-
 		this.rewindButtonImg = this.imgPath + 'rewind.png';
 		this.forwardButtonImg = this.imgPath + 'forward.png';
-
 		this.previousButtonImg = this.imgPath + 'previous.png';
 		this.nextButtonImg = this.imgPath + 'next.png';
 
 		if (this.speedIcons === 'arrows') {
 			this.fasterButtonImg = this.imgPath + 'slower.png';
 			this.slowerButtonImg = this.imgPath + 'faster.png';
-		}
-		else if (this.speedIcons === 'animals') {
+		} else if (this.speedIcons === 'animals') {
 			this.fasterButtonImg = this.imgPath + 'rabbit.png';
 			this.slowerButtonImg = this.imgPath + 'turtle.png';
 		}
@@ -792,15 +649,13 @@ var AblePlayerInstances = [];
 		this.signButtonImg = this.imgPath + 'sign.png';
 		this.transcriptButtonImg = this.imgPath + 'transcript.png';
 		this.descriptionsButtonImg = this.imgPath + 'descriptions.png';
-
 		this.fullscreenExpandButtonImg = this.imgPath + 'fullscreen-expand.png';
 		this.fullscreenCollapseButtonImg = this.imgPath + 'fullscreen-collapse.png';
-
 		this.prefsButtonImg = this.imgPath + 'preferences.png';
 		this.helpButtonImg = this.imgPath + 'help.png';
 	};
 
-	AblePlayer.prototype.getSvgData = function(button) {
+	AblePlayer.prototype.getIconData = function(button) {
 
 		// returns array of values for creating <svg> tag for specified button
 		// 0 = <svg> viewBox attribute
@@ -812,142 +667,191 @@ var AblePlayerInstances = [];
 			case 'play':
 				svg[0] = '0 0 16 20';
 				svg[1] = 'M0 18.393v-16.429q0-0.29 0.184-0.402t0.441 0.033l14.821 8.237q0.257 0.145 0.257 0.346t-0.257 0.346l-14.821 8.237q-0.257 0.145-0.441 0.033t-0.184-0.402z';
+				svg[2] = 'icon-play';
+				svg[3] = this.playButtonImg;
 				break;
 
 			case 'pause':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0 18.036v-15.714q0-0.29 0.212-0.502t0.502-0.212h5.714q0.29 0 0.502 0.212t0.212 0.502v15.714q0 0.29-0.212 0.502t-0.502 0.212h-5.714q-0.29 0-0.502-0.212t-0.212-0.502zM10 18.036v-15.714q0-0.29 0.212-0.502t0.502-0.212h5.714q0.29 0 0.502 0.212t0.212 0.502v15.714q0 0.29-0.212 0.502t-0.502 0.212h-5.714q-0.29 0-0.502-0.212t-0.212-0.502z';
-				break;
-
-			case 'stop':
-				svg[0] = '0 0 20 20';
-				svg[1] = 'M0 18.036v-15.714q0-0.29 0.212-0.502t0.502-0.212h15.714q0.29 0 0.502 0.212t0.212 0.502v15.714q0 0.29-0.212 0.502t-0.502 0.212h-15.714q-0.29 0-0.502-0.212t-0.212-0.502z';
+				svg[2] = 'icon-pause';
+				svg[3] = this.pauseButtonImg;
 				break;
 
 			case 'restart':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M18 8h-6l2.243-2.243c-1.133-1.133-2.64-1.757-4.243-1.757s-3.109 0.624-4.243 1.757c-1.133 1.133-1.757 2.64-1.757 4.243s0.624 3.109 1.757 4.243c1.133 1.133 2.64 1.757 4.243 1.757s3.109-0.624 4.243-1.757c0.095-0.095 0.185-0.192 0.273-0.292l1.505 1.317c-1.466 1.674-3.62 2.732-6.020 2.732-4.418 0-8-3.582-8-8s3.582-8 8-8c2.209 0 4.209 0.896 5.656 2.344l2.344-2.344v6z';
+				svg[2] = 'icon-restart';
+				svg[3] = this.restartButtonImg;
 				break;
 
 			case 'rewind':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M11.25 3.125v6.25l6.25-6.25v13.75l-6.25-6.25v6.25l-6.875-6.875z';
+				svg[2] = 'icon-rewind';
+				svg[3] = this.rewindButtonImg;
 				break;
 
 			case 'forward':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10 16.875v-6.25l-6.25 6.25v-13.75l6.25 6.25v-6.25l6.875 6.875z';
+				svg[2] = 'icon-forward';
+				svg[3] = this.forwardButtonImg;
 				break;
 
 			case 'previous':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M5 17.5v-15h2.5v6.875l6.25-6.25v13.75l-6.25-6.25v6.875z';
+				svg[2] = 'icon-previous';
+				svg[3] = this.previousButtonImg;
 				break;
 
 			case 'next':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M15 2.5v15h-2.5v-6.875l-6.25 6.25v-13.75l6.25 6.25v-6.875z';
+				svg[2] = 'icon-next';
+				svg[3] = this.nextButtonImg;
 				break;
 
 			case 'slower':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0 7.321q0-0.29 0.212-0.502t0.502-0.212h10q0.29 0 0.502 0.212t0.212 0.502-0.212 0.502l-5 5q-0.212 0.212-0.502 0.212t-0.502-0.212l-5-5q-0.212-0.212-0.212-0.502z';
+				svg[2] = 'icon-slower';
+				svg[3] = this.slowerButtonImg;
 				break;
 
 			case 'faster':
 				svg[0] = '0 0 11 20';
 				svg[1] = 'M0 12.411q0-0.29 0.212-0.502l5-5q0.212-0.212 0.502-0.212t0.502 0.212l5 5q0.212 0.212 0.212 0.502t-0.212 0.502-0.502 0.212h-10q-0.29 0-0.502-0.212t-0.212-0.502z';
+				svg[2] = 'icon-faster';
+				svg[3] = this.fasterButtonImg;
 				break;
 
 			case 'turtle':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M17.212 3.846c-0.281-0.014-0.549 0.025-0.817 0.144-1.218 0.542-1.662 2.708-2.163 3.942-1.207 2.972-7.090 4.619-11.755 5.216-0.887 0.114-1.749 0.74-2.428 1.466 0.82-0.284 2.126-0.297 2.74 0.144 0.007 0.488-0.376 1.062-0.625 1.37-0.404 0.5-0.398 0.793 0.12 0.793 0.473 0 0.752 0.007 1.635 0 0.393-0.003 0.618-0.16 1.49-1.49 3.592 0.718 5.986-0.264 5.986-0.264s0.407 1.755 1.418 1.755h1.49c0.633 0 0.667-0.331 0.625-0.433-0.448-1.082-0.68-1.873-0.769-2.5-0.263-1.857 0.657-3.836 2.524-5.457 0.585 0.986 2.253 0.845 2.909-0.096s0.446-2.268-0.192-3.221c-0.49-0.732-1.345-1.327-2.188-1.37zM8.221 4.663c-0.722-0.016-1.536 0.111-2.5 0.409-4.211 1.302-4.177 4.951-3.51 5.745 0 0-0.955 0.479-0.409 1.274 0.448 0.652 3.139 0.191 5.409-0.529s4.226-1.793 5.312-2.692c0.948-0.785 0.551-2.106-0.505-1.947-0.494-0.98-1.632-2.212-3.798-2.26zM18.846 5.962c0.325 0 0.577 0.252 0.577 0.577s-0.252 0.577-0.577 0.577c-0.325 0-0.577-0.252-0.577-0.577s0.252-0.577 0.577-0.577z';
+				svg[2] = 'icon-turtle';
+				svg[3] = this.slowerButtonImg;
 				break;
 
 			case 'rabbit':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10.817 0c-2.248 0-1.586 0.525-1.154 0.505 1.551-0.072 5.199 0.044 6.851 2.428 0 0-1.022-2.933-5.697-2.933zM10.529 0.769c-2.572 0-2.837 0.51-2.837 1.106 0 0.545 1.526 0.836 2.524 0.697 2.778-0.386 4.231-0.12 5.264 0.865-1.010 0.779-0.75 1.401-1.274 1.851-1.093 0.941-2.643-0.673-4.976-0.673-2.496 0-4.712 1.92-4.712 4.76-0.157-0.537-0.769-0.913-1.442-0.913-0.974 0-1.514 0.637-1.514 1.49 0 0.769 1.13 1.791 2.861 0.938 0.499 1.208 2.265 1.364 2.452 1.418 0.538 0.154 1.875 0.098 1.875 0.865 0 0.794-1.034 1.094-1.034 1.707 0 1.070 1.758 0.873 2.284 1.034 1.683 0.517 2.103 1.214 2.788 2.212 0.771 1.122 2.572 1.408 2.572 0.625 0-3.185-4.413-4.126-4.399-4.135 0.608-0.382 2.139-1.397 2.139-3.534 0-1.295-0.703-2.256-1.755-2.861 1.256 0.094 2.572 1.205 2.572 2.74 0 1.877-0.653 2.823-0.769 2.957 1.975-1.158 3.193-3.91 3.029-6.37 0.61 0.401 1.27 0.577 1.971 0.625 0.751 0.052 1.475-0.225 1.635-0.529 0.38-0.723 0.162-2.321-0.12-2.837-0.763-1.392-2.236-1.73-3.606-1.683-1.202-1.671-3.812-2.356-5.529-2.356zM1.37 3.077l-0.553 1.538h3.726c0.521-0.576 1.541-1.207 2.284-1.538h-5.457zM18.846 5.192c0.325 0 0.577 0.252 0.577 0.577s-0.252 0.577-0.577 0.577c-0.325 0-0.577-0.252-0.577-0.577s0.252-0.577 0.577-0.577zM0.553 5.385l-0.553 1.538h3.197c0.26-0.824 0.586-1.328 0.769-1.538h-3.413z';
+				svg[2] = 'icon-rabbit';
+				svg[3] = this.fasterButtonImg;
 				break;
 
 			case 'ellipsis':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10.001 7.8c-1.215 0-2.201 0.985-2.201 2.2s0.986 2.2 2.201 2.2c1.215 0 2.199-0.985 2.199-2.2s-0.984-2.2-2.199-2.2zM3.001 7.8c-1.215 0-2.201 0.985-2.201 2.2s0.986 2.2 2.201 2.2c1.215 0 2.199-0.986 2.199-2.2s-0.984-2.2-2.199-2.2zM17.001 7.8c-1.215 0-2.201 0.985-2.201 2.2s0.986 2.2 2.201 2.2c1.215 0 2.199-0.985 2.199-2.2s-0.984-2.2-2.199-2.2z';
+				svg[2] = 'icon-ellipsis';
+				svg[3] = false;
 				break;
 
 			case 'pipe':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10.15 0.179h0.623c0.069 0 0.127 0.114 0.127 0.253v19.494c0 0.139-0.057 0.253-0.127 0.253h-1.247c-0.069 0-0.126-0.114-0.126-0.253v-19.494c0-0.139 0.057-0.253 0.126-0.253h0.623z';
+				svg[2] = 'icon-pipe';
+				svg[3] = false;
 				break;
 
 			case 'captions':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0.033 3.624h19.933v12.956h-19.933v-12.956zM18.098 10.045c-0.025-2.264-0.124-3.251-0.743-3.948-0.112-0.151-0.322-0.236-0.496-0.344-0.606-0.386-3.465-0.526-6.782-0.526s-6.313 0.14-6.907 0.526c-0.185 0.108-0.396 0.193-0.519 0.344-0.607 0.697-0.693 1.684-0.731 3.948 0.037 2.265 0.124 3.252 0.731 3.949 0.124 0.161 0.335 0.236 0.519 0.344 0.594 0.396 3.59 0.526 6.907 0.547 3.317-0.022 6.176-0.151 6.782-0.547 0.174-0.108 0.384-0.183 0.496-0.344 0.619-0.697 0.717-1.684 0.743-3.949v0 0zM9.689 9.281c-0.168-1.77-1.253-2.813-3.196-2.813-1.773 0-3.168 1.387-3.168 3.617 0 2.239 1.271 3.636 3.372 3.636 1.676 0 2.851-1.071 3.035-2.852h-2.003c-0.079 0.661-0.397 1.168-1.068 1.168-1.059 0-1.253-0.91-1.253-1.876 0-1.33 0.442-2.010 1.174-2.010 0.653 0 1.068 0.412 1.13 1.129h1.977zM16.607 9.281c-0.167-1.77-1.252-2.813-3.194-2.813-1.773 0-3.168 1.387-3.168 3.617 0 2.239 1.271 3.636 3.372 3.636 1.676 0 2.851-1.071 3.035-2.852h-2.003c-0.079 0.661-0.397 1.168-1.068 1.168-1.059 0-1.253-0.91-1.253-1.876 0-1.33 0.441-2.010 1.174-2.010 0.653 0 1.068 0.412 1.13 1.129h1.976z';
+				svg[2] = 'icon-captions';
+				svg[3] = this.captionsButtonImg;
 				break;
 
 			case 'descriptions':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M17.623 3.57h-1.555c1.754 1.736 2.763 4.106 2.763 6.572 0 2.191-0.788 4.286-2.189 5.943h1.484c1.247-1.704 1.945-3.792 1.945-5.943-0-2.418-0.886-4.754-2.447-6.572v0zM14.449 3.57h-1.55c1.749 1.736 2.757 4.106 2.757 6.572 0 2.191-0.788 4.286-2.187 5.943h1.476c1.258-1.704 1.951-3.792 1.951-5.943-0-2.418-0.884-4.754-2.447-6.572v0zM11.269 3.57h-1.542c1.752 1.736 2.752 4.106 2.752 6.572 0 2.191-0.791 4.286-2.181 5.943h1.473c1.258-1.704 1.945-3.792 1.945-5.943 0-2.418-0.876-4.754-2.447-6.572v0zM10.24 9.857c0 3.459-2.826 6.265-6.303 6.265v0.011h-3.867v-12.555h3.896c3.477 0 6.274 2.806 6.274 6.279v0zM6.944 9.857c0-1.842-1.492-3.338-3.349-3.338h-0.876v6.686h0.876c1.858 0 3.349-1.498 3.349-3.348v0z';
+				svg[2] = 'icon-descriptions';
+				svg[3] = this.descriptionsButtonImg;
 				break;
 
 			case 'sign':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10.954 10.307c0.378 0.302 0.569 1.202 0.564 1.193 0.697 0.221 1.136 0.682 1.136 0.682 1.070-0.596 1.094-0.326 1.558-0.682 0.383-0.263 0.366-0.344 0.567-1.048 0.187-0.572-0.476-0.518-1.021-1.558-0.95 0.358-1.463 0.196-1.784 0.167-0.145-0.020-0.12 0.562-1.021 1.247zM14.409 17.196c-0.133 0.182-0.196 0.218-0.363 0.454-0.28 0.361 0.076 0.906 0.253 0.82 0.206-0.076 0.341-0.488 0.567-0.623 0.115-0.061 0.422-0.513 0.709-0.82 0.211-0.238 0.363-0.344 0.564-0.594 0.341-0.422 0.412-0.744 0.709-1.193 0.184-0.236 0.312-0.307 0.481-0.594 0.886-1.679 0.628-2.432 1.475-3.629 0.26-0.353 0.552-0.442 0.964-0.653 0.383-2.793-0.888-4.356-0.879-4.361-1.067 0.623-1.644 0.879-2.751 0.82-0.417-0.005-0.636-0.182-1.048-0.145-0.385 0.015-0.582 0.159-0.964 0.29-0.589 0.182-0.91 0.344-1.529 0.535-0.393 0.11-0.643 0.115-1.050 0.255-0.348 0.147-0.182 0.029-0.427 0.312-0.317 0.348-0.238 0.623-0.535 1.222-0.371 0.785-0.326 0.891-0.115 0.987-0.14 0.402-0.174 0.672-0.14 1.107 0.039 0.331-0.101 0.562 0.255 0.825 0.483 0.361 1.499 1.205 1.757 1.217 0.39-0.012 1.521 0.029 2.096-0.368 0.13-0.081 0.167-0.162 0.056 0.145-0.022 0.037-1.433 1.136-1.585 1.131-1.794 0.056-1.193 0.157-1.303 0.115-0.091 0-0.955-1.055-1.477-0.682-0.196 0.12-0.287 0.236-0.363 0.452 0.066 0.137 0.383 0.358 0.675 0.54 0.422 0.27 0.461 0.552 0.881 0.653 0.513 0.115 1.060 0.039 1.387 0.081 0.125 0.034 1.256-0.297 1.961-0.675 0.65-0.336-0.898 0.648-1.276 1.131-1.141 0.358-0.82 0.373-1.362 0.483-0.503 0.115-0.479 0.086-0.822 0.196-0.356 0.086-0.648 0.572-0.312 0.825 0.201 0.167 0.827-0.066 1.445-0.086 0.275-0.005 1.391-0.518 1.644-0.653 0.633-0.339 1.099-0.81 1.472-1.077 0.518-0.361-0.584 0.991-1.050 1.558zM8.855 9.799c-0.378-0.312-0.569-1.212-0.564-1.217-0.697-0.206-1.136-0.667-1.136-0.653-1.070 0.582-1.099 0.312-1.558 0.653-0.388 0.277-0.366 0.363-0.567 1.045-0.187 0.594 0.471 0.535 1.021 1.561 0.95-0.344 1.463-0.182 1.784-0.142 0.145 0.010 0.12-0.572 1.021-1.247zM5.4 2.911c0.133-0.191 0.196-0.228 0.368-0.454 0.27-0.371-0.081-0.915-0.253-0.849-0.211 0.096-0.346 0.508-0.599 0.653-0.093 0.052-0.4 0.503-0.682 0.82-0.211 0.228-0.363 0.334-0.564 0.599-0.346 0.407-0.412 0.729-0.709 1.161-0.184 0.258-0.317 0.324-0.481 0.621-0.886 1.669-0.631 2.422-1.475 3.6-0.26 0.38-0.552 0.461-0.964 0.682-0.383 2.788 0.883 4.346 0.879 4.336 1.068-0.609 1.639-0.861 2.751-0.825 0.417 0.025 0.636 0.201 1.048 0.174 0.385-0.025 0.582-0.169 0.964-0.285 0.589-0.196 0.91-0.358 1.499-0.54 0.422-0.12 0.672-0.125 1.080-0.285 0.348-0.128 0.182-0.010 0.427-0.282 0.312-0.358 0.238-0.633 0.508-1.217 0.398-0.8 0.353-0.906 0.142-0.991 0.135-0.412 0.174-0.677 0.14-1.107-0.044-0.336 0.101-0.572-0.255-0.82-0.483-0.375-1.499-1.22-1.752-1.222-0.395 0.002-1.526-0.039-2.101 0.339-0.13 0.101-0.167 0.182-0.056-0.11 0.022-0.052 1.433-1.148 1.585-1.163 1.794-0.039 1.193-0.14 1.303-0.088 0.091-0.007 0.955 1.045 1.477 0.682 0.191-0.13 0.287-0.245 0.368-0.452-0.071-0.147-0.388-0.368-0.68-0.537-0.422-0.282-0.464-0.564-0.881-0.655-0.513-0.125-1.065-0.049-1.387-0.11-0.125-0.015-1.256 0.317-1.956 0.68-0.66 0.351 0.893-0.631 1.276-1.136 1.136-0.339 0.81-0.353 1.36-0.479 0.501-0.101 0.476-0.071 0.82-0.172 0.351-0.096 0.648-0.577 0.312-0.849-0.206-0.152-0.827 0.081-1.44 0.086-0.28 0.020-1.396 0.533-1.649 0.677-0.633 0.329-1.099 0.8-1.472 1.048-0.523 0.38 0.584-0.967 1.050-1.529z';
+				svg[2] = 'icon-sign';
+				svg[3] = this.signButtonImg;
 				break;
 
 			case 'mute':
 			case 'volume-mute':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M7.839 1.536c0.501-0.501 0.911-0.331 0.911 0.378v16.172c0 0.709-0.41 0.879-0.911 0.378l-4.714-4.713h-3.125v-7.5h3.125l4.714-4.714zM18.75 12.093v1.657h-1.657l-2.093-2.093-2.093 2.093h-1.657v-1.657l2.093-2.093-2.093-2.093v-1.657h1.657l2.093 2.093 2.093-2.093h1.657v1.657l-2.093 2.093z';
+				svg[2] = 'icon-volume-mute';
+				svg[3] = this.imgPath + 'volume-mute.png';
 				break;
 
 			case 'volume-soft':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M10.723 14.473c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 1.584-1.584 1.584-4.161 0-5.745-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c2.315 2.315 2.315 6.082 0 8.397-0.183 0.183-0.423 0.275-0.663 0.275zM7.839 1.536c0.501-0.501 0.911-0.331 0.911 0.378v16.172c0 0.709-0.41 0.879-0.911 0.378l-4.714-4.713h-3.125v-7.5h3.125l4.714-4.714z';
+				svg[2] = 'icon-volume-soft';
+				svg[3] = this.imgPath + 'volume-soft.png';
 				break;
 
 			case 'volume-medium':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M14.053 16.241c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 2.559-2.559 2.559-6.722 0-9.281-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c1.594 1.594 2.471 3.712 2.471 5.966s-0.878 4.373-2.471 5.966c-0.183 0.183-0.423 0.275-0.663 0.275zM10.723 14.473c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 1.584-1.584 1.584-4.161 0-5.745-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c2.315 2.315 2.315 6.082 0 8.397-0.183 0.183-0.423 0.275-0.663 0.275zM7.839 1.536c0.501-0.501 0.911-0.331 0.911 0.378v16.172c0 0.709-0.41 0.879-0.911 0.378l-4.714-4.713h-3.125v-7.5h3.125l4.714-4.714z';
+				svg[2] = 'icon-volume-medium';
+				svg[3] = this.imgPath + 'volume-medium.png';
 				break;
 
 			case 'volume-loud':
 				svg[0] = '0 0 21 20';
 				svg[1] = 'M17.384 18.009c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 1.712-1.712 2.654-3.988 2.654-6.408s-0.943-4.696-2.654-6.408c-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c2.066 2.066 3.204 4.813 3.204 7.734s-1.138 5.668-3.204 7.734c-0.183 0.183-0.423 0.275-0.663 0.275zM14.053 16.241c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 2.559-2.559 2.559-6.722 0-9.281-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c1.594 1.594 2.471 3.712 2.471 5.966s-0.878 4.373-2.471 5.966c-0.183 0.183-0.423 0.275-0.663 0.275zM10.723 14.473c-0.24 0-0.48-0.092-0.663-0.275-0.366-0.366-0.366-0.96 0-1.326 1.584-1.584 1.584-4.161 0-5.745-0.366-0.366-0.366-0.96 0-1.326s0.96-0.366 1.326 0c2.315 2.315 2.315 6.082 0 8.397-0.183 0.183-0.423 0.275-0.663 0.275zM7.839 1.536c0.501-0.501 0.911-0.331 0.911 0.378v16.172c0 0.709-0.41 0.879-0.911 0.378l-4.714-4.713h-3.125v-7.5h3.125l4.714-4.714z';
+				svg[2] = 'icon-volume-loud';
+				svg[3] = this.imgPath + 'volume-loud.png';
 				break;
 
 			case 'chapters':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M5 2.5v17.5l6.25-6.25 6.25 6.25v-17.5zM15 0h-12.5v17.5l1.25-1.25v-15h11.25z';
+				svg[2] = 'icon-chapters';
+				svg[3] = this.chaptersButtonImg;
 				break;
 
 			case 'transcript':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0 19.107v-17.857q0-0.446 0.313-0.759t0.759-0.313h8.929v6.071q0 0.446 0.313 0.759t0.759 0.313h6.071v11.786q0 0.446-0.313 0.759t-0.759 0.312h-15q-0.446 0-0.759-0.313t-0.313-0.759zM4.286 15.536q0 0.156 0.1 0.257t0.257 0.1h7.857q0.156 0 0.257-0.1t0.1-0.257v-0.714q0-0.156-0.1-0.257t-0.257-0.1h-7.857q-0.156 0-0.257 0.1t-0.1 0.257v0.714zM4.286 12.679q0 0.156 0.1 0.257t0.257 0.1h7.857q0.156 0 0.257-0.1t0.1-0.257v-0.714q0-0.156-0.1-0.257t-0.257-0.1h-7.857q-0.156 0-0.257 0.1t-0.1 0.257v0.714zM4.286 9.821q0 0.156 0.1 0.257t0.257 0.1h7.857q0.156 0 0.257-0.1t0.1-0.257v-0.714q0-0.156-0.1-0.257t-0.257-0.1h-7.857q-0.156 0-0.257 0.1t-0.1 0.257v0.714zM11.429 5.893v-5.268q0.246 0.156 0.402 0.313l4.554 4.554q0.156 0.156 0.313 0.402h-5.268z';
+				svg[2] = 'icon-transcript';
+				svg[3] = this.transcriptButtonImg;
 				break;
 
 			case 'preferences':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M18.238 11.919c-1.049-1.817-0.418-4.147 1.409-5.205l-1.965-3.404c-0.562 0.329-1.214 0.518-1.911 0.518-2.1 0-3.803-1.714-3.803-3.828h-3.931c0.005 0.653-0.158 1.314-0.507 1.919-1.049 1.818-3.382 2.436-5.212 1.382l-1.965 3.404c0.566 0.322 1.056 0.793 1.404 1.396 1.048 1.815 0.42 4.139-1.401 5.2l1.965 3.404c0.56-0.326 1.209-0.513 1.902-0.513 2.094 0 3.792 1.703 3.803 3.808h3.931c-0.002-0.646 0.162-1.3 0.507-1.899 1.048-1.815 3.375-2.433 5.203-1.387l1.965-3.404c-0.562-0.322-1.049-0.791-1.395-1.391zM10 14.049c-2.236 0-4.050-1.813-4.050-4.049s1.813-4.049 4.050-4.049 4.049 1.813 4.049 4.049c-0 2.237-1.813 4.049-4.049 4.049z';
+				svg[2] = 'icon-preferences';
+				svg[3] = this.prefsButtonImg;
 				break;
 
 			case 'close':
 				svg[0] = '0 0 16 20';
 				svg[1] = 'M1.228 14.933q0-0.446 0.312-0.759l3.281-3.281-3.281-3.281q-0.313-0.313-0.313-0.759t0.313-0.759l1.518-1.518q0.313-0.313 0.759-0.313t0.759 0.313l3.281 3.281 3.281-3.281q0.313-0.313 0.759-0.313t0.759 0.313l1.518 1.518q0.313 0.313 0.313 0.759t-0.313 0.759l-3.281 3.281 3.281 3.281q0.313 0.313 0.313 0.759t-0.313 0.759l-1.518 1.518q-0.313 0.313-0.759 0.313t-0.759-0.313l-3.281-3.281-3.281 3.281q-0.313 0.313-0.759 0.313t-0.759-0.313l-1.518-1.518q-0.313-0.313-0.313-0.759z';
+				svg[2] = 'icon-close';
+				svg[3] = null;
 				break;
 
 			case 'fullscreen-expand':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0 18.036v-5q0-0.29 0.212-0.502t0.502-0.212 0.502 0.212l1.607 1.607 3.705-3.705q0.112-0.112 0.257-0.112t0.257 0.112l1.272 1.272q0.112 0.112 0.112 0.257t-0.112 0.257l-3.705 3.705 1.607 1.607q0.212 0.212 0.212 0.502t-0.212 0.502-0.502 0.212h-5q-0.29 0-0.502-0.212t-0.212-0.502zM8.717 8.393q0-0.145 0.112-0.257l3.705-3.705-1.607-1.607q-0.212-0.212-0.212-0.502t0.212-0.502 0.502-0.212h5q0.29 0 0.502 0.212t0.212 0.502v5q0 0.29-0.212 0.502t-0.502 0.212-0.502-0.212l-1.607-1.607-3.705 3.705q-0.112 0.112-0.257 0.112t-0.257-0.112l-1.272-1.272q-0.112-0.112-0.112-0.257z';
+				svg[2] = 'icon-fullscreen-expand';
+				svg[3] = this.fullscreenExpandButtonImg;
 				break;
 
 			case 'fullscreen-collapse':
 				svg[0] = '0 0 20 20';
 				svg[1] = 'M0.145 16.964q0-0.145 0.112-0.257l3.705-3.705-1.607-1.607q-0.212-0.212-0.212-0.502t0.212-0.502 0.502-0.212h5q0.29 0 0.502 0.212t0.212 0.502v5q0 0.29-0.212 0.502t-0.502 0.212-0.502-0.212l-1.607-1.607-3.705 3.705q-0.112 0.112-0.257 0.112t-0.257-0.112l-1.272-1.272q-0.112-0.112-0.112-0.257zM8.571 9.464v-5q0-0.29 0.212-0.502t0.502-0.212 0.502 0.212l1.607 1.607 3.705-3.705q0.112-0.112 0.257-0.112t0.257 0.112l1.272 1.272q0.112 0.112 0.112 0.257t-0.112 0.257l-3.705 3.705 1.607 1.607q0.212 0.212 0.212 0.502t-0.212 0.502-0.502 0.212h-5q-0.29 0-0.502-0.212t-0.212-0.502z';
+				svg[2] = 'icon-fullscreen-collapse';
+				svg[3] = this.fullscreenCollapseButtonImg;
 				break;
 
 			case 'help':
 				svg[0] = '0 0 11 20';
 				svg[1] = 'M0.577 6.317q-0.028-0.167 0.061-0.313 1.786-2.969 5.179-2.969 0.893 0 1.797 0.346t1.629 0.926 1.183 1.423 0.458 1.769q0 0.603-0.173 1.127t-0.391 0.854-0.614 0.664-0.642 0.485-0.681 0.396q-0.458 0.257-0.765 0.725t-0.307 0.748q0 0.19-0.134 0.363t-0.313 0.173h-2.679q-0.167 0-0.285-0.206t-0.117-0.419v-0.502q0-0.926 0.725-1.747t1.596-1.211q0.658-0.301 0.938-0.625t0.279-0.848q0-0.469-0.519-0.826t-1.2-0.357q-0.725 0-1.205 0.324-0.391 0.279-1.194 1.283-0.145 0.179-0.346 0.179-0.134 0-0.279-0.089l-1.83-1.395q-0.145-0.112-0.173-0.279zM3.786 16.875v-2.679q0-0.179 0.134-0.313t0.313-0.134h2.679q0.179 0 0.313 0.134t0.134 0.313v2.679q0 0.179-0.134 0.313t-0.313 0.134h-2.679q-0.179 0-0.313-0.134t-0.134-0.313z';
+				svg[2] = 'icon-help';
+				svg[3] = this.helpButtonImg;
 				break;
 		}
 
@@ -959,17 +863,11 @@ var AblePlayerInstances = [];
 	// Can call again after updating this.media so long as new media element has the same ID.
 	AblePlayer.prototype.reinitialize = function () {
 
-		var deferred, promise, thisObj, errorMsg, srcFile;
+		var deferred, promise, thisObj;
 
 		deferred = new $.Deferred();
 		promise = deferred.promise();
 		thisObj = this;
-
-		// if F12 Developer Tools aren't open in IE (through 9, no longer a problen in IE10)
-		// console.log causes an error - can't use debug without a console to log messages to
-		if (! window.console) {
-			this.debug = false;
-		}
 
 		this.startedPlaying = false;
 		// TODO: Move this setting to cookie.
@@ -983,11 +881,9 @@ var AblePlayerInstances = [];
 		// Set media type to 'audio' or 'video'; this determines some of the behavior of player creation.
 		if (this.$media.is('audio')) {
 			this.mediaType = 'audio';
-		}
-		else if (this.$media.is('video')) {
+		} else if (this.$media.is('video')) {
 			this.mediaType = 'video';
-		}
-		else {
+		} else {
 			// Able Player was initialized with some element other than <video> or <audio>
 			this.provideFallback();
 			deferred.fail();
@@ -1009,16 +905,13 @@ var AblePlayerInstances = [];
 
 	AblePlayer.prototype.setPlayerSize = function(width, height) {
 
-		var mediaId = this.$media.attr('id');
-
 		// Called again after width and height are known
 
 		if (this.mediaType === 'audio') {
 			if (this.playerWidth) {
 				this.$ableWrapper.css('width',this.playerWidth + 'px');
 			}
-		}
-		else if (width > 0 && height > 0) {
+		} else if (width > 0 && height > 0) {
 			this.playerWidth = width;
 			this.playerHeight = height;
 			this.aspectRatio = height / width;
@@ -1027,77 +920,15 @@ var AblePlayerInstances = [];
 
 	AblePlayer.prototype.setIconType = function() {
 
-		// returns either "svg", "font" or "image" (in descending order of preference)
-		// Test for support of each type. If not supported, test the next type.
-		// last resort is image icons
-
-		var $tempButton, $testButton, controllerFont;
-
+		// Tests for SVG and font support removed in version 4.7.0.
+		// Browser support for these is no longer a risk; they are widely supported in all browsers.
+		// This now only returns 'svg' or 'false' if iconType is forced.
 		if (this.forceIconType) {
 			// use value specified in data-icon-type
 			return false;
 		}
 
-		// test for SVG support
-		// Test this method widely; failed as expected on IE8 and below
-		// https://stackoverflow.com/a/27568129/744281
-		if (!!(document.createElementNS && document.createElementNS('http://www.w3.org/2000/svg','svg').createSVGRect)) {
-			// browser supports SVG
-			this.iconType = 'svg';
-		}
-		else {
-			// browser does NOT support SVG
-			// test whether browser can support icon fonts, and whether user has overriding the default style sheet
-			// which could cause problems with proper display of the icon fonts
-			if (window.getComputedStyle) {
-
-				// webkit doesn't return calculated styles unless element has been added to the DOM
-				// and is visible (note: visibly clipped is considered "visible")
-				// use playpauseButton for font-family test if it exists; otherwise must create a new temp button
-				if ($('span.icon-play').length) {
-					$testButton = $('span.icon-play');
-				}
-				else {
-					$tempButton = $('<span>',{
-						'class': 'icon-play able-clipped'
-					});
-					$('body').append($tempButton);
-					$testButton = $tempButton;
-				}
-
-				// the following retrieves the computed value of font-family
-				// tested in Firefox 45.x with "Allow pages to choose their own fonts" unchecked - works!
-				// tested in Chrome 49.x with Font Changer plugin - works!
-				// tested in IE with user-defined style sheet enables - works!
-				// It does NOT account for users who have "ignore font styles on web pages" checked in IE
-				// There is no known way to check for that ???
-				controllerFont = window.getComputedStyle($testButton.get(0), null).getPropertyValue('font-family');
-				if (typeof controllerFont !== 'undefined') {
-					if (controllerFont.indexOf('able') !== -1) {
-						this.iconType = 'font';
-					}
-					else {
-						this.iconType = 'image';
-					}
-				}
-				else {
-					// couldn't get computed font-family; use images to be safe
-					this.iconType = 'image';
-				}
-			}
-			else {
-				// window.getComputedStyle is not supported (IE 8 and earlier)
-				// No known way to detect computed font
-				// The following retrieves the value from the style sheet, not the computed font
-				// controllerFont = $tempButton.get(0).currentStyle.fontFamily;
-				// It will therefore return "able", even if the user is overriding that with a custom style sheet
-				// To be safe, use images
-				this.iconType = 'image';
-			}
-			if (typeof $tempButton !== 'undefined') {
-				$tempButton.remove();
-			}
-		}
+		this.iconType = 'svg';
 	};
 
 	// Perform one-time setup for this instance of player; called after player is first initialized.
@@ -1108,8 +939,7 @@ var AblePlayerInstances = [];
 
 		if (this.$media.attr('id')) {
 			this.mediaId = this.$media.attr('id');
-		}
-		else {
+		} else {
 			// Ensure the base media element always has an ID.
 			this.mediaId = "ableMediaId_" + this.ableIndex;
 			this.$media.attr('id', this.mediaId);
@@ -1163,13 +993,8 @@ var AblePlayerInstances = [];
 				$(this).find('li span').attr('aria-hidden','true');
 				thisObj.playlistIndex = 0;
 				var dataEmbedded = $(this).data('embedded');
-				if (typeof dataEmbedded !== 'undefined' && dataEmbedded !== false) {
-					// embed playlist within player
-					thisObj.playlistEmbed = true;
-				}
-				else {
-					thisObj.playlistEmbed = false;
-				}
+				// is playlist embedded within player?
+				thisObj.playlistEmbed = (typeof dataEmbedded !== 'undefined' && dataEmbedded !== false) ? true : false;
 			}
 		});
 
@@ -1239,8 +1064,7 @@ var AblePlayerInstances = [];
 
 					thisObj.setupTracks().then(function() {
 						if (thisObj.hasClosedDesc) {
-							if (!thisObj.$descDiv ||
-								(thisObj.$descDiv && !($.contains(thisObj.$ableDiv[0], thisObj.$descDiv[0])))) {
+							if (!thisObj.$descDiv || (thisObj.$descDiv && !($.contains(thisObj.$ableDiv[0], thisObj.$descDiv[0])))) {
 								// descDiv either doesn't exist, or exists in an orphaned state
 								// Either way, it needs to be rebuilt...
 								thisObj.injectTextDescriptionArea();
@@ -1292,9 +1116,7 @@ var AblePlayerInstances = [];
 									thisObj.setupPopups();
 									thisObj.updateCaption();
 									thisObj.injectVTS();
-									if (thisObj.chaptersDivLocation) {
-										thisObj.populateChaptersDiv();
-									}
+									thisObj.populateChaptersDiv();
 									thisObj.showSearchResults();
 
 									// Go ahead and load media, without user requesting it
@@ -1309,7 +1131,7 @@ var AblePlayerInstances = [];
 									// refreshControls is called twice building/initializing the player
 									// this is the second. Best to pause a bit before executing, to be sure all prior steps are complete
 									setTimeout(function() {
-										thisObj.refreshControls('init');
+										thisObj.refreshControls();
 										deferred.resolve();
 									},100);
 								});
@@ -1332,11 +1154,9 @@ var AblePlayerInstances = [];
 		// First run player specific initialization.
 		if (this.player === 'html5') {
 			playerPromise = this.initHtml5Player();
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			playerPromise = this.initYouTubePlayer();
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			playerPromise = this.initVimeoPlayer();
 		}
 		// After player specific initialization is done, run remaining general initialization.
@@ -1345,15 +1165,12 @@ var AblePlayerInstances = [];
 		playerPromise.done(
 			function () { // done/resolved
 				if (thisObj.useFixedSeekInterval) {
+					// if fixed seekInterval was not already assigned (using value of data-seek-interval)
 					if (!thisObj.seekInterval) {
 						thisObj.seekInterval = thisObj.defaultSeekInterval;
 					}
-					else {
-						// fixed seekInterval was already assigned, using value of data-seek-interval attribute
-					}
 					thisObj.seekIntervalCalculated = true;
-				}
-				else {
+				} else {
 					thisObj.setSeekInterval();
 				}
 				deferred.resolve();
@@ -1368,9 +1185,8 @@ var AblePlayerInstances = [];
 
 	AblePlayer.prototype.initStenoFrame = function() {
 
-		var thisObj, deferred, promise, $iframe;
+		var thisObj, deferred, promise;
 		thisObj = this;
-
 		deferred = new $.Deferred();
 		promise = deferred.promise();
 
@@ -1379,15 +1195,13 @@ var AblePlayerInstances = [];
 			if (this.$stenoFrame[0].contentWindow,document.readyState == 'complete') {
 				// iframe has already loaded
 				deferred.resolve();
-			}
-			else {
+			} else {
 				// iframe has not loaded. Wait for it.
 				this.$stenoFrame.on('load',function() {
 					deferred.resolve();
 				});
 			}
-		}
-		else {
+		} else {
 			// there is no stenoFrame to initialize
 			deferred.resolve();
 		}
@@ -1402,33 +1216,24 @@ var AblePlayerInstances = [];
 		var thisObj, duration;
 		thisObj = this;
 		this.seekInterval = this.defaultSeekInterval;
-		if (this.useChapterTimes) {
-			duration = this.chapterDuration;
-		}
-		else {
-			duration = this.duration;
-		}
+		duration = (this.useChapterTimes) ? this.chapterDuration : this.duration;
+
 		if (typeof duration === 'undefined' || duration < 1) {
 			// no duration; just use default for now but keep trying until duration is available
 			this.seekIntervalCalculated = false;
 			return;
-		}
-		else {
+		} else {
 			if (duration <= 20) {
 				this.seekInterval = 5;	 // 4 steps max
-			}
-			else if (duration <= 30) {
+			} else if (duration <= 30) {
 				this.seekInterval = 6; // 5 steps max
-			}
-			else if (duration <= 40) {
+			} else if (duration <= 40) {
 				this.seekInterval = 8; // 5 steps max
-			}
-			else if (duration <= 100) {
+			} else if (duration <= 100) {
 				this.seekInterval = 10; // 10 steps max
-			}
-			else {
+			} else {
 				// never more than 10 steps from start to end
-				this.seekInterval = (duration / 10);
+				this.seekInterval = Math.round(duration / 10, 0);
 			}
 			this.seekIntervalCalculated = true;
 		}
@@ -1477,32 +1282,32 @@ var AblePlayerInstances = [];
 							// track.language = the iso code for the language
 							// track.kind = 'captions' or 'subtitles'
 							// track.label = the human-readable label
-						}).catch(function(error) {
-							switch (error.name) {
-								case 'InvalidTrackLanguageError':
-									// no track was available with the specified language
-									
-									break;
-								case 'InvalidTrackError':
-									// no track was available with the specified language and kind
-									
-									break;
-								default:
-									// some other error occurred
-									
-									break;
-							}
-						});
-					}
-					else {
-						// disable Vimeo captions.
-						this.vimeoPlayer.disableTextTrack().then(function() {
-							// Vimeo captions disabled
-						}).catch(function(error) {
-							
-						});
-					}
+						}
+					).catch(function(error) {
+						switch (error.name) {
+							case 'InvalidTrackLanguageError':
+								// no track was available with the specified language
+								
+								break;
+							case 'InvalidTrackError':
+								// no track was available with the specified language and kind
+								
+								break;
+							default:
+								// some other error occurred
+								
+								break;
+						}
+					});
+				} else {
+					// disable Vimeo captions.
+					this.vimeoPlayer.disableTextTrack().then(function() {
+						// Vimeo captions disabled
+					}).catch(function(error) {
+						
+					});
 				}
+			}
 		}
 	};
 
@@ -1522,6 +1327,7 @@ var AblePlayerInstances = [];
 		// Keep native player from displaying captions/subtitles by setting textTrack.mode='disabled'
 		// https://dev.w3.org/html5/spec-author-view/video.html#text-track-mode
 		// This *should* work but historically hasn't been supported in all browsers
+		// As of July 2025, 96% supported per https://caniuse.com/?search=text-track-mode.
 		// Workaround for non-supporting browsers is to remove default attribute
 		// We're doing that too in track.js > setupCaptions()
 		var textTracks = this.$media.get(0).textTracks;
@@ -1538,39 +1344,21 @@ var AblePlayerInstances = [];
 
 		// Determine which player to use, if any
 		// return 'html5', 'youtube', 'vimeo', or null
-
-		var i, sourceType, $newItem;
 		if (this.testFallback) {
 			return null;
-		}
-		else if (this.youTubeId) {
-			if (this.mediaType !== 'video') {
-				// attempting to play a YouTube video using an element other than <video>
-				return null;
-			}
-			else {
-				return 'youtube';
-			}
-		}
-		else if (this.vimeoId) {
-			if (this.mediaType !== 'video') {
-				// attempting to play a Vimeo video using an element other than <video>
-				return null;
-			}
-			else {
-				return 'vimeo';
-			}
-
-		}
-		else if (this.media.canPlayType) {
+		} else if (this.youTubeId) {
+			// null if attempting to play a YouTube video using an element other than <video>
+			return  (this.mediaType !== 'video') ? null : 'youtube';
+		} else if (this.vimeoId) {
+			// null if attempting to play a Vimeo video using an element other than <video>
+			return (this.mediaType !== 'video') ? null : 'vimeo';
+		} else if (this.media.canPlayType) {
 			return 'html5';
-		}
-		else {
+		} else {
 			// Browser does not support the available media file
 			return null;
 		}
 	};
-
 })(jQuery);
 
 (function ($) {
@@ -1600,12 +1388,7 @@ var AblePlayerInstances = [];
 			this.setCookie(defaultCookie);
 			cookie = defaultCookie;
 		}
-		if (cookie) {
-			return cookie;
-		}
-		else {
-			return defaultCookie;
-		}
+		return (cookie) ? cookie : defaultCookie;
 	};
 
 	AblePlayer.prototype.updateCookie = function( setting ) {
@@ -1630,8 +1413,7 @@ var AblePlayerInstances = [];
 				cookie.transcript['left'] = windowPos.left;
 				cookie.transcript['width'] = $window.width();
 				cookie.transcript['height'] = $window.height();
-			}
-			else if (setting === 'sign') {
+			} else if (setting === 'sign') {
 				$window = this.$signWindow;
 				windowPos = $window.position();
 				if (typeof cookie.sign === 'undefined') {
@@ -1644,8 +1426,7 @@ var AblePlayerInstances = [];
 				cookie.sign['width'] = $window.width();
 				cookie.sign['height'] = $window.height();
 			}
-		}
-		else if (setting === 'voice') {
+		} else if (setting === 'voice') {
 			if (typeof cookie.voices === 'undefined') {
 				cookie.voices = [];
 			}
@@ -1663,8 +1444,7 @@ var AblePlayerInstances = [];
 				newVoice = {'name':this.prefDescVoice, 'lang':this.prefDescVoiceLang};
 				cookie.voices.push(newVoice);
 			}
-		}
-		else {
+		} else {
 			available = this.getAvailablePreferences();
 			// Rebuild cookie with current cookie values,
 			// replacing the one value that's been changed
@@ -1688,13 +1468,11 @@ var AblePlayerInstances = [];
 		if (this.usingYouTubeCaptions) {
 			// no transcript is possible
 			return ['captions','descriptions','keyboard'];
-		}
-		else if (this.usingVimeoCaptions) {
+		} else if (this.usingVimeoCaptions) {
 			// users cannot control caption appearance
 			// and no transcript is possible
 			return ['descriptions','keyboard'];
-		}
-		else {
+		} else {
 			return ['captions','descriptions','keyboard','transcript'];
 		}
 	}
@@ -1854,12 +1632,15 @@ var AblePlayerInstances = [];
 				'group': 'descriptions',
 				'default': 1 // 0 to 1
 			});
-			prefs.push({
-				'name': 'prefDescPause', // automatically pause when closed description starts
-				'label': this.tt.prefDescPause,
-				'group': 'descriptions',
-				'default': this.defaultDescPause
-			});
+			// Don't enable pause option if video described files in use.
+			if ( this.descMethod !== 'video' ) {
+				prefs.push({
+					'name': 'prefDescPause', // automatically pause when closed description starts
+					'label': this.tt.prefDescPause,
+					'group': 'descriptions',
+					'default': this.defaultDescPause
+				});
+			}
 			prefs.push({
 				'name': 'prefDescVisible', // visibly show closed description (if avilable and used)
 				'label': this.tt.prefDescVisible,
@@ -1890,8 +1671,7 @@ var AblePlayerInstances = [];
 			var defaultValue = available[ii]['default'];
 			if (cookie.preferences[prefName] !== undefined) {
 				this[prefName] = cookie.preferences[prefName];
-			}
-			else {
+			} else {
 				cookie.preferences[prefName] = defaultValue;
 				this[prefName] = defaultValue;
 			}
@@ -1910,19 +1690,12 @@ var AblePlayerInstances = [];
 		// Creates a preferences form and injects it.
 		// form is one of the supported forms (groups) defined in getPreferencesGroups()
 
-		var thisObj, available, descLangs,
-			$prefsDiv, formTitle, introText,
-			$prefsIntro,$prefsIntroP2,p3Text,$prefsIntroP3,i, j,
-			$fieldset, fieldsetClass, fieldsetId,
-			$descFieldset, $descLegend, $legend, legendId,
-			thisPref, $thisDiv, thisClass, thisId, $thisLabel, $thisField,
-			$div1,id1,$radio1,$label1,
-			$div2,id2,$radio2,$label2,
-			options,$thisOption,optionValue,optionLang,optionText,sampleCapsDiv,
-			changedPref,changedSpan,changedText,
-			currentDescState, prefDescVoice,
-			$kbHeading,$kbList,kbLabels,keys,kbListText,$kbListItem,
-			dialog,saveButton,cancelButton;
+		var thisObj, available,
+			$prefsDiv, formTitle, introText, $prefsIntro,$prefsIntroP2,p3Text,$prefsIntroP3,i, j,
+			$fieldset, fieldsetClass, fieldsetId, $legend, legendId, thisPref, $thisDiv, thisClass,
+			thisId, $thisLabel, $thisField, options,$thisOption,optionValue,optionLang,optionText,
+			changedPref,changedSpan,changedText, currentDescState, prefDescVoice, $kbHeading,$kbList,
+			kbLabels,keys,kbListText,$kbListItem, dialog,$saveButton,$cancelButton,$buttonContainer;
 
 		thisObj = this;
 		available = this.getAvailablePreferences();
@@ -1938,8 +1711,7 @@ var AblePlayerInstances = [];
 		if (form == 'captions') {
 			formTitle = this.tt.prefTitleCaptions;
 			// Intro text removed in 4.4.32 to cut down on unnecessary verbiage
-		}
-		else if (form == 'descriptions') {
+		} else if (form == 'descriptions') {
 			formTitle = this.tt.prefTitleDescriptions;
 			var $prefsIntro = $('<p>',{
 				text: this.tt.prefIntroDescription1
@@ -1957,16 +1729,13 @@ var AblePlayerInstances = [];
 				currentDescState = this.tt.prefIntroDescription2 + ' ';
 				currentDescState += '<strong>' + this.tt.prefDescFormatOption1b + '</strong>';
 				currentDescState += ' <em>' + this.tt.and + '</em> <strong>' + this.tt.prefDescFormatOption2b + '</strong>.';
-			}
-			else if (this.hasOpenDesc) {
+			} else if (this.hasOpenDesc) {
 				currentDescState = this.tt.prefIntroDescription2;
 				currentDescState += ' <strong>' + this.tt.prefDescFormatOption1b + '</strong>.';
-			}
-			else if (this.hasClosedDesc) {
+			} else if (this.hasClosedDesc) {
 				currentDescState = this.tt.prefIntroDescription2;
 				currentDescState += ' <strong>' + this.tt.prefDescFormatOption2b + '</strong>.';
-			}
-			else {
+			} else {
 				currentDescState = this.tt.prefIntroDescriptionNone;
 			}
 			$prefsIntroP2 = $('<p>',{
@@ -1982,8 +1751,7 @@ var AblePlayerInstances = [];
 			});
 
 			$prefsDiv.append($prefsIntro,$prefsIntroUL,$prefsIntroP2,$prefsIntroP3);
-		}
-		else if (form == 'keyboard') {
+		} else if (form == 'keyboard') {
 			formTitle = this.tt.prefTitleKeyboard;
 			introText = this.tt.prefIntroKeyboard1;
 			introText += ' ' + this.tt.prefIntroKeyboard2;
@@ -1992,8 +1760,7 @@ var AblePlayerInstances = [];
 				text: introText
 			});
 			$prefsDiv.append($prefsIntro);
-		}
-		else if (form == 'transcript') {
+		} else if (form == 'transcript') {
 			formTitle = this.tt.prefTitleTranscript;
 			// Intro text removed in 4.4.32 to cut down on unnecessary verbiage
 		}
@@ -2008,8 +1775,7 @@ var AblePlayerInstances = [];
 			$legend.attr('id',legendId);
 			$fieldset.attr('aria-labelledby',legendId);
 			$fieldset.append($legend);
-		}
-		else if (form === 'descriptions') {
+		} else if (form === 'descriptions') {
 			$legend = $('<h2>' + this.tt.prefHeadingTextDescription + '</h2>');
 			$legend.attr('id',legendId);
 			$fieldset.attr('aria-labelledby',legendId);
@@ -2044,27 +1810,18 @@ var AblePlayerInstances = [];
 							optionValue = options[j];
 							if (optionValue === 'overlay') {
 								optionText = this.tt.captionsPositionOverlay;
-							}
-							else if (optionValue === 'below') {
+							} else if (optionValue === 'below') {
 								optionValue = options[j];
 								optionText = this.tt.captionsPositionBelow;
 							}
-						}
-						else if (thisPref === 'prefCaptionsFont' || thisPref === 'prefCaptionsColor' || thisPref === 'prefCaptionsBGColor') {
+						} else if (thisPref === 'prefCaptionsFont' || thisPref === 'prefCaptionsColor' || thisPref === 'prefCaptionsBGColor') {
 							optionValue = options[j][0];
 							optionText = options[j][1];
-						}
-						else if (thisPref === 'prefCaptionsOpacity') {
+						} else if (thisPref === 'prefCaptionsOpacity') {
 							optionValue = options[j];
 							optionText = options[j];
-							if (optionValue === '0%') {
-								optionText += ' (' + this.tt.transparent + ')';
-							}
-							else if (optionValue === '100%') {
-								optionText += ' (' + this.tt.solid + ')';
-							}
-						}
-						else {
+							optionText += (optionValue === '0%') ? ' (' + this.tt.transparent + ')' : ' (' + this.tt.solid + ')';
+						} else {
 							optionValue = options[j];
 							optionText = options[j];
 						}
@@ -2078,8 +1835,7 @@ var AblePlayerInstances = [];
 						$thisField.append($thisOption);
 					}
 					$thisDiv.append($thisLabel,$thisField);
-				}
-				else if (form === 'descriptions') {
+				} else if (form === 'descriptions') {
 					$thisLabel = $('<label for="' + thisId + '"> ' + available[i]['label'] + '</label>');
 					if (thisPref === 'prefDescPause' || thisPref === 'prefDescVisible') {
 						// these preferences are checkboxes
@@ -2095,14 +1851,13 @@ var AblePlayerInstances = [];
 							$thisField.prop('checked',true);
 						}
 						$thisDiv.append($thisField,$thisLabel);
-					}
-					else if (this.synth) {
+					} else if (this.synth) {
 						// Only show these options if browser supports speech synthesis
 						$thisDiv.addClass('able-prefs-select');
 						$thisField = $('<select>',{
 							name: thisPref,
 							id: thisId,
-						});						
+						});
 						if (thisPref === 'prefDescVoice' && this.descVoices.length) {
 							prefDescVoice = this.getPrefDescVoice();
 							for (j=0; j < this.descVoices.length; j++) {
@@ -2120,12 +1875,10 @@ var AblePlayerInstances = [];
 								$thisField.append($thisOption);
 							}
 							this.$voiceSelectField = $thisField;
-						}
-						else {
+						} else {
 							if (thisPref == 'prefDescPitch') { // 0 to 2
 								options = [0,0.5,1,1.5,2];
-							}
-							else if (thisPref == 'prefDescRate') { // 0.1 to 10
+							} else if (thisPref == 'prefDescRate') { // 0.1 to 10
 								// Tests with a variety of voices on MacOS and Windows
 								// yielded the following choices that seem reasonable for audio description:
 								// 0.5 - too slow (exclude this)
@@ -2143,8 +1896,7 @@ var AblePlayerInstances = [];
 								// Note: if these values are modified, must also modfiy them
 								// in makePrefsValueReadable()
 								options = [0.7,0.8,0.9,1,1.1,1.2,1.5,2,2.5,3];
-							}
-							else if (thisPref == 'prefDescVolume') { // 0 (mute) to 1
+							} else if (thisPref == 'prefDescVolume') { // 0 (mute) to 1
 								options = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
 							}
 							if (typeof options !== 'undefined') {
@@ -2169,8 +1921,7 @@ var AblePlayerInstances = [];
 						});
 						$thisDiv.append($thisLabel,$thisField);
 					}
-				}
-				else { // all other fields are checkboxes
+				} else { // all other fields are checkboxes
 					$thisLabel = $('<label for="' + thisId + '"> ' + available[i]['label'] + '</label>');
 					$thisField = $('<input>',{
 						type: 'checkbox',
@@ -2189,30 +1940,25 @@ var AblePlayerInstances = [];
 							if (changedPref === 'prefAltKey') {
 								changedSpan = '.able-modkey-alt';
 								changedText = thisObj.tt.prefAltKey + ' + ';
-							}
-							else if (changedPref === 'prefCtrlKey') {
+							} else if (changedPref === 'prefCtrlKey') {
 								changedSpan = '.able-modkey-ctrl';
 								changedText = thisObj.tt.prefCtrlKey + ' + ';
-							}
-							else if (changedPref === 'prefShiftKey') {
+							} else if (changedPref === 'prefShiftKey') {
 								changedSpan = '.able-modkey-shift';
 								changedText = thisObj.tt.prefShiftKey + ' + ';
 							}
 							if ($(this).is(':checked')) {
 								$(changedSpan).text(changedText);
-							}
-							else {
+							} else {
 								$(changedSpan).text('');
 							}
 						});
 					}
 					$thisDiv.append($thisField,$thisLabel);
 				}
-				if (thisPref === 'prefDescVoice' && !this.descVoices.length) { 
+				if (thisPref === 'prefDescVoice' && !this.descVoices.length) {
 					// No voices are available (e.g., in Safari 15.4 on Mac OS)
-					// Do not add a Voice select field 
-				}
-				else { 
+				} else {
 					$fieldset.append($thisDiv);
 				}
 			}
@@ -2229,8 +1975,7 @@ var AblePlayerInstances = [];
 				$prefsDiv.append(this.$sampleCapsDiv);
 				this.stylizeCaptions(this.$sampleCapsDiv);
 			}
-		}
-		else if (form === 'descriptions') {
+		} else if (form === 'descriptions') {
 			if (this.synth) {
 				// add a div with sample audio description text
 				this.$sampleDescDiv = $('<div>',{
@@ -2239,8 +1984,7 @@ var AblePlayerInstances = [];
 				$prefsDiv.append(this.$sampleDescDiv);
 				this.currentSampleText = this.tt.sampleDescriptionText;
 			}
-		}
-		else if (form === 'keyboard') {
+		} else if (form === 'keyboard') {
 			// add a current list of keyboard shortcuts
 			$kbHeading = $('<h2>',{
 				text: this.tt.prefHeadingKeyboard2
@@ -2253,65 +1997,52 @@ var AblePlayerInstances = [];
 				if (this.controls[i] === 'play') {
 					kbLabels.push(this.tt.play + '/' + this.tt.pause);
 					keys.push('p</span> <em>' + this.tt.or + '</em> <span class="able-help-modifiers"> ' + this.tt.spacebar);
-				}
-				else if (this.controls[i] === 'restart') {
+				} else if (this.controls[i] === 'restart') {
 					kbLabels.push(this.tt.restart);
 					keys.push('s');
-				}
-				else if (this.controls[i] === 'previous') {
+				} else if (this.controls[i] === 'previous') {
 					kbLabels.push(this.tt.prevTrack);
 					keys.push('b'); // b = back
-				}
-				else if (this.controls[i] === 'next') {
+				} else if (this.controls[i] === 'next') {
 					kbLabels.push(this.tt.nextTrack);
 					keys.push('n');
-				}
-				else if (this.controls[i] === 'rewind') {
+				} else if (this.controls[i] === 'rewind') {
 					kbLabels.push(this.tt.rewind);
 					keys.push('r');
-				}
-				else if (this.controls[i] === 'forward') {
+				} else if (this.controls[i] === 'forward') {
 					kbLabels.push(this.tt.forward);
 					keys.push('f');
-				}
-				else if (this.controls[i] === 'volume') {
+				} else if (this.controls[i] === 'volume') {
 					kbLabels.push(this.tt.volume);
 					keys.push('v</span> <em>' + this.tt.or + '</em> <span class="able-modkey">1-9');
 					// mute toggle
 					kbLabels.push(this.tt.mute + '/' + this.tt.unmute);
 					keys.push('m');
-				}
-				else if (this.controls[i] === 'captions') {
+				} else if (this.controls[i] === 'captions') {
 					if (this.captions.length > 1) {
 						// caption button launches a Captions popup menu
 						kbLabels.push(this.tt.captions);
-					}
-					else {
+					} else {
 						// there is only one caption track
 						// therefore caption button is a toggle
 						if (this.captionsOn) {
 							kbLabels.push(this.tt.hideCaptions);
-						}
-						else {
+						} else {
 							kbLabels.push(this.tt.showCaptions);
 						}
 					}
 					keys.push('c');
-				}
-				else if (this.controls[i] === 'descriptions') {
+				} else if (this.controls[i] === 'descriptions') {
 					if (this.descOn) {
 						kbLabels.push(this.tt.turnOffDescriptions);
-					}
-					else {
+					} else {
 						kbLabels.push(this.tt.turnOnDescriptions);
 					}
 					keys.push('d');
-				}
-				else if (this.controls[i] === 'prefs') {
+				} else if (this.controls[i] === 'prefs') {
 					kbLabels.push(this.tt.preferences);
 					keys.push('e');
-				}
-				else if (this.controls[i] === 'help') {
+				} else if (this.controls[i] === 'help') {
 					kbLabels.push(this.tt.help);
 					keys.push('h');
 				}
@@ -2354,28 +2085,23 @@ var AblePlayerInstances = [];
 		}
 
 		// $prefsDiv (dialog) must be appended to the BODY!
-		// otherwise when aria-hidden="true" is applied to all background content
-		// that will include an ancestor of the dialog,
-		// which will render the dialog unreadable by screen readers
 		$('body').append($prefsDiv);
-		dialog = new AccessibleDialog($prefsDiv, this.$prefsButton, 'dialog', true, formTitle, $prefsIntro, thisObj.tt.closeButtonLabel, '32em');
+		dialog = new AccessibleDialog($prefsDiv, this.$prefsButton, 'dialog', true, formTitle, $prefsIntro, thisObj.tt.closeButtonLabel, false);
 
 		// Add save and cancel buttons.
-		$prefsDiv.append('<hr>');
-		saveButton = $('<button class="modal-button">' + this.tt.save + '</button>');
-		cancelButton = $('<button class="modal-button">' + this.tt.cancel + '</button>');
-		saveButton.on( 'click', function () {
+		$buttonContainer = $( '<div class="able-prefs-buttons"></div>' );
+		$saveButton = $('<button class="modal-button">' + this.tt.save + '</button>');
+		$cancelButton = $('<button class="modal-button">' + this.tt.cancel + '</button>');
+		$saveButton.on( 'click', function () {
 			dialog.hide();
 			thisObj.savePrefsFromForm();
 		});
-		cancelButton.on( 'click', function () {
+		$cancelButton.on( 'click', function () {
 			dialog.hide();
 			thisObj.resetPrefsForm();
 		});
-
-		$prefsDiv.append(saveButton);
-		$prefsDiv.append(cancelButton);
-
+		$buttonContainer.append( $saveButton,$cancelButton );
+		$prefsDiv.append($buttonContainer);
 		// Associate the dialog's H1 as aria-labelledby for groups of fields
 		// (alternative to fieldset and legend)
 		if (form === 'captions' || form === 'transcript') {
@@ -2385,14 +2111,11 @@ var AblePlayerInstances = [];
 		// add global reference for future control
 		if (form === 'captions') {
 			this.captionPrefsDialog = dialog;
-		}
-		else if (form === 'descriptions') {
+		} else if (form === 'descriptions') {
 			this.descPrefsDialog = dialog;
-		}
-		else if (form === 'keyboard') {
+		} else if (form === 'keyboard') {
 			this.keyboardPrefsDialog = dialog;
-		}
-		else if (form === 'transcript') {
+		} else if (form === 'transcript') {
 			this.transcriptPrefsDialog = dialog;
 		}
 
@@ -2403,7 +2126,7 @@ var AblePlayerInstances = [];
 		})
 		// Add handler for escape key
 		$('div.able-prefs-form').on( 'keydown', function(e) {
-			if (e.which === 27) { // escape
+			if (e.key === 'Escape') {
 				thisObj.resetPrefsForm();
 			}
 		});
@@ -2416,11 +2139,9 @@ var AblePlayerInstances = [];
 
 		if (this.selectedDescriptions) {
 			lang = this.selectedDescriptions.language;
-		}
-		else if (this.captionLang) {
+		} else if (this.captionLang) {
 			lang = this.captionLang;
-		}
-		else {
+		} else {
 			lang = this.lang;
 		}
 		cookie = this.getCookie();
@@ -2468,57 +2189,42 @@ var AblePlayerInstances = [];
 		if (pref === 'prefDescPitch') {
 			if (value === 0) {
 				return this.tt.prefDescPitch1;
-			}
-			else if (value === 0.5) {
+			} else if (value === 0.5) {
 				return this.tt.prefDescPitch2;
-			}
-			else if (value === 1) {
+			} else if (value === 1) {
 				return this.tt.prefDescPitch3;
-			}
-			else if (value === 1.5) {
+			} else if (value === 1.5) {
 				return this.tt.prefDescPitch4;
-			}
-			else if (value === 2) {
+			} else if (value === 2) {
 				return this.tt.prefDescPitch5;
 			}
-		}
-		else if (pref === 'prefDescRate') {
+		} else if (pref === 'prefDescRate') {
 			// default in the API is 0.1 to 10, where 1 is normal speaking voice
 			// our custom range offers several rates close to 1
 			// plus a couple of crazy fast ones for sport
 			// Our more readable options (1-10) or mapped here to API values
 			if (value === 0.7) {
 				return 1;
-			}
-			else if (value === 0.8) {
+			} else if (value === 0.8) {
 				return 2;
-			}
-			else if (value === 0.9) {
+			} else if (value === 0.9) {
 				return 3;
-			}
-			else if (value === 1) {
+			} else if (value === 1) {
 				return 4;
-			}
-			else if (value === 1.1) {
+			} else if (value === 1.1) {
 				return 5;
-			}
-			else if (value === 1.2) {
+			} else if (value === 1.2) {
 				return 6;
-			}
-			else if (value === 1.5) {
+			} else if (value === 1.5) {
 				return 7;
-			}
-			else if (value === 2) {
+			} else if (value === 2) {
 				return 8;
-			}
-			else if (value === 2.5) {
+			} else if (value === 2.5) {
 				return 9;
-			}
-			else if (value === 3) {
+			} else if (value === 3) {
 				return 10;
 			}
-		}
-		else if (pref === 'prefDescVolume') {
+		} else if (pref === 'prefDescVolume') {
 			// values range from 0.1 to 1.0
 			return value * 10;
 		}
@@ -2544,12 +2250,10 @@ var AblePlayerInstances = [];
 			if ((prefName.indexOf('Captions') !== -1) && (prefName !== 'prefCaptions')) {
 				// this is a caption-related select box
 				$('select[name="' + prefName + '"]').val(cookie.preferences[prefName]);
-			}
-			else { // all others are checkboxes
+			} else { // all others are checkboxes
 				if (this[prefName] === 1) {
 					$('input[name="' + prefName + '"]').prop('checked',true);
-				}
-				else {
+				} else {
 					$('input[name="' + prefName + '"]').prop('checked',false);
 				}
 			}
@@ -2599,8 +2303,7 @@ var AblePlayerInstances = [];
 						cookie.voices.push(newVoice);
 					}
 					numChanges++;
-				}
-				else if (prefName == 'prefDescMethod') {
+				} else if (prefName == 'prefDescMethod') {
 					// As of v4.0.10, prefDescMethod is no longer a choice
 					// this.prefDescMethod = $('input[name="' + prefName + '"]:checked').val();
 					this.prefDescMethod = 'video';
@@ -2608,8 +2311,7 @@ var AblePlayerInstances = [];
 						cookie.preferences['prefDescMethod'] = this.prefDescMethod;
 						numChanges++;
 					}
-				}
-				else if ((prefName.indexOf('Captions') !== -1) && (prefName !== 'prefCaptions')) {
+				} else if ((prefName.indexOf('Captions') !== -1) && (prefName !== 'prefCaptions')) {
 					// this is one of the caption-related select fields
 					newValue = $('select[id="' + prefId + '"]').val();
 					if (cookie.preferences[prefName] !== newValue) { // user changed setting
@@ -2623,8 +2325,7 @@ var AblePlayerInstances = [];
 						capSizeChanged = true;
 						capSizeValue = newValue;
 					}
-				}
-				else if ((prefName.indexOf('Desc') !== -1) && (prefName !== 'prefDescPause') && prefName !== 'prefDescVisible') {
+				} else if ((prefName.indexOf('Desc') !== -1) && (prefName !== 'prefDescPause') && prefName !== 'prefDescVisible') {
 					// this is one of the description-related select fields
 					newValue = $('select[id="' + prefId + '"]').val();
 					if (cookie.preferences[prefName] !== newValue) { // user changed setting
@@ -2633,27 +2334,23 @@ var AblePlayerInstances = [];
 						this[prefName] = newValue;
 						numChanges++;
 					}
-				}
-				else { // all other fields are checkboxes
+				} else { // all other fields are checkboxes
 					if ($('input[id="' + prefId + '"]').is(':checked')) {
 						cookie.preferences[prefName] = 1;
 						if (this[prefName] === 1) {
 							// nothing has changed
-						}
-						else {
+						} else {
 							// user has just turned this pref on
 							this[prefName] = 1;
 							numChanges++;
 						}
-					}
-					else { // thisPref is not checked
+					} else { // thisPref is not checked
 						cookie.preferences[prefName] = 0;
 						if (this[prefName] === 1) {
 							// user has just turned this pref off
 							this[prefName] = 0;
 							numChanges++;
-						}
-						else {
+						} else {
 							// nothing has chaged
 						}
 					}
@@ -2663,8 +2360,7 @@ var AblePlayerInstances = [];
 		if (numChanges > 0) {
 			this.setCookie(cookie);
 			this.showAlert(this.tt.prefSuccess);
-		}
-		else {
+		} else {
 			this.showAlert(this.tt.prefNoChange);
 		}
 		if (this.player === 'youtube' &&
@@ -2688,8 +2384,7 @@ var AblePlayerInstances = [];
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			// there is only one player
 			this.updatePrefs();
 			if (numCapChanges > 0) {
@@ -2710,8 +2405,7 @@ var AblePlayerInstances = [];
 			// tabbable transcript
 			if (this.prefTabbable === 1) {
 				this.$transcriptDiv.find('span.able-transcript-seekpoint').attr('tabindex','0');
-			}
-			else {
+			} else {
 				this.$transcriptDiv.find('span.able-transcript-seekpoint').removeAttr('tabindex');
 			}
 
@@ -2771,8 +2465,7 @@ var AblePlayerInstances = [];
 			errString += err;
 			if (console.warn) {
 				
-			}
-			else if (console.log) {
+			} else if (console.log) {
 				
 			}
 		}
@@ -2801,8 +2494,7 @@ var AblePlayerInstances = [];
 			if (cutText[ii] === '\n') {
 				state.column = 1;
 				state.line += 1;
-			}
-			else {
+			} else {
 				state.column += 1;
 			}
 		}
@@ -2822,8 +2514,7 @@ var AblePlayerInstances = [];
 			returnText = state.text;
 			updatePosition(state, returnText);
 			state.text = '';
-		}
-		else {
+		} else {
 			returnText = state.text.substring(0, nextEOL);
 			updatePosition(state, returnText + '\n');
 			state.text = state.text.substring(nextEOL + 1);
@@ -2833,12 +2524,7 @@ var AblePlayerInstances = [];
 
 	function peekLine(state) {
 		var nextEOL = state.text.indexOf('\n');
-		if (nextEOL === -1) {
-			return state.text;
-		}
-		else {
-			return state.text.substring(0, nextEOL);
-		}
+		return (nextEOL === -1) ? state.text : state.text.substring(0, nextEOL);
 	}
 
 	function parseFileBody(state) {
@@ -2852,8 +2538,7 @@ var AblePlayerInstances = [];
 				parseMetadataHeaders,
 				eatAtLeast1EmptyLines,
 				parseCuesAndComments]);
-		}
-		else {
+		} else {
 			state.error = "WEBVTT signature not followed by whitespace.";
 		}
 	}
@@ -2864,11 +2549,9 @@ var AblePlayerInstances = [];
 			var nextLine = peekLine(state);
 			if (nextLine.indexOf('-->') !== -1) {
 				return;
-			}
-			else if (nextLine.length === 0) {
+			} else if (nextLine.length === 0) {
 				return;
-			}
-			else {
+			} else {
 				var keyValue = act(state, getMetadataKeyValue);
 				state.metadata[keyValue[0]] = keyValue[1];
 				act(state, eatUntilEOLInclusive);
@@ -2901,8 +2584,7 @@ var AblePlayerInstances = [];
 		if (colon === -1) {
 			state.error = 'Missing colon.';
 			return;
-		}
-		else {
+		} else {
 			var pairName = pair.substring(0, colon);
 			var pairValue = pair.substring(colon + 1);
 			return [pairName, pairValue];
@@ -2916,8 +2598,7 @@ var AblePlayerInstances = [];
 		if (colon === -1) {
 			state.error = 'Missing colon.';
 			return;
-		}
-		else {
+		} else {
 			var pairName = pair.substring(0, colon);
 			var pairValue = pair.substring(colon + 1);
 			return [pairName, pairValue];
@@ -2930,14 +2611,11 @@ var AblePlayerInstances = [];
 			// If NOTE is not on a line all its own, it must be followed by a space or tab.
 			if (nextLine.indexOf('NOTE') === 0 && ((nextLine.length === 4) || (nextLine[4] === ' ') || (nextLine[4] === '\t'))) {
 				actList(state, [eatComment, eatEmptyLines]);
-			}
-			else if (nextLine.trim().length === 0 && state.text.length > 0) {
+			} else if (nextLine.trim().length === 0 && state.text.length > 0) {
 				act(state, eatEmptyLines);
-			}
-			else if (nextLine.trim().length > 0) {
+			} else if (nextLine.trim().length > 0) {
 				act(state, parseCue);
-			}
-			else {
+			} else {
 				// Everythings parsed!
 				return;
 			}
@@ -2960,8 +2638,7 @@ var AblePlayerInstances = [];
 				errString += 'Expected cue timing for cueId \''+cueId+'\' but found: ' + nextLine + '\n';
 				if (console.warn) {
 					
-				}
-				else if (console.log) {
+				} else if (console.log) {
 					
 				}
 				return; // Return leaving line for parseCuesAndComments to handle
@@ -3030,8 +2707,7 @@ var AblePlayerInstances = [];
 			// We'll use the tokens themselves as objects where possible.
 			if (token.type === 'string') {
 				current.children.push(token);
-			}
-			else if (token.type === 'startTag') {
+			} else if (token.type === 'startTag') {
 				token.type = token.tagName;
 				// Define token.parent; added by Terrill to fix bug end 'endTag' loop
 				token.parent = current;
@@ -3041,31 +2717,27 @@ var AblePlayerInstances = [];
 					}
 					current.children.push(token);
 					current = token;
-				}
-				else if (token.tagName === 'rt' && current.tagName === 'ruby') {
+				} else if (token.tagName === 'rt' && current.tagName === 'ruby') {
 					if (languageStack.length > 0) {
 						current.language = languageStack[languageStack.length - 1];
 					}
 					current.children.push(token);
 					current = token;
-				}
-				else if (token.tagName === 'c') {
+				} else if (token.tagName === 'c') {
 					token.value = token.annotation;
 					if (languageStack.length > 0) {
 						current.language = languageStack[languageStack.length - 1];
 					}
 					current.children.push(token);
 					current = token;
-				}
-				else if (token.tagName === 'v') {
+				} else if (token.tagName === 'v') {
 					token.value = token.annotation;
 					if (languageStack.length > 0) {
 						current.language = languageStack[languageStack.length - 1];
 					}
 					current.children.push(token);
 					current = token;
-				}
-				else if (token.tagName === 'lang') {
+				} else if (token.tagName === 'lang') {
 					languageStack.push(token.annotation);
 					if (languageStack.length > 0) {
 						current.language = languageStack[languageStack.length - 1];
@@ -3073,22 +2745,18 @@ var AblePlayerInstances = [];
 					current.children.push(token);
 					current = token;
 				}
-			}
-			else if (token.type === 'endTag') {
+			} else if (token.type === 'endTag') {
 				if (token.tagName === current.type && $.inArray(token.tagName, ['c', 'i', 'b', 'u', 'ruby', 'rt', 'v']) !== -1) {
 					// NOTE from Terrill: This was resulting in an error because current.parent was undefined
 					// Fixed (I think) by assigning current token to token.parent in 'startTag' loop
 					current = current.parent;
-				}
-				else if (token.tagName === 'lang' && current.type === 'lang') {
+				} else if (token.tagName === 'lang' && current.type === 'lang') {
 					current = current.parent;
 					languageStack.pop();
-				}
-				else if (token.tagName === 'ruby' && current.type === 'rt') {
+				} else if (token.tagName === 'ruby' && current.type === 'rt') {
 					current = current.parent.parent;
 				}
-			}
-			else if (token.type === 'timestampTag') {
+			} else if (token.type === 'timestampTag') {
 				var tempState = {
 					text: token.value,
 					error: null,
@@ -3123,11 +2791,9 @@ var AblePlayerInstances = [];
 			// Double newlines indicate end of token.
 			if (state.text.length >= 2 && state.text[0] === '\n' && state.text[1] === '\n') {
 				c = '\u0004';
-			}
-			else if (state.text.length > 0) {
+			} else if (state.text.length > 0) {
 				c = state.text[0];
-			}
-			else {
+			} else {
 				// End of file.
 				c = '\u0004';
 			}
@@ -3135,161 +2801,125 @@ var AblePlayerInstances = [];
 				if (c === '&') {
 					buffer = '&';
 					tokenState = 'escape';
-				}
-				else if (c === '<') {
+				} else if (c === '<') {
 					if (result.length === 0) {
 						tokenState = 'tag';
-					}
-					else {
+					} else {
 						token.type = 'string';
 						token.value = result.join('');
 						return token;
 					}
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					return {type: 'string', value: result.join('')};
-				}
-				else {
+				} else {
 					result.push(c);
 				}
-			}
-			else if (tokenState === 'escape') {
+			} else if (tokenState === 'escape') {
 				if (c === '&') {
 					result.push(buffer);
 					buffer = '&';
-				}
-				else if (c.match(/[0-9a-z]/)) {
+				} else if (c.match(/[0-9a-z]/)) {
 					buffer += c;
-				}
-				else if (c === ';') {
+				} else if (c === ';') {
 					if (buffer === '&amp') {
 						result.push('&');
-					}
-					else if (buffer === '&lt') {
+					} else if (buffer === '&lt') {
 						result.push('<');
-					}
-					else if (buffer === '&gt') {
+					} else if (buffer === '&gt') {
 						result.push('>');
-					}
-					else if (buffer === '&lrm') {
+					} else if (buffer === '&lrm') {
 						result.push('\u200e');
-					}
-					else if (buffer === '&rlm') {
+					} else if (buffer === '&rlm') {
 						result.push('\u200f');
-					}
-					else if (buffer === '&nbsp') {
+					} else if (buffer === '&nbsp') {
 						result.push('\u00a0');
-					}
-					else {
+					} else {
 						result.push(buffer);
 						result.push(';');
 					}
 					tokenState = 'data';
-				}
-				else if (c === '<' || c === '\u0004') {
+				} else if (c === '<' || c === '\u0004') {
 					result.push(buffer);
 					token.type = 'string';
 					token.value = result.join('');
 					return token;
-				}
-				else if (c === '\t' || c === '\n' || c === '\u000c' || c === ' ') { // Handle unescaped & chars as strings
+				} else if (c === '\t' || c === '\n' || c === '\u000c' || c === ' ') { // Handle unescaped & chars as strings
 					result.push(buffer);
 					token.type = 'string';
 					token.value = result.join('');
 					return token;
-				}
-				else {
+				} else {
 					result.push(buffer);
 					tokenState = 'data';
 				}
-			}
-			else if (tokenState === 'tag') {
+			} else if (tokenState === 'tag') {
 				if (c === '\t' || c === '\n' || c === '\u000c' || c === ' ') {
 					tokenState = 'startTagAnnotation';
-				}
-				else if (c === '.') {
+				} else if (c === '.') {
 					tokenState = 'startTagClass';
-				}
-				else if (c === '/') {
+				} else if (c === '/') {
 					tokenState = 'endTag';
-				}
-				else if (c.match('[0-9]')) {
+				} else if (c.match('[0-9]')) {
 					tokenState = 'timestampTag';
 					result.push(c);
-				}
-				else if (c === '>') {
+				} else if (c === '>') {
 					cut(state, 1);
 					break;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					token.tagName = '';
 					token.type = 'startTag';
 					return token;
-				}
-				else {
+				} else {
 					result.push(c);
 					tokenState = 'startTag';
 				}
-			}
-			else if (tokenState === 'startTag') {
+			} else if (tokenState === 'startTag') {
 				if (c === '\t' || c === '\u000c' || c === ' ') {
 					tokenState = 'startTagAnnotation';
-				}
-				else if (c === '\n') {
+				} else if (c === '\n') {
 					buffer = c;
 					tokenState = 'startTagAnnotation';
-				}
-				else if (c === '.') {
+				} else if (c === '.') {
 					tokenState = 'startTagClass';
-				}
-				else if (c === '>') {
+				} else if (c === '>') {
 					cut(state, 1);
 					token.tagName = result.join('');
 					token.type = 'startTag';
 					return token;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					token.tagName = result.join('');
 					token.type = 'startTag';
 					return token;
-				}
-				else {
+				} else {
 					result.push(c);
 				}
-			}
-			else if (tokenState === 'startTagClass') {
+			} else if (tokenState === 'startTagClass') {
 				if (c === '\t' || c === '\u000c' || c === ' ') {
 					token.classes.push(buffer);
 					buffer = '';
 					tokenState = 'startTagAnnotation';
-				}
-				else if (c === '\n') {
+				} else if (c === '\n') {
 					token.classes.push(buffer);
 					buffer = c;
 					tokenState = 'startTagAnnotation';
-				}
-				else if (c === '.') {
+				} else if (c === '.') {
 					token.classes.push(buffer);
 					buffer = "";
-				}
-				else if (c === '>') {
+				} else if (c === '>') {
 					cut(state, 1);
 					token.classes.push(buffer);
 					token.type = 'startTag';
 					token.tagName = result.join('');
 					return token;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					token.classes.push(buffer);
 					token.type = 'startTag';
 					token.tagName = result.join('');
 					return token;
-				}
-				else {
+				} else {
 					buffer += 'c';
 				}
-			}
-			else if (tokenState === 'startTagAnnotation') {
+			} else if (tokenState === 'startTagAnnotation') {
 				if (c === '>') {
 					cut(state, 1);
 					buffer = buffer.trim().replace(/ +/, ' ');
@@ -3297,51 +2927,42 @@ var AblePlayerInstances = [];
 					token.tagName = result.join('');
 					token.annotation = buffer;
 					return token;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					buffer = buffer.trim().replace(/ +/, ' ');
 					token.type = 'startTag';
 					token.tagName = result.join('');
 					token.annotation = buffer;
 					return token;
-				}
-				else {
+				} else {
 					buffer += c;
 				}
-			}
-			else if (tokenState === 'endTag') {
+			} else if (tokenState === 'endTag') {
 				if (c === '>') {
 					cut(state, 1);
 					token.type = 'endTag';
 					token.tagName = result.join('');
 					return token;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					token.type = 'endTag';
 					token.tagName = result.join('');
 					return token;
-				}
-				else {
+				} else {
 					result.push(c);
 				}
-			}
-			else if (tokenState === 'timestampTag') {
+			} else if (tokenState === 'timestampTag') {
 				if (c === '>') {
 					cut(state, 1);
 					token.type = 'timestampTag';
 					token.name = result.join('');
 					return token;
-				}
-				else if (c === '\u0004') {
+				} else if (c === '\u0004') {
 					token.type = 'timestampTag';
 					token.name = result.join('');
 					return token;
-				}
-				else {
+				} else {
 					result.push(c);
 				}
-			}
-			else {
+			} else {
 				throw 'Unknown tokenState ' + tokenState;
 			}
 
@@ -3361,12 +2982,10 @@ var AblePlayerInstances = [];
 			if ( nextLine.trim().length === 0) {
 				// End of comment.
 				return;
-			}
-			else if (nextLine.indexOf('-->') !== -1) {
+			} else if (nextLine.indexOf('-->') !== -1) {
 				state.error = 'Invalid syntax: --> in comment.';
 				return;
-			}
-			else {
+			} else {
 				cutLine(state);
 			}
 		}
@@ -3384,8 +3003,7 @@ var AblePlayerInstances = [];
 	function eatSignature(state) {
 		if (state.text.substring(0,6) === 'WEBVTT') {
 			cut(state, 6);
-		}
-		else {
+		} else {
 			state.error = 'Invalid signature.';
 		}
 	}
@@ -3393,8 +3011,7 @@ var AblePlayerInstances = [];
 	function eatArrow(state) {
 		if (state.text.length < 3 || state.text.substring(0,3) !== '-->') {
 			state.error = 'Missing -->';
-		}
-		else {
+		} else {
 			cut(state, 3);
 		}
 	}
@@ -3402,8 +3019,7 @@ var AblePlayerInstances = [];
 	function eatSingleSpaceOrTab(state) {
 		if (state.text[0] === '\t' || state.text[0] === ' ') {
 			cut(state, 1);
-		}
-		else {
+		} else {
 			state.error = 'Missing space.';
 		}
 	}
@@ -3429,8 +3045,7 @@ var AblePlayerInstances = [];
 		var nextEOL = state.text.indexOf('\n');
 		if (nextEOL === -1) {
 			state.error = 'Missing EOL.';
-		}
-		else {
+		} else {
 			cut(state, nextEOL + 1);
 		}
 	}
@@ -3440,8 +3055,7 @@ var AblePlayerInstances = [];
 			var nextLine = peekLine(state);
 			if ( nextLine.trim().length === 0) {
 				cutLine(state);
-			}
-			else {
+			} else {
 				break;
 			}
 		}
@@ -3455,8 +3069,7 @@ var AblePlayerInstances = [];
 			if ( nextLine.trim().length === 0) {
 				cutLine(state);
 				linesEaten += 1;
-			}
-			else {
+			} else {
 				break;
 			}
 		}
@@ -3473,7 +3086,9 @@ var AblePlayerInstances = [];
 		}
 		var timestamp = cut(state, nextSpace);
 
-		var results = /((\d\d):)?((\d\d):)(\d\d).(\d\d\d)|(\d+).(\d\d\d)/.exec(timestamp);
+		// The spec requires exactly 2 characters for minutes and seconds, and 2+ for hours,
+		// but some VTT generation creates 1 digit hour times (e.g. "1:02:24.000 --> 1:04:48.000") and it seems harmless to allow that here
+		var results = /((\d+):)?((\d\d):)(\d\d).(\d\d\d)|(\d+).(\d\d\d)/.exec(timestamp);
 
 		if (!results) {
 			state.error = 'Unable to parse timestamp';
@@ -3500,8 +3115,7 @@ var AblePlayerInstances = [];
 
 			time += parseInt(seconds, 10);
 			time += parseInt(results[6], 10) / 1000;
-		}
-		else {
+		} else {
 			time += parseInt(results[7], 10);
 			time += parseInt(results[8], 10) / 1000;
 		}
@@ -3515,17 +3129,12 @@ var AblePlayerInstances = [];
 	AblePlayer.prototype.injectPlayerCode = function() {
 
 		// create and inject surrounding HTML structure
-		// If IOS:
+		// If iOS:
 		//  If video:
-		//   IOS does not support any of the player's functionality
+		//   iOS does not support any of the player's functionality
 		//   - everything plays in its own player
 		//   Therefore, AblePlayer is not loaded & all functionality is disabled
-		//   (this all determined. If this is IOS && video, this function is never called)
-		//  If audio:
-		//   HTML cannot be injected as a *parent* of the <audio> element
-		//   It is therefore injected *after* the <audio> element
-		//   This is only a problem in IOS 6 and earlier,
-		//   & is a known bug, fixed in IOS 7
+		//   (this all determined. If this is iOS && video, this function is never called)
 
 		var thisObj, captionsContainer, i;
 		thisObj = this;
@@ -3558,8 +3167,7 @@ var AblePlayerInstances = [];
 		captionsContainer = $('<div>');
 		if (this.mediaType === 'video') {
 			captionsContainer.addClass('able-vidcap-container');
-		}
-		else if (this.mediaType === 'audio') {
+		} else if (this.mediaType === 'audio') {
 			captionsContainer.addClass('able-audcap-container');
 			// hide this by default. It will be shown if captions are available
 			captionsContainer.addClass('captions-off');
@@ -3567,7 +3175,7 @@ var AblePlayerInstances = [];
 
 		this.injectPlayerControlArea(); // this may need to be injected after captions???
 		this.$captionsContainer = this.$mediaContainer.wrap(captionsContainer).parent();
-		this.injectAlert();
+		this.injectAlert(this.$ableDiv);
 		this.injectPlaylist();
 
 		// Do this last, as it should be prepended to the top of this.$ableDiv
@@ -3584,8 +3192,7 @@ var AblePlayerInstances = [];
 		var headingType;
 		if (this.playerHeadingLevel == '0') {
 			// do NOT inject a heading (at author's request)
-		}
-		else {
+		} else {
 			if (typeof this.playerHeadingLevel === 'undefined') {
 				this.playerHeadingLevel = this.getNextHeadingLevel(this.$ableDiv); // returns in integer 1-6
 			}
@@ -3611,28 +3218,7 @@ var AblePlayerInstances = [];
 			'tabindex': 0
 		});
 
-		if (this.iconType == 'svg') {
-			svgData = this.getSvgData('play');
-			buttonIcon = $('<svg>',{
-				'focusable': 'false',
-				'aria-hidden': 'true',
-				'viewBox': svgData[0]
-			});
-			svgPath = $('<path>',{
-				'd': svgData[1]
-			});
-			buttonIcon.append(svgPath);
-			this.$bigPlayButton.html(buttonIcon);
-
-			// Final step: Need to refresh the DOM in order for browser to process & display the SVG
-			this.$bigPlayButton.html(this.$bigPlayButton.html());
-		}
-		else { // use icon font
-			this.$bigPlayIcon = $('<span>', {
-				'class': 'icon-play',
-			});
-			this.$bigPlayButton.append(this.$bigPlayIcon);
-		}
+		this.getIcon( this.$bigPlayButton, 'play' );
 
 		this.$bigPlayButton.on( 'click', function () {
 			thisObj.handlePlay();
@@ -3691,15 +3277,13 @@ var AblePlayerInstances = [];
 		this.$statusBarDiv.append(this.$timer, this.$speed, this.$status);
 		if (this.showNowPlaying) {
 			this.$playerDiv.append(this.$nowPlayingDiv, this.$controllerDiv, this.$statusBarDiv);
-		}
-		else {
+		} else {
 			this.$playerDiv.append(this.$controllerDiv, this.$statusBarDiv);
 		}
 		if (this.mediaType === 'video') {
 			// the player controls go after the media & captions
 			this.$ableDiv.append(this.$playerDiv);
-		}
-		else {
+		} else {
 			// the player controls go before the media & captions
 			this.$ableDiv.prepend(this.$playerDiv);
 		}
@@ -3732,8 +3316,7 @@ var AblePlayerInstances = [];
 		// if users disagree, they can resize (and resposition) them
 		if (which === 'transcript') {
 			return ( viewportMaxwidth <= 450 ) ? viewportMaxwidth : 450;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			return ( viewportMaxwidth <= 400 ) ? viewportMaxwidth : 400;
 		}
 	};
@@ -3744,15 +3327,13 @@ var AblePlayerInstances = [];
 		var cookie, cookiePos, $window, windowPos;
 
 		cookie = this.getCookie();
+		$window = ( which === 'transcript' ) ? this.$transcriptArea : this.$signWindow;
 		if (which === 'transcript') {
-			$window = this.$transcriptArea;
 			if (typeof cookie.transcript !== 'undefined') {
 				cookiePos = cookie.transcript;
 			}
-		}
-		else if (which === 'sign') {
-			$window = this.$signWindow;
-			if (typeof cookie.transcript !== 'undefined') {
+		} else if (which === 'sign') {
+			if (typeof cookie.sign !== 'undefined') {
 				cookiePos = cookie.sign;
 			}
 		}
@@ -3768,11 +3349,18 @@ var AblePlayerInstances = [];
 					'top': cookiePos['top'],
 					'left': cookiePos['left']
 				});
+				// Check whether the window is above the top of the viewport.
+				topPosition = $window.offset().top;
+				if ( topPosition < 0 ) {
+					$window.css({
+						'top': cookiePos['top'] - topPosition,
+						'left': cookiePos['left']
+					});
+				}
 			}
 			// since cookie is not page-specific, z-index needs may vary across different pages
 			this.updateZIndex(which);
-		}
-		else {
+		} else {
 			// position window using default values
 			windowPos = this.getOptimumPosition(which, width);
 			if (typeof width === 'undefined') {
@@ -3820,17 +3408,14 @@ var AblePlayerInstances = [];
 		otherWindowWidth = 0; // width of other visiable draggable windows will be added to this
 
 		if (targetWindow === 'transcript') {
-			if (typeof this.$signWindow !== 'undefined') {
-				if (this.$signWindow.is(':visible')) {
-					otherWindowWidth = this.$signWindow.width() + gap;
-				}
+			// If placing the transcript window, check position of sign window first.
+			if (typeof this.$signWindow !== 'undefined' && (this.$signWindow.is(':visible'))) {
+				otherWindowWidth = this.$signWindow.width() + gap;
 			}
-		}
-		else if (targetWindow === 'sign') {
-			if (typeof this.$transcriptArea !== 'undefined') {
-				if (this.$transcriptArea.is(':visible')) {
-					otherWindowWidth = this.$transcriptArea.width() + gap;
-				}
+		} else if (targetWindow === 'sign') {
+			// If placing the sign window, check position of transcript window first.
+			if (typeof this.$transcriptArea !== 'undefined' && (this.$transcriptArea.is(':visible'))) {
+				otherWindowWidth = this.$transcriptArea.width() + gap;
 			}
 		}
 		if (targetWidth < (windowWidth - (ableLeft + ableWidth + gap + otherWindowWidth))) {
@@ -3838,14 +3423,12 @@ var AblePlayerInstances = [];
 			position[0] = 'absolute';
 			position[1] = 0;
 			position[2] = ableWidth + otherWindowWidth + gap;
-		}
-		else if (targetWidth + gap < ableLeft) {
+		} else if (targetWidth + gap < ableLeft) {
 			// there's room to the right of $ableDiv
 			position[0] = 'absolute';
 			position[1] = 0;
 			position[2] = ableLeft - targetWidth - gap;
-		}
-		else {
+		} else {
 			// position element below $ableDiv
 			position[0] = 'relative';
 			// no need to define top, left, or z-index
@@ -3853,32 +3436,31 @@ var AblePlayerInstances = [];
 		return position;
 	};
 
-	AblePlayer.prototype.injectAlert = function () {
-
+	AblePlayer.prototype.injectAlert = function ($container) {
 		// inject two alerts, one visible for all users and one for screen reader users only
-
-		var top;
-
 		this.$alertBox = $('<div role="alert"></div>');
 		this.$alertBox.addClass('able-alert');
 		this.$alertBox.hide();
-		this.$alertBox.appendTo(this.$ableDiv);
-		if (this.mediaType == 'audio') {
-			top = '-10';
-		}
-		else {
-			// position just below top of video by default
-			// but this will change after video player is fully sized
-			// see control.js > resizePlayer()
-			top = '10';
-		}
-		this.$alertBox.css({
-			top: top + 'px'
+
+		var $alertText = $( '<span></span>' );
+		$alertText.appendTo(this.$alertBox);
+
+		var $alertDismiss = $('<button type="button"></button>' );
+		$alertDismiss.attr( 'aria-label', this.tt.dismissButton );
+		$alertDismiss.text( '×' );
+		$alertDismiss.appendTo(this.$alertBox);
+
+		$alertDismiss.on( 'click', function(e) {
+			$(this).parent('div').hide();
 		});
 
-		this.$srAlertBox = $('<div role="alert"></div>');
-		this.$srAlertBox.addClass('able-screenreader-alert');
-		this.$srAlertBox.appendTo(this.$ableDiv);
+		this.$alertBox.appendTo($container);
+
+		if ( ! this.$srAlertBox ) {
+			this.$srAlertBox = $('<div role="alert"></div>');
+			this.$srAlertBox.addClass('able-screenreader-alert');
+			this.$srAlertBox.appendTo($container);
+		}
 	};
 
 	AblePlayer.prototype.injectPlaylist = function () {
@@ -3898,7 +3480,7 @@ var AblePlayerInstances = [];
 		// 'which' parameter is either 'captions', 'chapters', 'prefs', 'transcript-window' or 'sign-window'
 		// 'tracks', if provided, is a list of tracks to be used as menu items
 
-		var thisObj, $menu, includeMenuItem, i, $menuItem, prefCat, whichPref, hasDefault, track, 
+		var thisObj, $menu, includeMenuItem, i, $menuItem, prefCat, whichPref, hasDefault, track,
 		windowOptions, $thisItem, $prevItem, $nextItem;
 
 		thisObj = this;
@@ -3924,14 +3506,11 @@ var AblePlayerInstances = [];
 					prefCat = this.prefCats[i];
 					if (prefCat === 'captions') {
 						$menuItem.text(this.tt.prefMenuCaptions);
-					}
-					else if (prefCat === 'descriptions') {
+					} else if (prefCat === 'descriptions') {
 						$menuItem.text(this.tt.prefMenuDescriptions);
-					}
-					else if (prefCat === 'keyboard') {
+					} else if (prefCat === 'keyboard') {
 						$menuItem.text(this.tt.prefMenuKeyboard);
-					}
-					else if (prefCat === 'transcript') {
+					} else if (prefCat === 'transcript') {
 						$menuItem.text(this.tt.prefMenuTranscript);
 					}
 					$menuItem.on('click',function() {
@@ -3940,14 +3519,11 @@ var AblePlayerInstances = [];
 						thisObj.setFullscreen(false);
 						if (whichPref === thisObj.tt.prefMenuCaptions) {
 							thisObj.captionPrefsDialog.show();
-						}
-						else if (whichPref === thisObj.tt.prefMenuDescriptions) {
+						} else if (whichPref === thisObj.tt.prefMenuDescriptions) {
 							thisObj.descPrefsDialog.show();
-						}
-						else if (whichPref === thisObj.tt.prefMenuKeyboard) {
+						} else if (whichPref === thisObj.tt.prefMenuKeyboard) {
 							thisObj.keyboardPrefsDialog.show();
-						}
-						else if (whichPref === thisObj.tt.prefMenuTranscript) {
+						} else if (whichPref === thisObj.tt.prefMenuTranscript) {
 							thisObj.transcriptPrefsDialog.show();
 						}
 						thisObj.closePopups();
@@ -3956,21 +3532,18 @@ var AblePlayerInstances = [];
 					$menu.append($menuItem);
 				}
 				this.$prefsButton.attr('data-prefs-popup','menu');
-			}
-			else if (this.prefCats.length == 1) {
+			} else if (this.prefCats.length == 1) {
 				// only 1 category, so don't create a popup menu.
 				// Instead, open dialog directly when user clicks Prefs button
 				this.$prefsButton.attr('data-prefs-popup',this.prefCats[0]);
 			}
-		}
-		else if (which === 'captions' || which === 'chapters') {
+		} else if (which === 'captions' || which === 'chapters') {
 			hasDefault = false;
 			for (i = 0; i < tracks.length; i++) {
 				track = tracks[i];
 				if (which === 'captions' && this.player === 'html5' && typeof track.cues === 'undefined') {
 					includeMenuItem = false;
-				}
-				else {
+				} else {
 					includeMenuItem = true;
 				}
 				if (includeMenuItem) {
@@ -3982,16 +3555,14 @@ var AblePlayerInstances = [];
 					if (track.def && this.prefCaptions == 1) {
 						$menuItem.attr('aria-checked','true');
 						hasDefault = true;
-					}
-					else {
+					} else {
 						$menuItem.attr('aria-checked','false');
 					}
 					// Get a label using track data
 					if (which == 'captions') {
 						$menuItem.text(track.label);
 						$menuItem.on('click',this.getCaptionClickFunction(track));
-					}
-					else if (which == 'chapters') {
+					} else if (which == 'chapters') {
 						$menuItem.text(this.flattenCueForCaption(track) + ' - ' + this.formatSecondsAsColonTime(track.start));
 						$menuItem.on('click',this.getChapterClickFunction(track.start));
 					}
@@ -4007,15 +3578,13 @@ var AblePlayerInstances = [];
 				if (this.prefCaptions === 0) {
 					$menuItem.attr('aria-checked','true');
 					hasDefault = true;
-				}
-				else {
+				} else {
 					$menuItem.attr('aria-checked','false');
 				}
 				$menuItem.on('click',this.getCaptionOffFunction());
 				$menu.append($menuItem);
 			}
-		}
-		else if (which === 'transcript-window' || which === 'sign-window') {
+		} else if (which === 'transcript-window' || which === 'sign-window') {
 			windowOptions = [];
 			windowOptions.push({
 				'name': 'move',
@@ -4059,17 +3628,14 @@ var AblePlayerInstances = [];
 			if ($menu.find('li[lang=' + this.captionLang + ']')) {
 				// a track exists for the default language. Check that item in the menu
 				$menu.find('li[lang=' + this.captionLang + ']').attr('aria-checked','true');
-			}
-			else {
+			} else {
 				// check the last item (captions off)
 				$menu.find('li').last().attr('aria-checked','true');
 			}
-		}
-		else if (which === 'chapters') {
+		} else if (which === 'chapters') {
 			if ($menu.find('li:contains("' + this.defaultChapter + '")')) {
 				$menu.find('li:contains("' + this.defaultChapter + '")').attr('aria-checked','true').addClass('able-focus');
-			}
-			else {
+			} else {
 				$menu.find('li').first().attr('aria-checked','true').addClass('able-focus');
 			}
 		}
@@ -4081,38 +3647,31 @@ var AblePlayerInstances = [];
 				// this is the first item in the menu
 				$prevItem = $(this).find('li').last(); // wrap to bottom
 				$nextItem = $thisItem.next();
-			}
-			else if ($thisItem.is(':last-child')) {
+			} else if ($thisItem.is(':last-child')) {
 				// this is the last Item
 				$prevItem = $thisItem.prev();
 				$nextItem = $(this).find('li').first(); // wrap to top
-			}
-			else {
+			} else {
 				$prevItem = $thisItem.prev();
 				$nextItem = $thisItem.next();
 			}
-			if (e.which === 9) { // Tab
+			if (e.key === 'Tab') {
 				if (e.shiftKey) {
 					$thisItem.removeClass('able-focus');
 					$prevItem.trigger('focus').addClass('able-focus');
-				}
-				else {
+				} else {
 					$thisItem.removeClass('able-focus');
 					$nextItem.trigger('focus').addClass('able-focus');
 				}
-			}
-			else if (e.which === 40 || e.which === 39) { // down or right arrow
+			} else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
 				$thisItem.removeClass('able-focus');
 				$nextItem.trigger('focus').addClass('able-focus');
-			}
-			else if (e.which == 38 || e.which === 37) { // up or left arrow
+			} else if (e.key == 'ArrowUp' || e.key === 'ArrowLeft') {
 				$thisItem.removeClass('able-focus');
 				$prevItem.trigger('focus').addClass('able-focus');
-			}
-			else if (e.which === 32 || e.which === 13) { // space or enter
+			} else if (e.key === ' ' || e.key === 'Enter') {
 				$thisItem.trigger( 'click' );
-			}
-			else if (e.which === 27) {	// Escape
+			} else if (e.key === 'Escape') {
 				$thisItem.removeClass('able-focus');
 				thisObj.closePopups();
 				e.stopPropagation;
@@ -4208,30 +3767,24 @@ var AblePlayerInstances = [];
 				var popup = popups[i];
 				if (popup == 'prefs') {
 					this.prefsPopup = this.createPopup('prefs');
-				}
-				else if (popup == 'captions') {
+				} else if (popup == 'captions') {
 					if (typeof this.captionsPopup === 'undefined' || !this.captionsPopup) {
 						this.captionsPopup = this.createPopup('captions',this.captions);
 					}
-				}
-				else if (popup == 'chapters') {
+				} else if (popup == 'chapters') {
 					if (this.selectedChapters) {
 						tracks = this.selectedChapters.cues;
-					}
-					else if (this.chapters.length >= 1) {
+					} else if (this.chapters.length >= 1) {
 						tracks = this.chapters[0].cues;
-					}
-					else {
+					} else {
 						tracks = [];
 					}
 					if (typeof this.chaptersPopup === 'undefined' || !this.chaptersPopup) {
 						this.chaptersPopup = this.createPopup('chapters',tracks);
 					}
-				}
-				else if (popup == 'transcript-window') {
+				} else if (popup == 'transcript-window') {
 					return this.createPopup('transcript-window');
-				}
-				else if (popup == 'sign-window') {
+				} else if (popup == 'sign-window') {
 					return this.createPopup('sign-window');
 				}
 			}
@@ -4251,8 +3804,7 @@ var AblePlayerInstances = [];
 			// fallback has already been implemented.
 			// stopgap to prevent this function from executing twice on the same media element
 			return;
-		}
-		else {
+		} else {
 			this.usingFallback = true;
 		}
 
@@ -4272,8 +3824,7 @@ var AblePlayerInstances = [];
 		// get/assign an id for the media element
 		if (this.$media.attr('id')) {
 			this.mediaId = this.$media.attr('id');
-		}
-		else {
+		} else {
 			this.mediaId = 'media' + Math.floor(Math.random() * 1000000000).toString();
 		}
 
@@ -4371,8 +3922,7 @@ var AblePlayerInstances = [];
 			if (this.skin === 'legacy') {
 				controlLayout[0].push('previous');
 				controlLayout[0].push('next');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[0].push('previous');
 				controlLayout[0].push('next');
 			}
@@ -4384,8 +3934,7 @@ var AblePlayerInstances = [];
 				controlLayout[2].push('slower');
 				controlLayout[2].push('faster');
 			}
-		}
-		else {
+		} else {
 			playbackSupported = false;
 		}
 
@@ -4394,8 +3943,7 @@ var AblePlayerInstances = [];
 			numA11yButtons++;
 			if (this.skin === 'legacy') {
 				controlLayout[2].push('captions');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[1].push('captions');
 			}
 		}
@@ -4403,8 +3951,7 @@ var AblePlayerInstances = [];
 			numA11yButtons++;
 			if (this.skin === 'legacy') {
 				controlLayout[2].push('sign');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[1].push('sign');
 			}
 		}
@@ -4413,18 +3960,16 @@ var AblePlayerInstances = [];
 				numA11yButtons++;
 				if (this.skin === 'legacy') {
 					controlLayout[2].push('descriptions');
-				}
-				else if (this.skin == '2020') {
+				} else {
 					controlLayout[1].push('descriptions');
 				}
 			}
 		}
-		if (this.transcriptType === 'popup' && !(this.hideTranscriptButton)) {
+		if (this.transcriptType !== null && !(this.hideTranscriptButton)) {
 			numA11yButtons++;
 			if (this.skin === 'legacy') {
 				controlLayout[2].push('transcript');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[1].push('transcript');
 			}
 		}
@@ -4432,8 +3977,7 @@ var AblePlayerInstances = [];
 			numA11yButtons++;
 			if (this.skin === 'legacy') {
 				controlLayout[2].push('chapters');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[1].push('chapters');
 			}
 		}
@@ -4450,16 +3994,14 @@ var AblePlayerInstances = [];
 
 		if (this.skin === 'legacy') {
 			controlLayout[3].push('preferences');
-		}
-		else if (this.skin == '2020') {
+		} else {
 			controlLayout[1].push('preferences');
 		}
 
 		if (this.mediaType === 'video' && this.allowFullscreen) {
 			if (this.skin === 'legacy') {
 				controlLayout[3].push('fullscreen');
-			}
-			else {
+			} else {
 				controlLayout[1].push('fullscreen');
 			}
 		}
@@ -4468,12 +4010,10 @@ var AblePlayerInstances = [];
 			this.volumeButton = 'volume-' + this.getVolumeName(this.volume);
 			if (this.skin === 'legacy') {
 				controlLayout[1].push('volume');
-			}
-			else if (this.skin == '2020') {
+			} else {
 				controlLayout[1].push('volume');
 			}
-		}
-		else {
+		} else {
 			this.volume = false;
 		}
 		return controlLayout;
@@ -4489,12 +4029,10 @@ var AblePlayerInstances = [];
 		// some controls are aligned on the left, and others on the right
 
 		var thisObj, baseSliderWidth, controlLayout, numSections,
-		i, j, k, controls, $controllerSpan, $sliderDiv, sliderLabel, $pipe, $pipeImg,
-		svgData, svgPath, control,
-		$buttonLabel, $buttonImg, buttonImgSrc, buttonTitle, $newButton, iconClass, buttonIcon,
-		buttonText, position, buttonHeight, buttonWidth, buttonSide, controllerWidth,
-		tooltipId, tooltipY, tooltipX, tooltipWidth, tooltipStyle, tooltip, tooltipTimerId,
-		captionLabel, popupMenuId;
+		i, j, controls, $controllerSpan, $sliderDiv, sliderLabel, $pipe, control,
+		$buttonLabel, buttonTitle, $newButton, buttonText, position, buttonHeight,
+		buttonWidth, buttonSide, controllerWidth, tooltipId, tooltipY, tooltipX,
+		tooltipWidth, tooltipStyle, tooltip, tooltipTimerId, captionLabel, popupMenuId;
 
 		thisObj = this;
 
@@ -4517,7 +4055,7 @@ var AblePlayerInstances = [];
 			$sliderDiv = $('<div class="able-seekbar"></div>');
 			sliderLabel = this.mediaType + ' ' + this.tt.seekbarLabel;
 			this.$controllerDiv.append($sliderDiv);
-			this.seekBar = new AccessibleSlider(this.mediaType, $sliderDiv, 'horizontal', baseSliderWidth, 0, this.duration, this.seekInterval, sliderLabel, 'seekbar', true, 'visible');
+			this.seekBar = new AccessibleSlider($sliderDiv, 'horizontal', baseSliderWidth, 0, this.duration, this.seekInterval, sliderLabel, 'seekbar', true, 'visible');
 		}
 
 		// add a full-width seek bar
@@ -4530,8 +4068,7 @@ var AblePlayerInstances = [];
 				$controllerSpan = $('<div>',{
 					'class': 'able-left-controls'
 				});
-			}
-			else { // odd keys on the right
+			} else { // odd keys on the right
 				$controllerSpan = $('<div>',{
 					'class': 'able-right-controls'
 				});
@@ -4550,53 +4087,17 @@ var AblePlayerInstances = [];
 						// also set elapsed to 0
 						this.elapsed = 0;
 					}
-					this.seekBar = new AccessibleSlider(this.mediaType, $sliderDiv, 'horizontal', baseSliderWidth, 0, this.duration, this.seekInterval, sliderLabel, 'seekbar', true, 'visible');
-				}
-				else if (control === 'pipe') {
+					this.seekBar = new AccessibleSlider($sliderDiv, 'horizontal', baseSliderWidth, 0, this.duration, this.seekInterval, sliderLabel, 'seekbar', true, 'visible');
+				} else if (control === 'pipe') {
 					$pipe = $('<span>', {
 						'tabindex': '-1',
-						'aria-hidden': 'true'
+						'aria-hidden': 'true',
+						'class': 'able-pipe',
 					});
-					if (this.iconType === 'font') {
-						$pipe.addClass('icon-pipe');
-					}
-					else {
-						$pipeImg = $('<img>', {
-							src: this.rootPath + 'button-icons/' + this.iconColor + '/pipe.png',
-							alt: '',
-							role: 'presentation'
-						});
-						$pipe.append($pipeImg);
-					}
+					$pipe.append('|');
 					$controllerSpan.append($pipe);
-				}
-				else {
+				} else {
 					// this control is a button
-					if (control === 'volume') {
-						buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/' + this.volumeButton + '.png';
-					}
-					else if (control === 'fullscreen') {
-						buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/fullscreen-expand.png';
-					}
-					else if (control === 'slower') {
-						if (this.speedIcons === 'animals') {
-							buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/turtle.png';
-						}
-						else {
-							buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/slower.png';
-						}
-					}
-					else if (control === 'faster') {
-						if (this.speedIcons === 'animals') {
-							buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/rabbit.png';
-						}
-						else {
-							buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/faster.png';
-						}
-					}
-					else {
-						buttonImgSrc = this.rootPath + 'button-icons/' + this.iconColor + '/' + control + '.png';
-					}
 					buttonTitle = this.getButtonTitle(control);
 
 					// icomoon documentation recommends the following markup for screen readers:
@@ -4614,7 +4115,6 @@ var AblePlayerInstances = [];
 					$newButton = $('<div>',{
 						'role': 'button',
 						'tabindex': '0',
-						'aria-label': buttonTitle,
 						'class': 'able-button-handler-' + control
 					});
 
@@ -4628,16 +4128,14 @@ var AblePlayerInstances = [];
 									'aria-controls': popupMenuId,
 									'aria-haspopup': 'menu',
 									'aria-expanded': 'false'
-							});
-							}
-							else if (this.prefCats.length === 1) {
+								});
+							} else if (this.prefCats.length === 1) {
 								// Prefs button will trigger a dialog
 								$newButton.attr({
 									'aria-haspopup': 'dialog'
 								});
 							}
-						}
-						else if (control === 'volume') {
+						} else if (control === 'volume') {
 							popupMenuId = this.mediaId + '-volume-slider';
 							// volume slider popup is not a menu or a dialog
 							// therefore, using aria-expanded rather than aria-haspopup to communicate properties/state
@@ -4653,91 +4151,23 @@ var AblePlayerInstances = [];
 							}
 						}
 					}
-					if (this.iconType === 'font') {
-						if (control === 'volume') {
-							iconClass = 'icon-' + this.volumeButton;
-						}
-						else if (control === 'slower') {
-							if (this.speedIcons === 'animals') {
-								iconClass = 'icon-turtle';
-							}
-							else {
-								iconClass = 'icon-slower';
-							}
-						}
-						else if (control === 'faster') {
-							if (this.speedIcons === 'animals') {
-								iconClass = 'icon-rabbit';
-							}
-							else {
-								iconClass = 'icon-faster';
-							}
-						}
-						else {
-							iconClass = 'icon-' + control;
-						}
-						buttonIcon = $('<span>',{
-							'class': iconClass,
-							'aria-hidden': 'true'
-						});
-						$newButton.append(buttonIcon);
+					var getControl = control;
+					if ( control === 'faster' && this.speedIcons === 'animals' ) {
+						getControl = 'rabbit';
 					}
-					else if (this.iconType === 'svg') {
+					if ( control === 'slower' && this.speedIcons === 'animals' ) {
+						getControl = 'turtle';
+					}
+					if ( control === 'volume' ) {
+						this.getIcon( $newButton, this.volumeButton );
+					} else {
+						if ( 'fullscreen' === getControl ) {
+							getControl = ( this.fullscreen ) ? 'fullscreen-collapse' : 'fullscreen-expand';
+						}
+						this.getIcon( $newButton, getControl );
+					}
 
-						svgData;
-						if (control === 'volume') {
-							svgData = this.getSvgData(this.volumeButton);
-						}
-						else if (control === 'fullscreen') {
-							svgData = this.getSvgData('fullscreen-expand');
-						}
-						else if (control === 'slower') {
-							if (this.speedIcons === 'animals') {
-								svgData = this.getSvgData('turtle');
-							}
-							else {
-								svgData = this.getSvgData('slower');
-							}
-						}
-						else if (control === 'faster') {
-							if (this.speedIcons === 'animals') {
-								svgData = this.getSvgData('rabbit');
-							}
-							else {
-								svgData = this.getSvgData('faster');
-							}
-						}
-						else {
-							svgData = this.getSvgData(control);
-						}
-						buttonIcon = $('<svg>',{
-							'focusable': 'false',
-							'aria-hidden': 'true',
-							'viewBox': svgData[0]
-						});
-						svgPath = $('<path>',{
-							'd': svgData[1]
-						});
-						buttonIcon.append(svgPath);
-						$newButton.html(buttonIcon);
-
-						// Final step: Need to refresh the DOM in order for browser to process & display the SVG
-						$newButton.html($newButton.html());
-					}
-					else {
-						// use images
-						$buttonImg = $('<img>',{
-							'src': buttonImgSrc,
-							'alt': '',
-							'role': 'presentation'
-						});
-						$newButton.append($buttonImg);
-					}
-					// add the visibly-hidden label for screen readers that don't support aria-label on the button
-					$buttonLabel = $('<span>',{
-						'class': 'able-clipped'
-					}).text(buttonTitle);
-					$newButton.append($buttonLabel);
+					this.setText($newButton,buttonTitle);
 					// add an event listener that displays a tooltip on mouseenter or focus
 					$newButton.on('mouseenter focus',function(e) {
 
@@ -4763,8 +4193,7 @@ var AblePlayerInstances = [];
 						if ($(this).parent().hasClass('able-right-controls')) {
 							// this control is on the right side
 							buttonSide = 'right';
-						}
-						else {
+						} else {
 							// this control is on the left side
 							buttonSide = 'left';
 						}
@@ -4782,8 +4211,7 @@ var AblePlayerInstances = [];
 								right: '',
 								top: tooltipY + 'px'
 							};
-						}
-						else {
+						} else {
 							tooltipX = position.right - tooltipWidth/2;
 							if (tooltipX < 0) {
 								// tooltip would exceed the bounds of the player. Adjust.
@@ -4829,15 +4257,13 @@ var AblePlayerInstances = [];
 							// captions are available, but user has them turned off
 							if (this.captions.length > 1) {
 								captionLabel = this.tt.captions;
-							}
-							else {
+							} else {
 								captionLabel = this.tt.showCaptions;
 							}
 							$newButton.addClass('buttonOff').attr('title',captionLabel);
 							$newButton.attr('aria-pressed', 'false');
 						}
-					}
-					else if (control === 'descriptions') {
+					} else if (control === 'descriptions') {
 						if (!this.prefDesc || this.prefDesc !== 1) {
 							// user prefer non-audio described version
 							// Therefore, load media without description
@@ -4851,8 +4277,7 @@ var AblePlayerInstances = [];
 					// create variables of buttons that are referenced throughout the AblePlayer object
 					if (control === 'play') {
 						this.$playpauseButton = $newButton;
-					}
-					else if (control == 'previous') {
+					} else if (control == 'previous') {
 						this.$prevButton = $newButton;
 						// if player is being rebuilt because user clicked the Prev button
 						// return focus to that (newly built) button
@@ -4860,8 +4285,7 @@ var AblePlayerInstances = [];
 							this.$prevButton.trigger('focus');
 							this.buttonWithFocus = null;
 						}
-					}
-					else if (control == 'next') {
+					} else if (control == 'next') {
 						this.$nextButton = $newButton;
 						// if player is being rebuilt because user clicked the Next button
 						// return focus to that (newly built) button
@@ -4869,41 +4293,32 @@ var AblePlayerInstances = [];
 							this.$nextButton.trigger('focus');
 							this.buttonWithFocus = null;
 						}
-					}
-					else if (control === 'captions') {
+					} else if (control === 'captions') {
 						this.$ccButton = $newButton;
-					}
-					else if (control === 'sign') {
+					} else if (control === 'sign') {
 						this.$signButton = $newButton;
 						// gray out sign button if sign language window is not active
 						if (!(this.$signWindow.is(':visible'))) {
 							this.$signButton.addClass('buttonOff');
 						}
-					}
-					else if (control === 'descriptions') {
+					} else if (control === 'descriptions') {
 						this.$descButton = $newButton;
 						// button will be enabled or disabled in description.js > initDescription()
-					}
-					else if (control === 'mute') {
+					} else if (control === 'mute') {
 						this.$muteButton = $newButton;
-					}
-					else if (control === 'transcript') {
+					} else if (control === 'transcript') {
 						this.$transcriptButton = $newButton;
 						// gray out transcript button if transcript is not active
 						if (!(this.$transcriptDiv.is(':visible'))) {
 							this.$transcriptButton.addClass('buttonOff').attr('title',this.tt.showTranscript);
 						}
-					}
-					else if (control === 'fullscreen') {
+					} else if (control === 'fullscreen') {
 						this.$fullscreenButton = $newButton;
-					}
-					else if (control === 'chapters') {
+					} else if (control === 'chapters') {
 						this.$chaptersButton = $newButton;
-					}
-					else if (control === 'preferences') {
+					} else if (control === 'preferences') {
 						this.$prefsButton = $newButton;
-					}
-					else if (control === 'volume') {
+					} else if (control === 'volume') {
 						this.$volumeButton = $newButton;
 					}
 				}
@@ -4933,184 +4348,7 @@ var AblePlayerInstances = [];
 		}
 
 		// Update state-based display of controls.
-		this.refreshControls('init');
-	};
-
-	AblePlayer.prototype.useSvg = function () {
-
-		// Modified from IcoMoon.io svgxuse
-		// @copyright Copyright (c) 2016 IcoMoon.io
-		// @license		Licensed under MIT license
-		// See https://github.com/Keyamoon/svgxuse
-		// @version		1.1.16
-
-		var cache = Object.create(null); // holds xhr objects to prevent multiple requests
-		var checkUseElems,
-				tid; // timeout id
-		var debouncedCheck = function () {
-			clearTimeout(tid);
-			tid = setTimeout(checkUseElems, 100);
-		};
-		var unobserveChanges = function () {
-			return;
-		};
-		var observeChanges = function () {
-			var observer;
-			window.addEventListener('resize', debouncedCheck, false);
-			window.addEventListener('orientationchange', debouncedCheck, false);
-			if (window.MutationObserver) {
-				observer = new MutationObserver(debouncedCheck);
-				observer.observe(document.documentElement, {
-					childList: true,
-					subtree: true,
-					attributes: true
-				});
-				unobserveChanges = function () {
-					try {
-						observer.disconnect();
-						window.removeEventListener('resize', debouncedCheck, false);
-						window.removeEventListener('orientationchange', debouncedCheck, false);
-					} catch (ignore) {}
-				};
-			}
-			else {
-				document.documentElement.addEventListener('DOMSubtreeModified', debouncedCheck, false);
-				unobserveChanges = function () {
-					document.documentElement.removeEventListener('DOMSubtreeModified', debouncedCheck, false);
-					window.removeEventListener('resize', debouncedCheck, false);
-					window.removeEventListener('orientationchange', debouncedCheck, false);
-				};
-			}
-		};
-		var xlinkNS = 'http://www.w3.org/1999/xlink';
-		checkUseElems = function () {
-			var base,
-					bcr,
-					fallback = '', // optional fallback URL in case no base path to SVG file was given and no symbol definition was found.
-					hash,
-					i,
-					Request,
-					inProgressCount = 0,
-					isHidden,
-					url,
-					uses,
-					xhr;
-			if (window.XMLHttpRequest) {
-				Request = new XMLHttpRequest();
-				if (Request.withCredentials !== undefined) {
-					Request = XMLHttpRequest;
-				}
-				else {
-					Request = XDomainRequest || undefined;
-				}
-			}
-			if (Request === undefined) {
-				return;
-			}
-			function observeIfDone() {
-				// If done with making changes, start watching for chagnes in DOM again
-				inProgressCount -= 1;
-				if (inProgressCount === 0) { // if all xhrs were resolved
-					observeChanges(); // watch for changes to DOM
-				}
-			}
-			function attrUpdateFunc(spec) {
-				return function () {
-					if (cache[spec.base] !== true) {
-						spec.useEl.setAttributeNS(xlinkNS, 'xlink:href', '#' + spec.hash);
-					}
-				};
-			}
-			function onloadFunc(xhr) {
-				return function () {
-					var body = document.body;
-					var x = document.createElement('x');
-					var svg;
-					xhr.onload = null;
-					x.innerHTML = xhr.responseText;
-					svg = x.getElementsByTagName('svg')[0];
-					if (svg) {
-						svg.setAttribute('aria-hidden', 'true');
-						svg.style.position = 'absolute';
-						svg.style.width = 0;
-						svg.style.height = 0;
-						svg.style.overflow = 'hidden';
-						body.insertBefore(svg, body.firstChild);
-					}
-					observeIfDone();
-				};
-			}
-			function onErrorTimeout(xhr) {
-				return function () {
-					xhr.onerror = null;
-					xhr.ontimeout = null;
-					observeIfDone();
-				};
-			}
-			unobserveChanges(); // stop watching for changes to DOM
-			// find all use elements
-			uses = document.getElementsByTagName('use');
-			for (i = 0; i < uses.length; i += 1) {
-				try {
-					bcr = uses[i].getBoundingClientRect();
-				} catch (ignore) {
-					// failed to get bounding rectangle of the use element
-					bcr = false;
-				}
-				url = uses[i].getAttributeNS(xlinkNS, 'href').split('#');
-				base = url[0];
-				hash = url[1];
-				isHidden = bcr && bcr.left === 0 && bcr.right === 0 && bcr.top === 0 && bcr.bottom === 0;
-				if (bcr && bcr.width === 0 && bcr.height === 0 && !isHidden) {
-					// the use element is empty
-					// if there is a reference to an external SVG, try to fetch it
-					// use the optional fallback URL if there is no reference to an external SVG
-					if (fallback && !base.length && hash && !document.getElementById(hash)) {
-						base = fallback;
-					}
-					if (base.length) {
-						// schedule updating xlink:href
-						xhr = cache[base];
-						if (xhr !== true) {
-							// true signifies that prepending the SVG was not required
-							setTimeout(attrUpdateFunc({
-								useEl: uses[i],
-								base: base,
-								hash: hash
-							}), 0);
-						}
-						if (xhr === undefined) {
-							xhr = new Request();
-							cache[base] = xhr;
-							xhr.onload = onloadFunc(xhr);
-							xhr.onerror = onErrorTimeout(xhr);
-							xhr.ontimeout = onErrorTimeout(xhr);
-							xhr.open('GET', base);
-							xhr.send();
-							inProgressCount += 1;
-						}
-					}
-				}
-				else {
-					if (!isHidden) {
-						if (cache[base] === undefined) {
-							// remember this URL if the use element was not empty and no request was sent
-							cache[base] = true;
-						}
-						else if (cache[base].onload) {
-							// if it turns out that prepending the SVG is not necessary,
-							// abort the in-progress xhr.
-							cache[base].abort();
-							cache[base].onload = undefined;
-							cache[base] = true;
-						}
-					}
-				}
-			}
-			uses = '';
-			inProgressCount += 1;
-			observeIfDone();
-		};
+		this.refreshControls();
 	};
 
 	AblePlayer.prototype.cuePlaylistItem = function(sourceIndex) {
@@ -5127,9 +4365,8 @@ var AblePlayerInstances = [];
 
 		if (this.initializing) { // this is the first track - user hasn't pressed play yet
 			// do nothing.
-		}
-		else {
-				if (this.playerCreated) {
+		} else {
+			if (this.playerCreated) {
 				// remove the old
 				this.deletePlayer('playlist');
 			}
@@ -5142,8 +4379,7 @@ var AblePlayerInstances = [];
 		// it should be ok to play automatically, regardless of how it was requested
 		if (this.startedPlaying) {
 			this.okToPlay = true;
-		}
-		else {
+		} else {
 			this.okToPlay = false;
 		}
 
@@ -5160,16 +4396,14 @@ var AblePlayerInstances = [];
 				this.youTubeDescId = this.getYouTubeId($newItem.attr('data-youtube-desc-id'));
 			}
 			newPlayer = 'youtube';
-		}
-		else if (this.hasAttr($newItem,'data-vimeo-id')) {
+		} else if (this.hasAttr($newItem,'data-vimeo-id')) {
 			this.vimeoId = this.getVimeoId($newItem.attr('data-vimeo-id'));
 			if (this.hasAttr($newItem,'data-vimeo-desc-id')) {
 				this.vimeoDescId = this.getVimeoId($newItem.attr('data-vimeo-desc-id'));
 			}
 			newPlayer = 'vimeo';
-		}
-		else {
-				newPlayer = 'html5';
+		} else {
+			newPlayer = 'html5';
 		}
 		if (newPlayer === 'youtube') {
 			if (prevPlayer === 'html5') {
@@ -5179,9 +4413,8 @@ var AblePlayerInstances = [];
 				}
 				this.$media.hide();
 			}
-		}
-		else {
-				// the new player is not youtube
+		} else {
+			// the new player is not youtube
 			this.youTubeId = false;
 			if (prevPlayer === 'youtube') {
 				// unhide the media element
@@ -5209,7 +4442,7 @@ var AblePlayerInstances = [];
 		if ($sourceSpans.length) {
 			$sourceSpans.each(function() {
 				const $this = $(this);
- 
+
 				// Check if the required data-src attribute exists
 				if (thisObj.hasAttr($this, "data-src")) {
 					const sanitizedSrc = DOMPurify.sanitize($this.attr("data-src"));
@@ -5218,20 +4451,20 @@ var AblePlayerInstances = [];
 					if (validate.isProtocolSafe(sanitizedSrc)) {
 						// Create a new <source> element with the sanitized src
 						const $newSource = $("<source>", { src: sanitizedSrc });
-			
+
 						// List of optional attributes to sanitize and add
 						const optionalAttributes = [
 							"data-type",
 							"data-desc-src",
 							"data-sign-src",
 						];
-	
+
 						// Process optional attributes
 						optionalAttributes.forEach((attr) => {
 							if (thisObj.hasAttr($this, attr)) {
 								const attrValue = $this.attr(attr); // Get the attribute value
 								const sanitizedValue = DOMPurify.sanitize(attrValue); // Sanitize the value
-				
+
 								// If the attribute ends with "-src", validate the protocol
 								if (attr.endsWith("-src") && validate.isProtocolSafe(sanitizedValue)) {
 									$newSource.attr(attr, sanitizedValue); // Add the sanitized and validated attribute
@@ -5240,7 +4473,7 @@ var AblePlayerInstances = [];
 								}
 							}
              			});
- 
+
 						// Append the new <source> element to the media object
 						thisObj.$media.append($newSource);
 					}
@@ -5318,15 +4551,13 @@ var AblePlayerInstances = [];
 			// if thisObj.swappingSrc is true, media will autoplay when ready
 			if (thisObj.initializing) { // this is the first track - user hasn't pressed play yet
 				thisObj.swappingSrc = false;
-			}
-			else {
+			} else {
 				if (thisObj.player === 'html5') {
 					if (!thisObj.loadingMedia) {
 						thisObj.media.load();
 						thisObj.loadingMedia = true;
 					}
-				}
-				else if (thisObj.player === 'youtube') {
+				} else if (thisObj.player === 'youtube') {
 					thisObj.okToPlay = true;
 				}
 			}
@@ -5397,94 +4628,54 @@ var AblePlayerInstances = [];
 
 		if (control === 'playpause') {
 			return this.tt.play;
-		}
-		else if (control === 'play') {
+		} else if (control === 'play') {
 			return this.tt.play;
-		}
-		else if (control === 'pause') {
+		} else if (control === 'pause') {
 			return this.tt.pause;
-		}
-		else if (control === 'restart') {
+		} else if (control === 'restart') {
 			return this.tt.restart;
-		}
-		else if (control === 'previous') {
+		} else if (control === 'previous') {
 			return this.tt.prevTrack;
-		}
-		else if (control === 'next') {
+		} else if (control === 'next') {
 			return this.tt.nextTrack;
-		}
-		else if (control === 'rewind') {
+		} else if (control === 'rewind') {
 			return this.tt.rewind;
-		}
-		else if (control === 'forward') {
+		} else if (control === 'forward') {
 			return this.tt.forward;
-		}
-		else if (control === 'captions') {
+		} else if (control === 'captions') {
 			if (this.captions.length > 1) {
 				return this.tt.captions;
+			} else {
+				return (this.captionsOn) ? this.tt.hideCaptions : this.tt.showCaptions;
 			}
-			else {
-				if (this.captionsOn) {
-					return this.tt.hideCaptions;
-				}
-				else {
-					return this.tt.showCaptions;
-				}
-			}
-		}
-		else if (control === 'descriptions') {
-			if (this.descOn) {
-				return this.tt.turnOffDescriptions;
-			}
-			else {
-				return this.tt.turnOnDescriptions;
-			}
-		}
-		else if (control === 'transcript') {
-			if (this.$transcriptDiv.is(':visible')) {
-				return this.tt.hideTranscript;
-			}
-			else {
-				return this.tt.showTranscript;
-			}
-		}
-		else if (control === 'chapters') {
+		} else if (control === 'descriptions') {
+			return (this.descOn) ? this.tt.turnOffDescriptions : this.tt.turnOnDescriptions;
+		} else if (control === 'transcript') {
+			return (this.$transcriptDiv.is(':visible')) ? this.tt.hideTranscript : this.tt.showTranscript;
+		} else if (control === 'chapters') {
 			return this.tt.chapters;
-		}
-		else if (control === 'sign') {
+		} else if (control === 'sign') {
 			return this.tt.sign;
-		}
-		else if (control === 'volume') {
+		} else if (control === 'volume') {
 			return this.tt.volume;
-		}
-		else if (control === 'faster') {
+		} else if (control === 'faster') {
 			return this.tt.faster;
-		}
-		else if (control === 'slower') {
+		} else if (control === 'slower') {
 			return this.tt.slower;
-		}
-		else if (control === 'preferences') {
+		} else if (control === 'preferences') {
 			return this.tt.preferences;
-		}
-		else if (control === 'help') {
+		} else if (control === 'help') {
 			// return this.tt.help;
-		}
-		else if (control === 'fullscreen') {
-			if (!this.fullscreen) {
-				return this.tt.enterFullScreen;
-			}
-			else {
-				return this.tt.exitFullScreen;
-			}
-		}
-		else {
+		} else if (control === 'fullscreen') {
+			return (!this.fullscreen) ? this.tt.enterFullScreen : this.tt.exitFullScreen;
+		} else {
 			// there should be no other controls, but just in case:
 			// return the name of the control with first letter in upper case
 			// ultimately will need to get a translated label from this.tt
 			if (this.debug) {
 				
 			}
-			return control.charAt(0).toUpperCase() + control.slice(1);
+			return this.capitalizeFirstLetter( control );
 		}
 	};
 })(jQuery);
@@ -5763,20 +4954,17 @@ if (typeof module !== "undefined" && module.exports) {
     }
     for (i = 0; i < tracks.length; i++) {
       track = tracks[i];
-      kind = track.kind;
+      kind = ( track.kind ) ? track.kind : 'subtitles';
 
       if (!track.src) {
         if (thisObj.usingYouTubeCaptions || thisObj.usingVimeoCaptions) {
           // skip all the hullabaloo and go straight to setupCaptions
           thisObj.setupCaptions(track);
-        } else {
-          // Nothing to load!
-          // Skip this track; move on to next i
         }
         continue;
       }
-      var trackSrc = track.src;
-      loadingPromise = this.loadTextObject(track.src); // resolves with src, trackText
+	  var trackSrc = track.src;
+      loadingPromise = this.loadTextObject(trackSrc); // resolves with src, trackText
       loadingPromises.push(
         loadingPromise.catch(function (src) {
           
@@ -5784,7 +4972,7 @@ if (typeof module !== "undefined" && module.exports) {
       );
       loadingPromise.then(
         (function (track, kind) {
-          var trackSrc = track.src;
+          trackSrc = track.src;
           var trackLang = track.language;
           var trackLabel = track.label;
           var trackDesc = track.desc;
@@ -5805,14 +4993,14 @@ if (typeof module !== "undefined" && module.exports) {
                 trackContents
               );
             }
-            if (kind === "captions" || kind === "subtitles") {
+            if (kind === 'captions' || kind === 'subtitles') {
               thisObj.setupCaptions(track, cues);
-            } else if (kind === "descriptions") {
+            } else if (kind === 'descriptions') {
               thisObj.setupDescriptions(track, cues);
-            } else if (kind === "chapters") {
+            } else if (kind === 'chapters') {
               thisObj.setupChapters(track, cues);
-            } else if (kind === "metadata") {
-              thisObj.setupMetadata(track, cues);
+            } else if (kind === 'metadata') {
+              thisObj.setupMetadata(cues);
             }
           };
         })(track, kind)
@@ -5838,8 +5026,8 @@ if (typeof module !== "undefined" && module.exports) {
     // cues - array with startTime, endTime, and payload
     // desc - Boolean, true if track includes a data-desc attribute
 
-    var thisObj, deferred, promise, trackLang, trackLabel, isDefault, forDesc, 
-	hasDefault, hasTrackInDefLang, trackFound, i, j;
+    var thisObj, deferred, promise, trackLang, trackLabel, isDefault, forDesc,
+	hasDefault, hasTrackInDefLang, trackFound, i;
 
     thisObj = this;
     hasDefault = false;
@@ -5847,7 +5035,7 @@ if (typeof module !== "undefined" && module.exports) {
     deferred = new $.Deferred();
     promise = deferred.promise();
 
-    this.$tracks = this.$media.find("track");
+    this.$tracks = this.$media.find('track');
     this.tracks = []; // only includes tracks that do NOT have data-desc
     this.altTracks = []; // only includes tracks that DO have data-desc
 
@@ -5864,31 +5052,30 @@ if (typeof module !== "undefined" && module.exports) {
       this.usingYouTubeCaptions = false;
       // create object from HTML5 tracks
       this.$tracks.each(function (index, element) {
-        if ($(this).attr("kind") === "captions") {
+        if ($(this).attr('kind') === 'captions') {
           thisObj.hasCaptionsTrack = true;
-        } else if ($(this).attr("kind") === "descriptions") {
+        } else if ($(this).attr('kind') === 'descriptions') {
           thisObj.hasClosedDesc = true;
         }
 
         // srcLang should always be included with <track>, but HTML5 spec doesn't require it
         // if not provided, assume track is the same language as the default player language
-        if ($(this).attr("srclang")) {
-          trackLang = $(this).attr("srclang");
+        if ($(this).attr('srclang')) {
+          trackLang = $(this).attr('srclang');
         } else {
           trackLang = thisObj.lang;
         }
-        if ($(this).attr("label")) {
-          trackLabel = $(this).attr("label");
+        if ($(this).attr('label')) {
+          trackLabel = $(this).attr('label');
         } else {
           trackLabel = thisObj.getLanguageName(trackLang);
         }
 
-        if (typeof $(this).attr("default") !== "undefined" && !hasDefault) {
+        if (typeof $(this).attr('default') !== 'undefined' && !hasDefault) {
           isDefault = true;
           hasDefault = true;
         } else if (trackLang === thisObj.lang) {
           // this track is in the default lang of the player
-          // save this for later
           // if there is no other default track specified
           // this will be the default
           hasTrackInDefLang = true;
@@ -5909,8 +5096,8 @@ if (typeof module !== "undefined" && module.exports) {
         }
         if (forDesc) {
           thisObj.altTracks.push({
-            kind: $(this).attr("kind"),
-            src: $(this).attr("src"),
+            kind: $(this).attr('kind'),
+            src: $(this).attr('src'),
             language: trackLang,
             label: trackLabel,
             def: isDefault,
@@ -5918,8 +5105,8 @@ if (typeof module !== "undefined" && module.exports) {
           });
         } else {
           thisObj.tracks.push({
-            kind: $(this).attr("kind"),
-            src: $(this).attr("src"),
+            kind: $(this).attr('kind'),
+            src: $(this).attr('src'),
             language: trackLang,
             label: trackLabel,
             def: isDefault,
@@ -5935,16 +5122,16 @@ if (typeof module !== "undefined" && module.exports) {
               trackFound = false;
               i = 0;
               while (i < thisObj.tracks.length && !trackFound) {
-                if (thisObj.tracks[i]["language"] === thisObj.lang) {
-                  thisObj.tracks[i]["def"] = true;
+                if (thisObj.tracks[i]['language'] === thisObj.lang) {
+                  thisObj.tracks[i]['def'] = true;
                   trackFound = true;
                 }
                 i++;
               }
             } else {
               // use the first track
-              thisObj.tracks[0]["def"] = true;
-              thisObj.captionLang = thisObj.tracks[0]["language"];
+              thisObj.tracks[0]['def'] = true;
+              thisObj.captionLang = thisObj.tracks[0]['language'];
             }
           }
           // Remove 'default' attribute from all <track> elements
@@ -5958,7 +5145,7 @@ if (typeof module !== "undefined" && module.exports) {
     if (!this.$tracks.length || !this.hasCaptionsTrack) {
       // this media has no track elements
       // if this is a youtube or vimeo player, check there for captions/subtitles
-      if (this.player === "youtube") {
+      if (this.player === 'youtube') {
         this.getYouTubeCaptionTracks(this.youTubeId).then(function () {
           if (thisObj.hasCaptions) {
             thisObj.usingYouTubeCaptions = true;
@@ -5968,7 +5155,7 @@ if (typeof module !== "undefined" && module.exports) {
           }
           deferred.resolve();
         });
-      } else if (this.player === "vimeo") {
+      } else if (this.player === 'vimeo') {
         this.getVimeoCaptionTracks().then(function () {
           if (thisObj.hasCaptions) {
             thisObj.usingVimeoCaptions = true;
@@ -6062,8 +5249,8 @@ if (typeof module !== "undefined" && module.exports) {
         this.captionsOn = false;
       }
     }
-    if (this.mediaType === "audio" && this.captionsOn) {
-      this.$captionsContainer.removeClass("captions-off");
+    if (this.mediaType === 'audio' && this.captionsOn) {
+      this.$captionsContainer.removeClass('captions-off');
     }
 
     if (
@@ -6073,17 +5260,17 @@ if (typeof module !== "undefined" && module.exports) {
     ) {
       // captionsWrapper either doesn't exist, or exists in an orphaned state
       // Either way, it needs to be rebuilt...
-      this.$captionsDiv = $("<div>", {
+      this.$captionsDiv = $('<div>', {
         class: "able-captions",
       });
-      this.$captionsWrapper = $("<div>", {
-        class: "able-captions-wrapper",
-        "aria-hidden": "true",
+      this.$captionsWrapper = $('<div>', {
+        class: 'able-captions-wrapper',
+        'aria-hidden': 'true',
       }).hide();
-      if (this.prefCaptionsPosition === "below") {
-        this.$captionsWrapper.addClass("able-captions-below");
+      if (this.prefCaptionsPosition === 'below') {
+        this.$captionsWrapper.addClass('able-captions-below');
       } else {
-        this.$captionsWrapper.addClass("able-captions-overlay");
+        this.$captionsWrapper.addClass('able-captions-overlay');
       }
       this.$captionsWrapper.append(this.$captionsDiv);
       this.$captionsContainer.append(this.$captionsWrapper);
@@ -6114,19 +5301,19 @@ if (typeof module !== "undefined" && module.exports) {
     });
   };
 
-  AblePlayer.prototype.setupMetadata = function (track, cues, trackDesc) {
-    if (this.metaType === "text") {
+  AblePlayer.prototype.setupMetadata = function (cues) {
+    if (this.metaType === 'text') {
       // Metadata is only supported if data-meta-div is provided
       // The player does not display metadata internally
       if (this.metaDiv) {
-        if ($("#" + this.metaDiv)) {
+        if ($('#' + this.metaDiv)) {
           // container exists
-          this.$metaDiv = $("#" + this.metaDiv);
+          this.$metaDiv = $('#' + this.metaDiv);
           this.hasMeta = true;
           this.meta = cues;
         }
       }
-    } else if (this.metaType === "selector") {
+    } else if (this.metaType === 'selector') {
       this.hasMeta = true;
       this.visibleSelectors = [];
       this.meta = cues;
@@ -6148,14 +5335,14 @@ if (typeof module !== "undefined" && module.exports) {
     thisObj = this;
 
     // create a temp div for holding data
-    $tempDiv = $("<div>", {
-      style: "display:none",
+    $tempDiv = $('<div>', {
+      style: 'display:none',
     });
 
     // Fetch the content manually so it can be sanitized
     $.ajax({
       url: src,
-      dataType: "text",
+      dataType: 'text',
       success: function (data) {
         // Sanitize the fetched content
         var sanitizedTrackText = validate.sanitizeVttContent(data);
@@ -6187,7 +5374,6 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var thisObj, deferred, promise, youTubeId;
 		thisObj = this;
-
 		deferred = new $.Deferred();
 		promise = deferred.promise();
 
@@ -6195,20 +5381,15 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// if a described version is available && user prefers desription
 		// init player using the described version
-		if (this.youTubeDescId && this.prefDesc) {
-			youTubeId = this.youTubeDescId;
-		}
-		else {
-			youTubeId = this.youTubeId;
-		}
+		youTubeId = (this.youTubeDescId && this.prefDesc) ? this.youTubeDescId : this.youTubeId;
+
 		this.activeYouTubeId = youTubeId;
 		if (AblePlayer.youTubeIframeAPIReady) {
 			// Script already loaded and ready.
 			thisObj.finalizeYoutubeInit().then(function() {
 				deferred.resolve();
 			});
-		}
-		else {
+		} else {
 			// Has another player already started loading the script? If so, abort...
 			if (!AblePlayer.loadingYouTubeIframeAPI) {
 				$.getScript('https://www.youtube.com/iframe_api').fail(function () {
@@ -6229,14 +5410,11 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.finalizeYoutubeInit = function () {
 
 		// This is called once we're sure the Youtube iFrame API is loaded -- see above
-
 		var deferred, promise, thisObj, containerId, ccLoadPolicy, autoplay;
 
 		deferred = new $.Deferred();
 		promise = deferred.promise();
-
 		thisObj = this;
-
 		containerId = this.mediaId + '_youtube';
 
 		this.$mediaContainer.prepend($('<div>').attr('id', containerId));
@@ -6245,15 +5423,9 @@ if (typeof module !== "undefined" && module.exports) {
 		// 0 - show captions depending on user's preference on YouTube
 		// 1 - show captions by default, even if the user has turned them off
 		// IMPORTANT: This *must* be set to 1 or some browsers
-		// fail to load any texttracks (observed in Chrome, not in Firefox)
+		// fail to load any text tracks (observed in Chrome, not in Firefox)
 		ccLoadPolicy = 1;
-
-		if (this.okToPlay) {
-			autoplay = 1;
-		}
-		else {
-			autoplay = 0;
-		}
+		autoplay = (this.okToPlay) ? 1 : 0;
 
 		// Documentation https://developers.google.com/youtube/player_parameters
 
@@ -6266,17 +5438,17 @@ if (typeof module !== "undefined" && module.exports) {
 			host: this.youTubeNoCookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com',
 			playerVars: {
 				autoplay: autoplay,
-				enablejsapi: 1,
-				disableKb: 1, // disable keyboard shortcuts, using our own
-				playsinline: this.playsInline,
-				start: this.startTime,
-				controls: 0, // no controls, using our own
-				cc_load_policy: ccLoadPolicy,
 				cc_lang_pref: this.captionLang, // set the caption language
+				cc_load_policy: ccLoadPolicy,
+				controls: 0, // no controls, using our own
+				disableKb: 1, // disable keyboard shortcuts, using our own
+				enablejsapi: 1,
 				hl: this.lang, // set the UI language to match Able Player
-				modestbranding: 1, // no YouTube logo in controller
+				iv_load_policy: 3, // do not show video annotations
+				origin: window.location.origin,
+				playsinline: this.playsInline,
 				rel: 0, // when video ends, show only related videos from same channel (1 shows any)
-				iv_load_policy: 3 // do not show video annotations
+				start: this.startTime
 			},
 			events: {
 				onReady: function () {
@@ -6321,11 +5493,9 @@ if (typeof module !== "undefined" && module.exports) {
 							thisObj.playing = true;
 							thisObj.startedPlaying = true;
 							thisObj.paused = false;
-						}
-						else if (playerState == 'ended') {
+						} else if (playerState == 'ended') {
 							thisObj.onMediaComplete();
-						}
-						else {
+						} else {
 							thisObj.playing = false;
 							thisObj.paused = true;
 						}
@@ -6351,6 +5521,10 @@ if (typeof module !== "undefined" && module.exports) {
 						}
 					}
 				},
+				onApiChange: function() {
+					// getDuration() can be fetched during API change event.
+					thisObj.duration = thisObj.youTubePlayer.getDuration();
+				},
 				onPlaybackQualityChange: function () {
 					// do something
 				},
@@ -6368,7 +5542,6 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// The YouTube iframe API does not have a getSize() of equivalent method
 		// so, need to get dimensions from YouTube's iframe
-
 		var $iframe, width, height;
 
 		$iframe = this.$ableWrapper.find('iframe');
@@ -6388,7 +5561,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// get data via YouTube IFrame Player API, and push data to this.tracks & this.captions
 		// NOTE: Caption tracks are not available through the IFrame Player API
 		// until AFTER the video has started playing.
-		// Therefore, this function plays the video briefly in order to load the captions module
+		// Therefore, this function plays the video briefly to load the captions module
 		// then stops the video and collects the data needed to build the cc menu
 		// This is stupid, but seemingly unavoidable.
 		// Caption tracks could be obtained through the YouTube Data API
@@ -6397,16 +5570,15 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var deferred = new $.Deferred();
 		var promise = deferred.promise();
-
 		var thisObj, ytTracks, i, trackLang, trackLabel, isDefaultTrack;
 
 		thisObj = this;
 
-		if (!this.youTubePlayer.getOption('captions','tracklist')) {
+		if (!this.youTubePlayer.getOption('captions','tracklist') ) {
 
 			// no tracks were found, probably because the captions module hasn't loaded
-			// play video briefly (required in order to load the captions module)
-			// and after the apiChange event is triggered, try again to retreive tracks
+			// play video briefly (required to load the captions module)
+			// and after the apiChange event is triggered, try again to retrieve tracks
 			this.youTubePlayer.addEventListener('onApiChange',function(x) {
 
 				// getDuration() also requires video to play briefly
@@ -6431,12 +5603,9 @@ if (typeof module !== "undefined" && module.exports) {
 							trackLang = ytTracks[i].languageCode;
 							trackLabel = ytTracks[i].languageName; // displayName and languageName seem to always have the same value
 							isDefaultTrack = false;
-							if (typeof thisObj.captionLang !== 'undefined') {
-								if (trackLang === thisObj.captionLang) {
-									isDefaultTrack = true;
-								}
-							}
-							else if (typeof thisObj.lang !== 'undefined') {
+							if (typeof thisObj.captionLang !== 'undefined' && (trackLang === thisObj.captionLang) ) {
+								isDefaultTrack = true;
+							} else if (typeof thisObj.lang !== 'undefined') {
 								if (trackLang === thisObj.lang) {
 									isDefaultTrack = true;
 								}
@@ -6457,8 +5626,7 @@ if (typeof module !== "undefined" && module.exports) {
 						thisObj.hasCaptions = true;
 						// setupPopups again with new captions array, replacing original
 						thisObj.setupPopups('captions');
-					}
-					else {
+					} else {
 						// there are no YouTube captions
 						thisObj.usingYouTubeCaptions = false;
 						thisObj.hasCaptions = false;
@@ -6488,45 +5656,31 @@ if (typeof module !== "undefined" && module.exports) {
 		return promise;
 	};
 
-	AblePlayer.prototype.getYouTubeTimedTextUrl = function (youTubeId, trackName, trackLang) {
-
-		// return URL for retrieving WebVTT source via YouTube's timedtext API
-		// Note: This API seems to be undocumented, and could break anytime
-		// UPDATE: Google removed this API on November 10, 2021
-		// This function is no longer called, but is preserved here for reference
-		var url = 'https://www.youtube.com/api/timedtext?fmt=vtt';
-		url += '&v=' + youTubeId;
-		url += '&lang=' + trackLang;
-		// if track has a value in the name field, it's *required* in the URL
-		if (trackName !== '') {
-			url += '&name=' + trackName;
-		}
-		return url;
-	};
-
 	AblePlayer.prototype.getYouTubePosterUrl = function (youTubeId, width) {
 
-			 // return a URL for retrieving a YouTube poster image
-			 // supported values of width: 120, 320, 480, 640
-
-			 var url = 'https://img.youtube.com/vi/' + youTubeId;
-			 if (width == '120') {
-				 // default (small) thumbnail, 120 x 90
-				 return url + '/default.jpg';
-			 }
-			 else if (width == '320') {
-				 // medium quality thumbnail, 320 x 180
-				 return url + '/hqdefault.jpg';
-			 }
-			 else if (width == '480') {
-				 // high quality thumbnail, 480 x 360
-				 return url + '/hqdefault.jpg';
-			 }
-			 else if (width == '640') {
-				 // standard definition poster image, 640 x 480
-				 return url + '/sddefault.jpg';
-			 }
-			 return false;
+		// return a URL for retrieving a YouTube poster image
+		// supported values of width: 120, 320, 480, 640, 1280, 1920.
+		var url = 'https://img.youtube.com/vi/' + youTubeId;
+		if (width == '120') {
+			// default (small) thumbnail, 120 x 90
+			return url + '/default.jpg';
+		} else if (width == '320') {
+			// medium quality thumbnail, 320 x 180
+			return url + '/mqdefault.jpg';
+		} else if (width == '480') {
+			// high quality thumbnail, 480 x 360
+			return url + '/hqdefault.jpg';
+		} else if (width == '640') {
+			// standard definition poster image, 640 x 480
+			return url + '/sddefault.jpg';
+		} else if (width == '1280') {
+			// standard definition poster image, 640 x 480
+			return url + '/hq720.jpg';
+		} else if ( width == '1920' ) {
+			// standard definition poster image, 640 x 480
+			return url + '/maxresdefault.jpg';
+		}
+		return false;
 	};
 
 	AblePlayer.prototype.getYouTubeId = function (url) {
@@ -6546,8 +5700,7 @@ if (typeof module !== "undefined" && module.exports) {
 			idStartPos = url.length - 11;
 			id = url.substring(idStartPos);
 			return id;
-		}
-		else {
+		} else {
 			return url;
 		}
 };
@@ -6562,9 +5715,8 @@ if (typeof module !== "undefined" && module.exports) {
 	// - tracking(event, position)
 	// - stopTracking(event, position)
 
-	window. AccessibleSlider = function(mediaType, div, orientation, length, min, max, bigInterval, label, className, trackingMedia, initialState) {
+	window.AccessibleSlider = function(div, orientation, length, min, max, bigInterval, label, className, trackingMedia, initialState) {
 
-		// mediaType is either 'audio' or 'video'
 		// div is the host element around which the slider will be built
 		// orientation is either 'horizontal' or 'vertical'
 		// length is the width or height of the slider, depending on orientation
@@ -6606,8 +5758,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (initialState === 'visible') {
 			this.seekHead.attr('tabindex', '0');
-		}
-		else {
+		} else {
 			this.seekHead.attr('tabindex', '-1');
 		}
 		// Since head is focusable, it gets the aria roles/titles.
@@ -6646,8 +5797,7 @@ if (typeof module !== "undefined" && module.exports) {
 			if (orientation === 'horizontal') {
 				this.wrapperDiv.width(length);
 				this.loadedDiv.width(0);
-			}
-			else {
+			} else {
 				this.wrapperDiv.height(length);
 				this.loadedDiv.height(0);
 			}
@@ -6671,26 +5821,22 @@ if (typeof module !== "undefined" && module.exports) {
 
 			if (e.type === 'mouseenter' || e.type === 'focus') {
 				thisObj.overHead = true;
-			}
-			else if (e.type === 'mouseleave' || e.type === 'blur') {
+			} else if (e.type === 'mouseleave' || e.type === 'blur') {
 				thisObj.overHead = false;
 				if (!thisObj.overBody && thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.stopTracking(thisObj.pageXToPosition(coords.x));
 				}
-			}
-			else if (e.type === 'mousemove' || e.type === 'touchmove') {
+			} else if (e.type === 'mousemove' || e.type === 'touchmove') {
 				if (thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.trackHeadAtPageX(coords.x);
 				}
-			}
-			else if (e.type === 'mousedown' || e.type === 'touchstart') {
+			} else if (e.type === 'mousedown' || e.type === 'touchstart') {
 				thisObj.startTracking('mouse', thisObj.pageXToPosition(thisObj.seekHead.offset() + (thisObj.seekHead.width() / 2)));
 				if (!thisObj.bodyDiv.is(':focus')) {
 					thisObj.bodyDiv.focus();
 				}
 				e.preventDefault();
-			}
-			else if (e.type === 'mouseup' || e.type === 'touchend') {
+			} else if (e.type === 'mouseup' || e.type === 'touchend') {
 				if (thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.stopTracking(thisObj.pageXToPosition(coords.x));
 				}
@@ -6704,7 +5850,12 @@ if (typeof module !== "undefined" && module.exports) {
 		this.bodyDiv.on(
 			'mouseenter mouseleave mousemove mousedown mouseup keydown keyup touchstart touchmove touchend', function (e) {
 
+			// Don't trigger move on right click.
+			if ( e.button == 2 && e.type == 'mousedown' ) {
+				return;
+			}
 			coords = thisObj.pointerEventToXY(e);
+			let keyPressed = e.key;
 
 			if (e.type === 'mouseenter') {
 				thisObj.overBody = true;
@@ -6712,15 +5863,13 @@ if (typeof module !== "undefined" && module.exports) {
 					x: coords.x,
 					y: coords.y
 				};
-			}
-			else if (e.type === 'mouseleave') {
+			} else if (e.type === 'mouseleave') {
 				thisObj.overBody = false;
 				thisObj.overBodyMousePos = null;
 				if (!thisObj.overHead && thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.stopTracking(thisObj.pageXToPosition(coords.x));
 				}
-			}
-			else if (e.type === 'mousemove' || e.type === 'touchmove') {
+			} else if (e.type === 'mousemove' || e.type === 'touchmove') {
 				thisObj.overBodyMousePos = {
 					x: coords.x,
 					y: coords.y
@@ -6728,52 +5877,36 @@ if (typeof module !== "undefined" && module.exports) {
 				if (thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.trackHeadAtPageX(coords.x);
 				}
-			}
-			else if (e.type === 'mousedown' || e.type === 'touchstart') {
+			} else if (e.type === 'mousedown' || e.type === 'touchstart') {
 				thisObj.startTracking('mouse', thisObj.pageXToPosition(coords.x));
 				thisObj.trackHeadAtPageX(coords.x);
 				if (!thisObj.seekHead.is(':focus')) {
 					thisObj.seekHead.focus();
 				}
 				e.preventDefault();
-			}
-			else if (e.type === 'mouseup' || e.type === 'touchend') {
+			} else if (e.type === 'mouseup' || e.type === 'touchend') {
 				if (thisObj.tracking && thisObj.trackDevice === 'mouse') {
 					thisObj.stopTracking(thisObj.pageXToPosition(coords.x));
 				}
-			}
-			else if (e.type === 'keydown') {
-				// Home
-				if (e.which === 36) {
+			} else if (e.type === 'keydown') {
+				if (e.key === 'Home') {
 					thisObj.trackImmediatelyTo(0);
-				}
-				// End
-				else if (e.which === 35) {
+				} else if (e.key === 'End') {
 					thisObj.trackImmediatelyTo(thisObj.duration);
-				}
-				// Left arrow or down arrow
-				else if (e.which === 37 || e.which === 40) {
+				} else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
 					thisObj.arrowKeyDown(-1);
-				}
-				// Right arrow or up arrow
-				else if (e.which === 39 || e.which === 38) {
+				} else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
 					thisObj.arrowKeyDown(1);
-				}
-				// Page up
-				else if (e.which === 33 && bigInterval > 0) {
+				} else if (e.key === 'PageUp' && bigInterval > 0) {
 					thisObj.arrowKeyDown(bigInterval);
-				}
-				// Page down
-				else if (e.which === 34 && bigInterval > 0) {
+				} else if (e.key === 'PageDown' && bigInterval > 0) {
 					thisObj.arrowKeyDown(-bigInterval);
-				}
-				else {
+				} else {
 					return;
 				}
 				e.preventDefault();
-			}
-			else if (e.type === 'keyup') {
-				if (e.which >= 33 && e.which <= 40) {
+			} else if (e.type === 'keyup') {
+				if ( keyPressed === e.key ) {
 					if (thisObj.tracking && thisObj.trackDevice === 'keyboard') {
 						thisObj.stopTracking(thisObj.keyTrackPosition);
 					}
@@ -6795,8 +5928,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.nextStep *= 2;
 			}
 			this.trackHeadAtPosition(this.keyTrackPosition);
-		}
-		else {
+		} else {
 			this.nextStep = 1;
 			this.inertiaCount = 0;
 			this.keyTrackPosition = this.boundPos(this.position + (this.nextStep * multiplier));
@@ -6804,26 +5936,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.trackHeadAtPosition(this.keyTrackPosition);
 		}
 	};
-/*
-	AccessibleSlider.prototype.pageUp = function (multiplier) {
-		if (this.tracking && this.trackDevice === 'keyboard') {
-			this.keyTrackPosition = this.boundPos(this.keyTrackPosition + (this.nextStep * multiplier));
-			this.inertiaCount += 1;
-			if (this.inertiaCount === 20) {
-				this.inertiaCount = 0;
-				this.nextStep *= 2;
-			}
-			this.trackHeadAtPosition(this.keyTrackPosition);
-		}
-		else {
-			this.nextStep = 1;
-			this.inertiaCount = 0;
-			this.keyTrackPosition = this.boundPos(this.position + (this.nextStep * multiplier));
-			this.startTracking('keyboard', this.keyTrackPosition);
-			this.trackHeadAtPosition(this.keyTrackPosition);
-		}
-	};
-*/
+
 	AccessibleSlider.prototype.pageXToPosition = function (pageX) {
 		var offset = pageX - this.bodyDiv.offset().left;
 		var position = this.duration * (offset / this.bodyDiv.width());
@@ -6941,14 +6054,12 @@ if (typeof module !== "undefined" && module.exports) {
 				' ' + pMinuteWord +
 				', ' + pSeconds +
 				' ' + pSecondWord;
-		}
-		else if (pMinutes > 0) {
+		} else if (pMinutes > 0) {
 			descriptionText	 = pMinutes +
 				' ' + pMinuteWord +
 				', ' + pSeconds +
 				' ' + pSecondWord;
-		}
-		else {
+		} else {
 			descriptionText = pSeconds + ' ' + pSecondWord;
 		}
 
@@ -6980,18 +6091,15 @@ if (typeof module !== "undefined" && module.exports) {
 			this.timeTooltip.show();
 			if (this.tracking) {
 				this.timeTooltip.text(this.positionToStr(this.lastTrackPosition));
-			}
-			else {
+			} else {
 				this.timeTooltip.text(this.positionToStr(this.position));
 			}
 			this.setTooltipPosition(this.seekHead.position().left + (this.seekHead.width() / 2));
-		}
-		else if (this.overBody && this.overBodyMousePos) {
+		} else if (this.overBody && this.overBodyMousePos) {
 			this.timeTooltip.show();
 			this.timeTooltip.text(this.positionToStr(this.pageXToPosition(this.overBodyMousePos.x)));
 			this.setTooltipPosition(this.overBodyMousePos.x - this.bodyDiv.offset().left);
-		}
-		else {
+		} else {
 
 			clearTimeout(this.timeTooltipTimeoutId);
 			var _this = this;
@@ -7011,7 +6119,7 @@ if (typeof module !== "undefined" && module.exports) {
 	AccessibleSlider.prototype.setTooltipPosition = function (x) {
 		this.timeTooltip.css({
 			left: x - (this.timeTooltip.width() / 2) - 10,
-			bottom: this.seekHead.height() + 10
+			bottom: this.seekHead.height()
 		});
 	};
 
@@ -7029,8 +6137,7 @@ if (typeof module !== "undefined" && module.exports) {
 				dMinutes = '0' + dMinutes;
 			}
 			return dHours + ':' + dMinutes + ':' + dSeconds;
-		}
-		else {
+		} else {
 			return dMinutes + ':' + dSeconds;
 		}
 	};
@@ -7045,8 +6152,7 @@ if (typeof module !== "undefined" && module.exports) {
 			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
 			out.x = touch.pageX;
 			out.y = touch.pageY;
-		}
-		else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
+		} else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover'|| e.type=='mouseout' || e.type=='mouseenter' || e.type=='mouseleave') {
 			out.x = e.pageX;
 			out.y = e.pageY;
 		}
@@ -7064,7 +6170,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// including screen reader support
 		// TODO: Improve presentation of vertical slider. That requires some CSS finesse.
 
-		var thisObj, volumeSliderId, volumeHelpId, volumePct, volumeLabel;
+		var thisObj, volumeSliderId, volumeHelpId, volumePct, volumeLabel, volumeHeight;
 
 		thisObj = this;
 
@@ -7099,6 +6205,8 @@ if (typeof module !== "undefined" && module.exports) {
 		volumeLabel = this.$volumeButton.attr( 'aria-label' );
 		this.$volumeButton.attr( 'aria-label', volumeLabel + ' ' + volumePct + '%');
 		this.$volumeSlider.append(this.$volumeSliderTooltip,this.$volumeRange,this.$volumeHelp);
+		volumeHeight = this.$volumeButton.parents( '.able-control-row' )[0];
+		this.$volumeSlider.css( 'bottom', volumeHeight.offsetHeight );
 
 		$div.append(this.$volumeSlider);
 
@@ -7113,20 +6221,17 @@ if (typeof module !== "undefined" && module.exports) {
 
 		this.$volumeRange.on('keydown',function (e) {
 
-			// Escape key or Enter key or Tab key
-			if (e.which === 27 || e.which === 13 || e.which === 9) {
+			if (e.key === 'Escape' || e.key === 'Tab' || e.key === 'Enter') {
 				// close popup
 				if (thisObj.$volumeSlider.is(':visible')) {
 					thisObj.closingVolume = true; // stopgap
 					thisObj.hideVolumePopup();
-				}
-				else {
+				} else {
 					if (!thisObj.closingVolume) {
 						thisObj.showVolumePopup();
 					}
 				}
-			}
-			else {
+			} else {
 				return;
 			}
 		});
@@ -7151,64 +6256,33 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.refreshVolumeButton = function(volume) {
 
-		var volumeName, volumePct, volumeLabel, volumeIconClass, volumeImg, newSvgData;
+		var volumeName, volumePct, volumeLabel;
 
 		volumeName = this.getVolumeName(volume);
 		volumePct = (volume/10) * 100;
 		volumeLabel = this.tt.volume + ' ' + volumePct + '%';
 
-		if (this.iconType === 'font') {
-			volumeIconClass = 'icon-volume-' + volumeName;
-			this.$volumeButton.find('span').first().removeClass().addClass(volumeIconClass);
-			this.$volumeButton.find('span.able-clipped').text(volumeLabel);
-		}
-		else if (this.iconType === 'image') {
-			volumeImg = this.imgPath + 'volume-' + volumeName + '.png';
-			this.$volumeButton.find('img').attr('src',volumeImg);
-			this.$volumeButton.find('img').attr('alt',volumeLabel);
-		}
-		else if (this.iconType === 'svg') {
-			if (volumeName !== 'mute') {
-				volumeName = 'volume-' + volumeName;
-			}
-			newSvgData = this.getSvgData(volumeName);
-			this.$volumeButton.find('svg').attr('viewBox',newSvgData[0]);
-			this.$volumeButton.find('path').attr('d',newSvgData[1]);
-			this.$volumeButton.attr( 'aria-label', volumeLabel );
-		}
+		this.getIcon( this.$volumeButton, 'volume-' + volumeName );
+		this.$volumeButton.attr( 'aria-label', volumeLabel );
+		this.$volumeButton.find('span.able-clipped').text(volumeLabel);
 	};
 
 	AblePlayer.prototype.handleVolumeButtonClick = function() {
 
 		if (this.$volumeSlider.is(':visible')) {
 			this.hideVolumePopup();
-		}
-		else {
+		} else {
 			this.showVolumePopup();
 		}
 	};
 
-	AblePlayer.prototype.handleVolumeKeystroke = function(keycode) {
-
-		// keycode is an ASCII key code 49-57 (numeric keys 1-9),
+	AblePlayer.prototype.handleVolumeKeystroke = function(volume) {
 		// keyboard shortcuts for changing volume
-
-		var volume;
-
-		if (keycode >= 49 && keycode <= 57) {
-			volume = keycode - 48;
-		}
-		else {
-			return false;
-		}
-
 		if (this.isMuted() && volume > 0) {
 			this.setMute(false);
-		}
-		else if (volume === 0) {
+		} else if (volume === 0) {
 			this.setMute(true);
-		}
-		else {
+		} else {
 			this.setVolume(volume); // this.volume will be updated after volumechange event fires (event.js)
 			this.refreshVolumeHelp(volume);
 			this.refreshVolumeButton(volume);
@@ -7222,11 +6296,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.isMuted() && volume > 0) {
 			this.setMute(false);
-		}
-		else if (volume === 0) {
+		} else if (volume === 0) {
 			this.setMute(true);
-		}
-		else {
+		} else {
 			this.setVolume(volume); // this.volume will be updated after volumechange event fires (event.js)
 			this.refreshVolumeHelp(volume);
 			this.refreshVolumeButton(volume);
@@ -7237,8 +6309,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.isMuted()) {
 			this.setMute(false);
-		}
-		else {
+		} else {
 			this.setMute(true);
 		}
 	};
@@ -7270,8 +6341,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.player === 'html5') {
 			return this.media.muted;
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			return this.youTubePlayer.isMuted();
 		}
 	};
@@ -7283,8 +6353,7 @@ if (typeof module !== "undefined" && module.exports) {
 			// save current volume so it can be restored after unmute
 			this.lastVolume = this.volume;
 			this.volume = 0;
-		}
-		else { // restore to previous volume
+		} else { // restore to previous volume
 			if (typeof this.lastVolume !== 'undefined') {
 				this.volume = this.lastVolume;
 			}
@@ -7292,12 +6361,10 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.player === 'html5') {
 			this.media.muted = mute;
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			if (mute) {
 				this.youTubePlayer.mute();
-			}
-			else {
+			} else {
 				this.youTubePlayer.unMute();
 			}
 		}
@@ -7312,23 +6379,17 @@ if (typeof module !== "undefined" && module.exports) {
 		// convert as needed depending on player
 
 		var newVolume;
-
+		this.syncSignVideo( {'volume' : 0 } );
 		if (this.player === 'html5') {
 			// volume is 0 to 1
 			newVolume = volume / 10;
 			this.media.volume = newVolume;
-
-			if (this.hasSignLanguage && this.signVideo) {
-				this.signVideo.volume = 0; // always mute
-			}
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			// volume is 0 to 100
 			newVolume = volume * 10;
 			this.youTubePlayer.setVolume(newVolume);
 			this.volume = volume;
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			// volume is 0 to 1
 			newVolume = volume / 10;
 			this.vimeoPlayer.setVolume(newVolume).then(function() {
@@ -7345,8 +6406,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (this.player === 'html5') {
 			// uses 0 to 1 scale
 			return this.media.volume * 10;
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			// uses 0 to 100 scale
 			if (this.youTubePlayerReady) {
 				return this.youTubePlayer.getVolume() / 10;
@@ -7365,14 +6425,11 @@ if (typeof module !== "undefined" && module.exports) {
 		// returns 'mute','soft','medium', or 'loud' depending on volume level
 		if (volume == 0) {
 			return 'mute';
-		}
-		else if (volume == 10) {
+		} else if (volume == 10) {
 			return 'loud';
-		}
-		else if (volume < 5) {
+		} else if (volume < 5) {
 			return 'soft';
-		}
-		else {
+		} else {
 			return 'medium';
 		}
 	};
@@ -7393,9 +6450,11 @@ if (typeof module !== "undefined" && module.exports) {
 		var thisObj = this;
 		var modal = modalDiv;
 		this.modal = modal;
-		modal.css({
-			'width': width || '50%'
-		});
+		if ( width ) {
+			modal.css({
+				'width': width
+			});
+		}
 		modal.addClass('able-modal-dialog');
 
 		if (!fullscreen) {
@@ -7405,8 +6464,7 @@ if (typeof module !== "undefined" && module.exports) {
 				 'aria-label': thisObj.closeButtonLabel
 			}).text('×');
 			closeButton.on( 'keydown', function (e) {
-				// Space key down
-				if (e.which === 32) {
+				if (e.key === ' ') {
 					thisObj.hide();
 				}
 			}).on( 'click', function () {
@@ -7434,18 +6492,14 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 
 		modal.on( 'keydown', function (e) {
-			// Escape
-			if (e.which === 27) {
+			if (e.key === 'Escape') {
 				if (thisObj.escapeHook) {
 					thisObj.escapeHook(e, this);
-				}
-				else {
+				} else {
 					thisObj.hide();
 					e.preventDefault();
 				}
-			}
-			// Tab
-			else if (e.which === 9) {
+			} else if (e.key === 'Tab') {
 				// Manually loop tab navigation inside the modal.
 				var parts = modal.find('*');
 				var focusable = parts.filter(focusableElementsSelector).filter(':visible');
@@ -7462,8 +6516,7 @@ if (typeof module !== "undefined" && module.exports) {
 						focusable.get(focusable.length - 1).trigger('focus');
 						e.preventDefault();
 					}
-				}
-				else {
+				} else {
 					if (currentIndex === focusable.length - 1) {
 						focusable.get(0).trigger('focus');
 						e.preventDefault();
@@ -7473,7 +6526,10 @@ if (typeof module !== "undefined" && module.exports) {
 			e.stopPropagation();
 		});
 
-		$('body > *').not('.able-modal-overlay').not('.able-modal-dialog').removeAttr('inert');
+		if ( $( 'body' ).hasClass( 'able-modal-active' ) ) {
+			$( 'body > *') .not('.able-modal-overlay').not('.able-modal-dialog').removeAttr('inert');
+			$( 'body' ).removeClass( 'able-modal-active' );
+		}
 	};
 
 	AccessibleDialog.prototype.show = function () {
@@ -7489,10 +6545,12 @@ if (typeof module !== "undefined" && module.exports) {
 			// Keep from moving focus out of dialog when clicking outside of it.
 			overlay.on('mousedown.accessibleModal', function (e) {
 				e.preventDefault();
+				thisObj.hide();
 			});
 		}
 
 		$('body > *').not('.able-modal-overlay').not('.able-modal-dialog').attr('inert', true);
+		$( 'body' ).addClass( 'able-modal-active' );
 
 		this.overlay.css('display', 'block');
 		this.modal.css('display', 'block');
@@ -7519,6 +6577,7 @@ if (typeof module !== "undefined" && module.exports) {
 		this.modal.css('display', 'none');
 		this.modal.attr('aria-hidden', 'true');
 		$('body > *').not('.able-modal-overlay').not('.able-modal-dialog').removeAttr('inert');
+		$( 'body' ).removeClass( 'able-modal-active' );
 
 		this.focusedElementBeforeModal.trigger('focus');
 	};
@@ -7641,7 +6700,7 @@ if (typeof module !== "undefined" && module.exports) {
 
   AblePlayer.prototype.getSecondsFromColonTime = function (timeStr) {
     // Converts string of form hh:mm:ss to seconds
-    var timeParts, hours, minutes, seconds, newTime;
+    var timeParts, hours, minutes, seconds;
 
     timeParts = timeStr.split(":");
     if (timeParts.length === 3) {
@@ -7686,17 +6745,6 @@ if (typeof module !== "undefined" && module.exports) {
     }
   };
 
-  Number.isInteger =
-    Number.isInteger ||
-    function (value) {
-      // polyfill for IE11, which doesn't otherwise support Number.isInteger
-      // https://stackoverflow.com/a/31720368/744281
-      return (
-        typeof value === "number" &&
-        isFinite(value) &&
-        Math.floor(value) === value
-      );
-    };
 })(jQuery);
 
 (function ($) {
@@ -7737,72 +6785,47 @@ if (typeof module !== "undefined" && module.exports) {
 		this.descFile = this.$sources.first().attr('data-desc-src');
 		if (typeof this.descFile !== 'undefined') {
 			this.hasOpenDesc = true;
-		}
-		else {
+		} else {
 			// there's no open-described version via data-desc-src,
 			// but what about data-youtube-desc-src or data-vimeo-desc-src?
 			// if these exist, they would have been defined earlier
-			if (this.youTubeDescId || this.vimeoDescId) {
-				this.hasOpenDesc = true;
-			}
-			else { // there are no open-described versions from any source
-				this.hasOpenDesc = false;
-			}
+			this.hasOpenDesc = (this.youTubeDescId || this.vimeoDescId) ? true : false;
 		}
 
 		// Set this.descMethod based on media availability & user preferences
+		// no description is available for this video
+		this.descMethod = null;
 		if (this.hasOpenDesc && this.hasClosedDesc) {
 			// both formats are available. User gets their preference.
-			if (this.prefDescMethod) {
-				this.descMethod = this.prefDescMethod;
-			}
-			else {
-				// user has no preference. Video is default.
-				this.descMethod = 'video';
-			}
-		}
-		else if (this.hasOpenDesc) {
+			this.descMethod = (this.prefDescMethod) ? this.prefDescMethod : 'video';
+		} else if (this.hasOpenDesc) {
 			this.descMethod = 'video';
-		}
-		else if (this.hasClosedDesc) {
+		} else if (this.hasClosedDesc) {
 			this.descMethod = 'text';
-		}
-		else {
-			// no description is available for this video
-			this.descMethod = null;
 		}
 
 		// Set the default state of descriptions
+		this.descOn = false;
 		if (this.descMethod) {
 			if (this.prefDesc === 1) {
 				this.descOn = true;
-			}
-			else if (this.prefDesc === 0) {
+			} else if (this.prefDesc === 0) {
 				this.descOn = false;
-			}
-			else {
+			} else {
 				// user has no prefs. Use default state.
-				if (this.defaultStateDescriptions === 1)	{
-					this.descOn = true;
-				}
-				else {
-					this.descOn = false;
-				}
+				this.descOn = (this.defaultStateDescriptions === 1) ? true : false;
 			}
 		}
-		else {
-			this.descOn = false;
-		}
-		if (typeof this.$descDiv === 'undefined' && this.hasClosedDesc && this.descMethod === 'text') {
+
+		// If a video has text audio descriptions, inject the description area.
+		if (typeof this.$descDiv === 'undefined' && this.hasClosedDesc ) {
 			this.injectTextDescriptionArea();
 		}
 
 		if (this.descOn) {
-			if (this.descMethod === 'video') {
-				if (!this.usingDescribedVersion()) {
-					// switched from non-described to described version
-					this.swapDescription();
-				}
+			if (this.descMethod === 'video' && !this.usingDescribedVersion() ) {
+				// switched from non-described to described version
+				this.swapDescription();
 			}
 			if (this.hasClosedDesc) {
 				if (this.prefDescVisible) {
@@ -7811,23 +6834,20 @@ if (typeof module !== "undefined" && module.exports) {
 						this.$descDiv.show();
 						this.$descDiv.removeClass('able-clipped');
 					}
-				}
-				else {
+				} else {
 					// keep it visible to screen readers, but hide it visibly
 					if (typeof this.$descDiv !== 'undefined') {
 						this.$descDiv.addClass('able-clipped');
 					}
 				}
 			}
-		}
-		else { // description is off.
+		} else { // description is off.
 			if (this.descMethod === 'video') { // user has turned off described version of video
 				if (this.usingDescribedVersion()) {
 					// user was using the described verion. Swap for non-described version
 					this.swapDescription();
 				}
-			}
-			else if (this.descMethod === 'text') { // user has turned off text description
+			} else if (this.descMethod === 'text') { // user has turned off text description
 				// hide description div from everyone, including screen reader users
 				if (typeof this.$descDiv !== 'undefined') {
 					this.$descDiv.hide();
@@ -7845,11 +6865,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.player === 'youtube') {
 			return (this.activeYouTubeId === this.youTubeDescId);
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			return (this.activeVimeoId === this.vimeoDescId);
-		}
-		else {
+		} else {
 			return (this.$sources.first().attr('data-desc-src') === this.$sources.first().attr('src'));
 		}
 	};
@@ -7917,12 +6935,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var voices, descLangs, voiceLang, preferredLang;
 
-		if (this.captionLang) {
-			preferredLang = this.captionLang.substring(0,2).toLowerCase();
-		}
-		else {
-			preferredLang = this.lang.substring(0,2).toLowerCase();
-		}
+		preferredLang = (this.captionLang) ? this.captionLang.substring(0,2).toLowerCase() : this.lang.substring(0,2).toLowerCase();
+
 		this.descVoices = [];
 		voices = this.synth.getVoices();
 		descLangs = this.getDescriptionLangs();
@@ -7973,23 +6987,16 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var cookie, voices, prefDescVoice, descVoice, descLang, prefVoiceFound;
 		cookie = this.getCookie();
-		if (typeof cookie.voices !== 'undefined') {
-			prefDescVoice = this.getPrefDescVoice();
-		}
-		else {
-			prefDescVoice = null;
-		}
+		prefDescVoice = (typeof cookie.voices !== 'undefined') ? this.getPrefDescVoice() : null;
 
 		this.getBrowserVoices();
 		this.rebuildDescPrefsForm();
 
 		if (this.selectedDescriptions) {
 			descLang = this.selectedDescriptions.language;
-		}
-		else if (this.captionLang) {
+		} else if (this.captionLang) {
 			descLang = this.captionLang;
-		}
-		else {
+		} else {
 			descLang = this.lang;
 		}
 
@@ -8040,7 +7047,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// 2. User is toggling description
 		// (playerCreated == true)
 
-		var thisObj, i, origSrc, descSrc, srcType, newSource;
+		var thisObj, i, origSrc, descSrc, srcType;
 
 		thisObj = this;
 
@@ -8053,14 +7060,14 @@ if (typeof module !== "undefined" && module.exports) {
 		// after player is rebuilt, focus will return to that same element
 		// (if it exists)
 		this.$focusedElement = $(':focus');
+		this.activeMedia = this.mediaId;
 
 		// get current time of current source, and attempt to start new video at the same time
 		// whether this is possible will be determined after the new media source has loaded
 		// see onMediaNewSourceLoad()
 		if (this.elapsed > 0) {
 			this.swapTime = this.elapsed;
-		}
-		else {
+		} else {
 			this.swapTime = 0;
 		}
 		if (this.duration > 0) {
@@ -8075,8 +7082,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (this.descOn) {
 			// user has requested the described version
 			this.showAlert(this.tt.alertDescribedVersion);
-		}
-		else {
+		} else {
 			// user has requested the non-described version
 			this.showAlert(this.tt.alertNonDescribedVersion);
 		}
@@ -8096,8 +7102,7 @@ if (typeof module !== "undefined" && module.exports) {
 						this.$sources[i].setAttribute('src',origSrc);
 					}
 				}
-			}
-			else {
+			} else {
 				// the non-described version is currently playing. Swap to described.
 				for (i=0; i < this.$sources.length; i++) {
 					// for all <source> elements, replace src with data-desc-src (if one exists)
@@ -8125,29 +7130,21 @@ if (typeof module !== "undefined" && module.exports) {
 						thisObj.loadingMedia = true;
 					}
 				});
-			}
-			else {
+			} else {
 				// player is in the process of being created
 				// no need to recreate it
 			}
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 
-			if (this.usingDescribedVersion()) {
-				// the described version is currently playing. Swap to non-described
-				this.activeYouTubeId = this.youTubeId;
-			}
-			else {
-				// the non-described version is currently playing. Swap to described.
-				this.activeYouTubeId = this.youTubeDescId;
-			}
+			// if the described version is currently playing, swap to non-described
+			this.activeYouTubeId = (this.usingDescribedVersion()) ? this.youTubeId : this.youTubeDescId;
+
 			if (typeof this.youTubePlayer !== 'undefined') {
 				thisObj.swappingSrc = true;
 				if (thisObj.playing) {
 					// loadVideoById() loads and immediately plays the new video at swapTime
 					thisObj.youTubePlayer.loadVideoById(thisObj.activeYouTubeId,thisObj.swapTime);
-				}
-				else {
+				} else {
 					// cueVideoById() loads the new video and seeks to swapTime, but does not play
 					thisObj.youTubePlayer.cueVideoById(thisObj.activeYouTubeId,thisObj.swapTime);
 				}
@@ -8165,14 +7162,12 @@ if (typeof module !== "undefined" && module.exports) {
 				// next steps occur when youtube onReady event fires
 				// see youtube.js > finalizeYoutubeInit()
 			});
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			if (this.usingDescribedVersion()) {
 				// the described version is currently playing. Swap to non-described
 				this.activeVimeoId = this.vimeoId;
 				this.showAlert(this.tt.alertNonDescribedVersion);
-			}
-			else {
+			} else {
 				// the non-described version is currently playing. Swap to described.
 				this.activeVimeoId = this.vimeoDescId;
 				this.showAlert(this.tt.alertDescribedVersion);
@@ -8192,8 +7187,7 @@ if (typeof module !== "undefined" && module.exports) {
 						// video was playing when user requested an alternative version
 						// seek to swapTime and continue playback (playback happens automatically)
 						thisObj.vimeoPlayer.setCurrentTime(thisObj.swapTime);
-					}
-					else {
+					} else {
 						// Vimeo autostarts immediately after video loads
 						// The "Described" button should not trigger playback, so stop this before the user notices.
 						thisObj.vimeoPlayer.pause();
@@ -8204,8 +7198,7 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.showDescription = function(now) {
-
-		if (!this.hasClosedDesc || this.swappingSrc || !this.descOn || this.descMethod === 'video') {
+		if (!this.hasClosedDesc || this.swappingSrc || !this.descOn || ( this.descMethod === 'video' && !this.prefDescVisible ) ) {
 			return;
 		}
 
@@ -8216,23 +7209,18 @@ if (typeof module !== "undefined" && module.exports) {
 			var result = [];
 			if (component.type === 'string') {
 				result.push(component.value);
-			}
-			else {
+			} else {
 				for (var i = 0; i < component.children.length; i++) {
 					result.push(flattenComponentForDescription(component.children[i]));
 				}
 			}
 			return result.join('');
 		};
-
+		cues = [];
 		if (this.selectedDescriptions) {
 			cues = this.selectedDescriptions.cues;
-		}
-		else if (this.descriptions.length >= 1) {
+		} else if (this.descriptions.length >= 1) {
 			cues = this.descriptions[0].cues;
-		}
-		else {
-			cues = [];
 		}
 		for (d = 0; d < cues.length; d++) {
 			if ((cues[d].start <= now) && (cues[d].end > now)) {
@@ -8242,35 +7230,35 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 		if (typeof thisDescription !== 'undefined') {
 			if (this.currentDescription !== thisDescription) {
-				// temporarily remove aria-live from $status in order to prevent description from being interrupted
+				// temporarily remove aria-live from $status to prevent description from being interrupted
 				this.$status.removeAttr('aria-live');
 				descText = flattenComponentForDescription(cues[thisDescription].components);
 				if (this.descReader === 'screenreader') {
 					// load the new description into the container div for screen readers to read
 					this.$descDiv.html(descText);
-				}
-				else if (this.speechEnabled) {
-					// use browser's built-in speech synthesis
-					this.announceDescriptionText('description',descText);
+				} else if (this.speechEnabled) {
+					if ( 'video' !== this.descMethod ) {
+						// use browser's built-in speech synthesis
+						this.announceDescriptionText('description',descText);
+					}
 					if (this.prefDescVisible) {
 						// write description to the screen for sighted users
 						// but remove ARIA attributes since it isn't intended to be read by screen readers
 						this.$descDiv.html(descText).removeAttr('aria-live aria-atomic');
 					}
-				}
-				else {
+				} else {
 					// browser does not support speech synthesis
 					// load the new description into the container div for screen readers to read
 					this.$descDiv.html(descText);
 				}
+				// Only pause video if not using a described video.
 				if (this.prefDescPause && this.descMethod === 'text') {
 					this.pauseMedia();
 					this.pausedForDescription = true;
 				}
 				this.currentDescription = thisDescription;
 			}
-		}
-		else {
+		} else {
 			this.$descDiv.html('');
 			this.currentDescription = -1;
 			// restore aria-live to $status
@@ -8282,34 +7270,25 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// called when user changed playback rate
 		// adjust rate of audio description to match
-
 		var speechRate;
 
 		if (rate === 0.5) {
 			speechRate = 0.7; // option 1 in prefs menu
-		}
-		else if (rate === 0.75) {
+		} else if (rate === 0.75) {
 			speechRate =  0.8; // option 2 in prefs menu
-		}
-		else if (rate === 1.0) {
+		} else if (rate === 1.0) {
 			speechRate =  1; // option 4 in prefs menu (normal speech, default)
-		}
-		else if (rate === 1.25) {
+		} else if (rate === 1.25) {
 			speechRate =  1.1; // option 5 in prefs menu
-		}
-		else if (rate === 1.5) {
+		} else if (rate === 1.5) {
 			speechRate =  1.2; // option 6 in prefs menu
-		}
-		else if (rate === 1.75) {
+		} else if (rate === 1.75) {
 			speechRate =  1.5; // option 7 in prefs menu
-		}
-		else if (rate === 2.0) {
+		} else if (rate === 2.0) {
 			speechRate =  2; // option 8 in prefs menu (fast)
-		}
-		else if (rate === 2.25) {
+		} else if (rate === 2.25) {
 			speechRate =  2.5; // option 9 in prefs menu (very fast)
-		}
-		else if (rate >= 2.5) {
+		} else if (rate >= 2.5) {
 			speechRate =  3; // option 10 in prefs menu (super fast)
 		}
 		this.prefDescRate = speechRate;
@@ -8358,8 +7337,7 @@ if (typeof module !== "undefined" && module.exports) {
 			pitch = $('#' + this.mediaId + '_prefDescPitch').val();
 			rate = $('#' + this.mediaId + '_prefDescRate').val();
 			volume = $('#' + this.mediaId + '_prefDescVolume').val();
-		}
-		else {
+		} else {
 			// get settings from global prefs
 			voiceName = this.prefDescVoice;
 			pitch = this.prefDescPitch;
@@ -8372,8 +7350,7 @@ if (typeof module !== "undefined" && module.exports) {
 			if (this.descVoices.length > 0) {
 				if (useFirstVoice) {
 					voice = this.descVoices[0];
-				}
-				else if (voiceName) {
+				} else if (voiceName) {
 					// get the voice that matches user's preferred voiceName
 					for (i = 0; i < this.descVoices.length; i++) {
 						if (this.descVoices[i].name == voiceName) {
@@ -8388,12 +7365,11 @@ if (typeof module !== "undefined" && module.exports) {
 					voice = this.descVoices[0];
 				}
 			}
-		}
-		else { 
-			voice = null; 
+		} else {
+			voice = null;
 		}
 		utterance = new SpeechSynthesisUtterance();
-		if (voice) { 
+		if (voice) {
 			utterance.voice = voice;
 		}
 		utterance.voiceURI = 'native';
@@ -8420,14 +7396,9 @@ if (typeof module !== "undefined" && module.exports) {
 			// As of Firefox 95, e.elapsedTime is expressed in seconds
 			// Other browsers (tested in Chrome & Edge) express this in milliseconds
 			// Assume no utterance will require over 100 seconds to express...
-			if (timeElapsed > 100) {
-				// time is likely expressed in milliseconds
-				secondsElapsed = (e.elapsedTime/1000).toFixed(2);
-			}
-			else {
-				// time is likely already expressed in seconds; just need to round it
-				secondsElapsed = (e.elapsedTime).toFixed(2);
-			}
+			// If a large value, time is likely expressed in milliseconds.
+			secondsElapsed = (timeElapsed > 100) ? (e.elapsedTime/1000).toFixed(2) : (e.elapsedTime).toFixed(2);
+
 			if (this.debug) {
 				
 			}
@@ -8457,7 +7428,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.isIOS = function(version) {
 
-		// return true if this is IOS
+		// return true if this is iOS
 		// if version is provided check for a particular version
 
 		var userAgent, iOS;
@@ -8469,18 +7440,15 @@ if (typeof module !== "undefined" && module.exports) {
 				if (userAgent.indexOf('os ' + version) !== -1) {
 					// this is the target version of iOS
 					return true;
-				}
-				else {
+				} else {
 					return false;
 				}
-			}
-			else {
+			} else {
 				// no version was specified
 				return true;
 			}
-		}
-		else {
-			// this is not IOS
+		} else {
+			// this is not iOS
 			return false;
 		}
 	};
@@ -8490,12 +7458,8 @@ if (typeof module !== "undefined" && module.exports) {
 		// To test whether the browser supports changing the volume,
 		// create a new audio element and try setting the volume to something other than 1.
 		// Then, retrieve the current setting to see if it preserved it.
+		// This doesn't work in iOS by design: https://developer.apple.com/documentation/avfoundation/avplayer/volume
 
-		// Unfortunately, this doesn't work in iOS. In 2022, our tests yield the same results as reported here:
-		// https://stackoverflow.com/questions/72861253/how-do-i-detect-if-a-browser-does-not-support-changing-html-audio-volume
-
-		// So, unfortunately we have to resort to sniffing for iOS
-		// before testing for support in other browsers
 		var audio, testVolume;
 
 		if (this.isIOS()) {
@@ -8505,20 +7469,13 @@ if (typeof module !== "undefined" && module.exports) {
 		testVolume = 0.9;  // any value between 0.1 and 0.9
 		audio = new Audio();
 		audio.volume = testVolume;
-		if (audio.volume === testVolume) {
-			return true;
-		}
-		else {
-			return false;
-		}
+
+		return ( audio.volume === testVolume );
 	};
 
 	AblePlayer.prototype.nativeFullscreenSupported = function () {
 
-		return document.fullscreenEnabled ||
-			document.webkitFullscreenEnabled ||
-			document.mozFullscreenEnabled ||
-			document.msFullscreenEnabled;
+		return document.fullscreenEnabled || document.webkitFullscreenEnabled;
 	};
 
 })(jQuery);
@@ -8541,10 +7498,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.synth.cancel();
 		}
 
-		if (this.hasSignLanguage && this.signVideo) {
-			// keep sign languge video in sync
-			this.signVideo.currentTime = this.startTime;
-		}
+		this.syncSignVideo( {'time' : this.startTime } );
 
 		if (this.player === 'html5') {
 			var seekable;
@@ -8558,25 +7512,17 @@ if (typeof module !== "undefined" && module.exports) {
 				// this.seeking will be set to false at that point
 				this.media.currentTime = this.startTime;
 				this.seekStatus = 'complete';
-				if (this.hasSignLanguage && this.signVideo) {
-					// keep sign languge video in sync
-					this.signVideo.currentTime = this.startTime;
-				}
+				this.syncSignVideo( { 'time' : this.startTime } );
 			}
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			this.youTubePlayer.seekTo(newTime,true);
 			if (newTime > 0) {
 				if (typeof this.$posterImg !== 'undefined') {
 					this.$posterImg.hide();
 				}
 			}
-			if (this.hasSignLanguage && this.signVideo) {
-				// keep sign languge video in sync
-				this.signVideo.currentTime = newTime;
-			}
-		}
-		else if (this.player === 'vimeo') {
+			this.syncSignVideo( {'time' : newTime } );
+		} else if (this.player === 'vimeo') {
 			this.vimeoPlayer.setCurrentTime(newTime).then(function() {
 				// seek finished.
 				// successful completion also fires a 'seeked' event (see event.js)
@@ -8613,8 +7559,7 @@ if (typeof module !== "undefined" && module.exports) {
 			mediaTimes['duration'] = duration;
 			mediaTimes['elapsed'] = elapsed;
 			deferred.resolve(mediaTimes);
-		}
-		else {
+		} else {
 			this.getDuration().then(function(duration) {
 				mediaTimes['duration'] = thisObj.roundDown(duration,6);
 				thisObj.getElapsed().then(function(elapsed) {
@@ -8641,39 +7586,32 @@ if (typeof module !== "undefined" && module.exports) {
 				 this.vimeoPlayer.getDuration().then(function(duration) {
 					if (duration === undefined || isNaN(duration) || duration === -1) {
 						deferred.resolve(0);
-					}
-					else {
+					} else {
 						deferred.resolve(duration);
 					}
 				});
-			}
-			else { // vimeoPlayer hasn't been initialized yet.
+			} else { // vimeoPlayer hasn't been initialized yet.
 				deferred.resolve(0);
 			}
-		}
-		else {
+		} else {
 			var duration;
 			if (this.player === 'html5') {
 				duration = this.media.duration;
-			}
-			else if (this.player === 'youtube') {
+			} else if (this.player === 'youtube') {
 				if (this.youTubePlayerReady) {
 					if (this.duration > 0) {
 						// duration was already retrieved while checking for captions
 						duration = this.duration;
-					}
-					else {
+					} else {
 						duration = this.youTubePlayer.getDuration();
 					}
-				}
-				else { // the YouTube player hasn't initialized yet
+				} else { // the YouTube player hasn't initialized yet
 					duration = 0;
 				}
 			}
 			if (duration === undefined || isNaN(duration) || duration === -1) {
 				deferred.resolve(0);
-			}
-			else {
+			} else {
 				deferred.resolve(duration);
 			}
 		}
@@ -8696,33 +7634,27 @@ if (typeof module !== "undefined" && module.exports) {
 				this.vimeoPlayer.getCurrentTime().then(function(elapsed) {
 					if (elapsed === undefined || isNaN(elapsed) || elapsed === -1) {
 						deferred.resolve(0);
-					}
-					else {
+					} else {
 						deferred.resolve(elapsed);
 					}
 				});
-			}
-			else { // vimeoPlayer hasn't been initialized yet.
+			} else { // vimeoPlayer hasn't been initialized yet.
 				deferred.resolve(0);
 			}
-		}
-		else {
+		} else {
 			var elapsed;
 			if (this.player === 'html5') {
 				elapsed = this.media.currentTime;
-			}
-			else if (this.player === 'youtube') {
+			} else if (this.player === 'youtube') {
 				if (this.youTubePlayerReady) {
 					elapsed = this.youTubePlayer.getCurrentTime();
-				}
-				else { // the YouTube player hasn't initialized yet
+				} else { // the YouTube player hasn't initialized yet
 					elapsed = 0;
 				}
 			}
 			if (elapsed === undefined || isNaN(elapsed) || elapsed === -1) {
 				deferred.resolve(0);
-			}
-			else {
+			} else {
 				deferred.resolve(elapsed);
 			}
 		}
@@ -8746,48 +7678,37 @@ if (typeof module !== "undefined" && module.exports) {
 		if (this.player === 'html5') {
 			if (this.media.ended) {
 				deferred.resolve('ended');
-			}
-			else if (this.media.paused) {
+			} else if (this.media.paused) {
 				deferred.resolve('paused');
-			}
-			else if (this.media.readyState !== 4) {
+			} else if (this.media.readyState !== 4) {
 				deferred.resolve('buffering');
-			}
-			else {
+			} else {
 				deferred.resolve('playing');
 			}
-		}
-		else if (this.player === 'youtube' && this.youTubePlayerReady) {
+		} else if (this.player === 'youtube' && this.youTubePlayerReady) {
 			var state = this.youTubePlayer.getPlayerState();
 			if (state === -1 || state === 5) {
 				deferred.resolve('stopped');
-			}
-			else if (state === 0) {
+			} else if (state === 0) {
 				deferred.resolve('ended');
-			}
-			else if (state === 1) {
+			} else if (state === 1) {
 				deferred.resolve('playing');
-			}
-			else if (state === 2) {
+			} else if (state === 2) {
 				deferred.resolve('paused');
-			}
-			else if (state === 3) {
+			} else if (state === 3) {
 				deferred.resolve('buffering');
 			}
-		}
-		else if (this.player === 'vimeo' && this.vimeoPlayer) {
+		} else if (this.player === 'vimeo' && this.vimeoPlayer) {
 				// curiously, Vimeo's API has no getPlaying(), getBuffering(), or getState() methods
 			// so maybe if it's neither paused nor ended, it must be playing???
 			this.vimeoPlayer.getPaused().then(function(paused) {
 				if (paused) {
 					deferred.resolve('paused');
-				}
-				else {
+				} else {
 					thisObj.vimeoPlayer.getEnded().then(function(ended) {
 						if (ended) {
 							deferred.resolve('ended');
-						}
-						else {
+						} else {
 							deferred.resolve('playing');
 						}
 					});
@@ -8800,29 +7721,16 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.isPlaybackRateSupported = function () {
 
 		if (this.player === 'html5') {
-			if (this.media.playbackRate) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (this.player === 'youtube') {
+			return (this.media.playbackRate) ? true : false;
+		} else if (this.player === 'youtube') {
 			// Youtube supports varying playback rates per video.
 			// Only expose controls if more than one playback rate is available.
 			if (this.youTubePlayerReady) {
-				if (this.youTubePlayer.getAvailablePlaybackRates().length > 1) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
+				return (this.youTubePlayer.getAvailablePlaybackRates().length > 1) ? true : false;
+			} else {
 				return false;
 			}
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			// since this takes longer to determine, it was set previously in initVimeoPlayer()
 			return this.vimeoSupportsPlaybackRateChange;
 		}
@@ -8837,22 +7745,16 @@ if (typeof module !== "undefined" && module.exports) {
 			this.syncSpeechToPlaybackRate(rate);
 		}
 
-		if (this.hasSignLanguage && this.signVideo) {
-			this.signVideo.playbackRate = rate;
-		}
+		this.syncSignVideo( {'rate' : rate } );
 
 		if (this.player === 'html5') {
 			this.media.playbackRate = rate;
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			this.youTubePlayer.setPlaybackRate(rate);
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			this.vimeoPlayer.setPlaybackRate(rate);
 		}
-		if (this.hasSignLanguage && this.signVideo) {
-			this.signVideo.playbackRate = rate;
-		}
+		this.syncSignVideo( { 'rate' : rate } );
 		this.playbackRate = rate;
 		this.$speed.text(this.tt.speed + ': ' + rate.toFixed(2).toString() + 'x');
 	};
@@ -8861,11 +7763,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.player === 'html5') {
 			return this.media.playbackRate;
-		}
-		else if (this.player === 'youtube') {
-			if (this.youTubePlayerReady) {
-				return this.youTubePlayer.getPlaybackRate();
-			}
+		} else if (this.player === 'youtube' && (this.youTubePlayerReady)) {
+			return this.youTubePlayer.getPlaybackRate();
 		}
 	};
 
@@ -8875,18 +7774,10 @@ if (typeof module !== "undefined" && module.exports) {
 		// and one of them is named 'paused'.
 		// A better name would be 'isCurrentlyNotPlayingOrBuffering'
 
-		var state;
-
 		if (this.player === 'vimeo') {
 			// just rely on value of this.playing
-			if (this.playing) {
-				return false;
-			}
-			else {
-				return true;
-			}
-		}
-		else {
+			return (this.playing) ? false : true;
+		} else {
 			this.getPlayerState().then(function(state) {
 				// if any of the following is true, consider the media 'paused'
 				return state === 'paused' || state === 'stopped' || state === 'ended';
@@ -8894,24 +7785,48 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 	};
 
+	AblePlayer.prototype.syncSignVideo = function(options) {
+		if (this.hasSignLanguage && ( this.signVideo || this.signYoutube ) ) {
+			if (options && typeof options.time !== 'undefined') {
+				if ( this.signVideo ) {
+					this.signVideo.currentTime = options.time;
+				} else {
+					this.youTubeSignPlayer.seekTo(options.time,true);
+				}
+			}
+			if (options && typeof options.rate !== 'undefined') {
+				if ( this.signVideo ) {
+					this.signVideo.playbackRate = options.rate;
+				} else {
+					this.youTubeSignPlayer.setPlaybackRate(options.rate);
+				}
+			}
+			if (options && typeof options.pause !== 'undefined') {
+				if ( this.signVideo ) {
+					this.signVideo.pause(true);
+				} else {
+					this.youTubeSignPlayer.pauseVideo();
+				}
+			}
+			if (options && typeof options.play !== 'undefined') {
+				if ( this.signVideo ) {
+					this.signVideo.play(true);
+				} else {
+					this.youTubeSignPlayer.playVideo();
+				}
+			}
+		}
+	};
+
 	AblePlayer.prototype.pauseMedia = function () {
 
-		var thisObj = this;
-
-		if (this.hasSignLanguage && this.signVideo) {
-			this.signVideo.pause(true);
-		}
+		this.syncSignVideo( { 'pause' : true } );
 
 		if (this.player === 'html5') {
 			this.media.pause(true);
-			if (this.hasSignLanguage && this.signVideo) {
-				this.signVideo.pause(true);
-			}
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			this.youTubePlayer.pauseVideo();
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			this.vimeoPlayer.pause();
 		}
 	};
@@ -8920,25 +7835,18 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var thisObj = this;
 
-		if (this.hasSignLanguage && this.signVideo) {
-			this.signVideo.play(true);
-		}
+		this.syncSignVideo( { 'play' : true } );
 
 		if (this.player === 'html5') {
 			this.media.play(true);
-			if (this.hasSignLanguage && this.signVideo) {
-				this.signVideo.play(true);
-			}
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 
 			this.youTubePlayer.playVideo();
 			if (typeof this.$posterImg !== 'undefined') {
 				this.$posterImg.hide();
 			}
 			this.stoppingYouTube = false;
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			 this.vimeoPlayer.play();
 		}
 		this.startedPlaying = true;
@@ -8964,7 +7872,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// Code is preserved below and commented out
 
 		var thisObj, mediaHeight, playerHeight, newMediaHeight;
-		var thisObj = this;
+		thisObj = this;
 
 		if (direction == 'out') {
 			// get the original height of two key components:
@@ -8983,8 +7891,7 @@ if (typeof module !== "undefined" && module.exports) {
 				},500);
 				*/
 			});
-		}
-		else if (direction == 'in') {
+		} else if (direction == 'in') {
 			// restore captionsContainer to its original height (needs work)
 			// this.$mediaContainer.removeAttr('style');
 			// fade relatively quickly back to its original position with full opacity
@@ -9007,7 +7914,7 @@ if (typeof module !== "undefined" && module.exports) {
 		this.hideControlsTimeoutStatus = 'active';
 	};
 
-	AblePlayer.prototype.refreshControls = function(context, duration, elapsed) {
+	AblePlayer.prototype.refreshControls = function(context = 'init', duration, elapsed) {
 
 		// context is one of the following:
 		// 'init' - initial build (or subsequent change that requires full rebuild)
@@ -9028,32 +7935,30 @@ if (typeof module !== "undefined" && module.exports) {
 		// duration is expressed as sss.xxx
 		// elapsed is expressed as sss.xxx
 
-		var thisObj, duration, lastChapterIndex, displayElapsed, updateLive, textByState, timestamp, widthUsed,
-			leftControls, rightControls, seekbarWidth, captionsCount, buffered, newTop, statusBarHeight, 
-			speedHeight, statusBarWidthBreakpoint, newSvgData;
+		var thisObj, duration,  textByState, timestamp,  captionsCount, newTop,	statusBarWidthBreakpoint;
 
 		thisObj = this;
-		if (this.swappingSrc) {
-			if (this.playing) {
-				// wait until new source has loaded before refreshing controls
-				// can't wait if player is NOT playing because some critical events
-				// won't fire until playback of new media starts
-				return;
-			}
+		// wait until new source has loaded before refreshing controls
+		// some critical events won't fire until playback of new media starts
+		if ( this.swappingSrc && this.playing ) {
+			return;
 		}
 
-		if (context === 'timeline' || context === 'init') {
-			// all timeline-related functionality requires both duration and elapsed
+		if ( context === 'timeline' || context === 'init' ) {
+			// Update timeline controls.
+			var lastChapterIndex, displayElapsed, updateLive, widthUsed,
+				leftControls, rightControls, seekbarWidth, buffered;
+			// all timeline-related functionality requires duration
 			if (typeof this.duration === 'undefined') {
-			 	// wait until duration is known before proceeding with refresh
-			 	return;
+				// wait until duration is known before proceeding with refresh
+				return;
 			}
 			if (this.useChapterTimes) {
 				this.chapterDuration = this.getChapterDuration();
 				this.chapterElapsed = this.getChapterElapsed();
 			}
 
-			if (this.useFixedSeekInterval === false && this.seekIntervalCalculated === false && this.duration > 0) {
+			if ( !this.useFixedSeekInterval && !this.seekIntervalCalculated && this.duration > 0) {
 				// couldn't calculate seekInterval previously; try again.
 				this.setSeekInterval();
 			}
@@ -9067,20 +7972,15 @@ if (typeof module !== "undefined" && module.exports) {
 							// chapter ends before or after video ends
 							// need to adjust seekbar duration to match video end
 							this.seekBar.setDuration(this.duration - this.currentChapter.start);
-						}
-						else {
+						} else {
 							this.seekBar.setDuration(this.chapterDuration);
 						}
-					}
-					else {
+					} else {
 						// this is not the last chapter
 						this.seekBar.setDuration(this.chapterDuration);
 					}
-				}
-				else {
-					if (!(this.duration === undefined || isNaN(this.duration) || this.duration === -1)) {
-						this.seekBar.setDuration(this.duration);
-					}
+				} else if ( !(this.duration === undefined || isNaN(this.duration) || this.duration === -1) ) {
+					this.seekBar.setDuration(this.duration);
 				}
 				if (!(this.seekBar.tracking)) {
 					// Only update the aria live region if we have an update pending
@@ -9091,8 +7991,7 @@ if (typeof module !== "undefined" && module.exports) {
 					this.liveUpdatePending = false;
 					if (this.useChapterTimes) {
 						this.seekBar.setPosition(this.chapterElapsed, updateLive);
-					}
-					else {
+					} else {
 						this.seekBar.setPosition(this.elapsed, updateLive);
 					}
 				}
@@ -9100,22 +7999,15 @@ if (typeof module !== "undefined" && module.exports) {
 				// When seeking, display the seek bar time instead of the actual elapsed time.
 				if (this.seekBar.tracking) {
 					displayElapsed = this.seekBar.lastTrackPosition;
-				}
-				else {
-					if (this.useChapterTimes) {
-						displayElapsed = this.chapterElapsed;
-					}
-					else {
-						displayElapsed = this.elapsed;
-					}
+				} else {
+					displayElapsed = ( this.useChapterTimes ) ? this.chapterElapsed : this.elapsed;
 				}
 			}
 			// update elapsed & duration
 			if (typeof this.$durationContainer !== 'undefined') {
 				if (this.useChapterTimes) {
 					this.$durationContainer.text(' / ' + this.formatSecondsAsColonTime(this.chapterDuration));
-				}
-				else {
+				} else {
 					this.$durationContainer.text(' / ' + this.formatSecondsAsColonTime(this.duration));
 				}
 			}
@@ -9127,26 +8019,21 @@ if (typeof module !== "undefined" && module.exports) {
 				// Update seekbar width.
 				// To do this, we need to calculate the width of all buttons surrounding it.
 				if (this.seekBar) {
-					widthUsed = 0;
+					let controlWrapper = this.seekBar.wrapperDiv.parent().parent();
 					leftControls = this.seekBar.wrapperDiv.parent().prev('div.able-left-controls');
 					rightControls = leftControls.next('div.able-right-controls');
-					leftControls.children().each(function () {
-						if ($(this).attr('role')=='button') {
-							widthUsed += $(this).outerWidth(true); // true = include margin
-						}
-					});
+					widthUsed = leftControls.outerWidth(true);
 					rightControls.children().each(function () {
 						if ($(this).attr('role')=='button') {
-							widthUsed += $(this).outerWidth(true);
+							widthUsed += $(this).outerWidth(true) + 5;
 						}
 					});
 					if (this.fullscreen) {
 						seekbarWidth = $(window).width() - widthUsed;
-					}
-					else {
+					} else {
 						// seekbar is wide enough to fill the remaining space
-						// include a 5px buffer to account for minor browser differences
-						seekbarWidth = this.$ableWrapper.width() - widthUsed - 5;
+						// include a 10px buffer to account for minor browser differences or custom styles.
+						seekbarWidth = controlWrapper.width() - widthUsed - 10;
 					}
 					// Sometimes some minor fluctuations based on browser weirdness, so set a threshold.
 					if (Math.abs(seekbarWidth - this.seekBar.getWidth()) > 5) {
@@ -9158,86 +8045,58 @@ if (typeof module !== "undefined" && module.exports) {
 			// Update buffering progress.
 			// TODO: Currently only using the first HTML5 buffered interval,
 			// but this fails sometimes when buffering is split into two or more intervals.
-			if (this.player === 'html5') {
-				if (this.media.buffered.length > 0) {
-					buffered = this.media.buffered.end(0);
-					if (this.useChapterTimes) {
-						if (buffered > this.chapterDuration) {
-							buffered = this.chapterDuration;
-						}
-						if (this.seekBar) {
-							this.seekBar.setBuffered(buffered / this.chapterDuration);
-						}
+			if (this.player === 'html5' && this.media.buffered.length > 0) {
+				buffered = this.media.buffered.end(0);
+				if (this.useChapterTimes) {
+					if (buffered > this.chapterDuration) {
+						buffered = this.chapterDuration;
 					}
-					else {
-						if (this.seekBar) {
-							if (!isNaN(buffered)) {
-								this.seekBar.setBuffered(buffered / duration);
-							}
-						}
+					if (this.seekBar) {
+						this.seekBar.setBuffered(buffered / this.chapterDuration);
 					}
+				} else if ( this.seekBar && !isNaN(buffered) ) {
+					this.seekBar.setBuffered(buffered / duration);
 				}
-			}
-			else if (this.player === 'youtube') {
-				if (this.seekBar) {
-					if (this.youTubePlayerReady) {
-						this.seekBar.setBuffered(this.youTubePlayer.getVideoLoadedFraction());
-					}
-				}
-			}
-			else if (this.player === 'vimeo') {
+			} else if (this.player === 'youtube' && this.seekBar && this.youTubePlayerReady ) {
+				this.seekBar.setBuffered(this.youTubePlayer.getVideoLoadedFraction());
+			} else if (this.player === 'vimeo') {
 				// TODO: Add support for Vimeo buffering update
-			}
-		} // end if context == 'timeline' or 'init'
-
-		if (context === 'descriptions' || context == 'init'){
-
-			if (this.$descButton) {
-				if (this.descOn) {
-					this.$descButton.removeClass('buttonOff').attr('aria-label',this.tt.turnOffDescriptions);
-					this.$descButton.find('span.able-clipped').text(this.tt.turnOffDescriptions);
-				}
-				else {
-					this.$descButton.addClass('buttonOff').attr('aria-label',this.tt.turnOnDescriptions);
-					this.$descButton.find('span.able-clipped').text(this.tt.turnOnDescriptions);
-				}
 			}
 		}
 
-		if (context === 'captions' || context == 'init'){
+		if (context === 'descriptions' || context == 'init'){
+			if (this.$descButton) {
+				this.toggleButtonState(
+					this.$descButton,
+					this.descOn,
+					this.tt.turnOffDescriptions,
+					this.tt.turnOnDescriptions,
+				);
+			}
+		}
+
+		if (context === 'captions' || context == 'init') {
 
 			if (this.$ccButton) {
 
 				captionsCount = this.captions.length;
-
-				// Button has a different title depending on the number of captions.
-				// If only one caption track, this is "Show captions" and "Hide captions"
-				// Otherwise, it is just always "Captions"
-				if (!this.captionsOn) {
-					this.$ccButton.addClass('buttonOff');
-					this.$ccButton.attr('aria-pressed', 'false')
-					if (captionsCount === 1) {
-						this.$ccButton.attr('aria-label',this.tt.showCaptions);
-						this.$ccButton.find('span.able-clipped').text(this.tt.showCaptions);
-					}
-				}
-				else {
-					this.$ccButton.removeClass('buttonOff');
-					this.$ccButton.attr('aria-pressed', 'true')
-					if (captionsCount === 1) {
-						this.$ccButton.attr('aria-label',this.tt.hideCaptions);
-						this.$ccButton.find('span.able-clipped').text(this.tt.hideCaptions);
-					}
-				}
-
 				if (captionsCount > 1) {
 					this.$ccButton.attr({
-						'aria-label': this.tt.captions,
 						'aria-haspopup': 'true',
 						'aria-controls': this.mediaId + '-captions-menu'
 					});
-					this.$ccButton.find('span.able-clipped').text(this.tt.captions);
 				}
+				var ariaLabelOn = ( captionsCount > 1 ) ? this.tt.captions : this.tt.showCaptions;
+				var ariaLabelOff = ( captionsCount > 1 ) ? this.tt.captions : this.tt.hideCaptions;
+				var ariaPressed = ( captionsCount > 1 ) ? true : false;
+
+				this.toggleButtonState(
+					this.$ccButton,
+					this.captionsOn,
+					ariaLabelOff,
+					ariaLabelOn,
+					ariaPressed
+				);
 			}
 		}
 
@@ -9245,35 +8104,12 @@ if (typeof module !== "undefined" && module.exports) {
 			if (this.$fullscreenButton) {
 				if (!this.fullscreen) {
 					this.$fullscreenButton.attr('aria-label', this.tt.enterFullScreen);
-					if (this.iconType === 'font') {
-						this.$fullscreenButton.find('span').first().removeClass('icon-fullscreen-collapse').addClass('icon-fullscreen-expand');
-						this.$fullscreenButton.find('span.able-clipped').text(this.tt.enterFullScreen);
-					}
-					else if (this.iconType === 'svg') {
-						newSvgData = this.getSvgData('fullscreen-expand');
-						this.$fullscreenButton.find('svg').attr('viewBox',newSvgData[0]);
-						this.$fullscreenButton.find('path').attr('d',newSvgData[1]);
-						this.$fullscreenButton.find('span.able-clipped').text(this.tt.enterFullScreen);
-					}
-					else {
-						this.$fullscreenButton.find('img').attr('src',this.fullscreenExpandButtonImg);
-					}
-				}
-				else {
+					this.getIcon( this.$fullscreenButton, 'fullscreen-expand' );
+					this.$fullscreenButton.find('span.able-clipped').text(this.tt.enterFullScreen);
+				} else {
 					this.$fullscreenButton.attr('aria-label',this.tt.exitFullscreen);
-					if (this.iconType === 'font') {
-						this.$fullscreenButton.find('span').first().removeClass('icon-fullscreen-expand').addClass('icon-fullscreen-collapse');
-						this.$fullscreenButton.find('span.able-clipped').text(this.tt.exitFullscreen);
-					}
-					else if (this.iconType === 'svg') {
-						newSvgData = this.getSvgData('fullscreen-collapse');
-						this.$fullscreenButton.find('svg').attr('viewBox',newSvgData[0]);
-						this.$fullscreenButton.find('path').attr('d',newSvgData[1]);
-						this.$fullscreenButton.find('span.able-clipped').text(this.tt.exitFullscreen);
-					}
-					else {
-						this.$fullscreenButton.find('img').attr('src',this.fullscreenCollapseButtonImg);
-					}
+					this.getIcon( this.$fullscreenButton, 'fullscreen-collapse' );
+					this.$fullscreenButton.find('span.able-clipped').text(this.tt.exitFullscreen);
 				}
 			}
 		}
@@ -9289,13 +8125,11 @@ if (typeof module !== "undefined" && module.exports) {
 					if (this.fullscreen) {
 						this.$bigPlayButton.width($(window).width());
 						this.$bigPlayButton.height($(window).height());
-					}
-					else {
+					} else {
 						this.$bigPlayButton.width(this.$mediaContainer.width());
 						this.$bigPlayButton.height(this.$mediaContainer.height());
 					}
-				}
-				else {
+				} else {
 					this.$bigPlayButton.hide();
 					this.$bigPlayButton.attr('aria-hidden', 'true');
 				}
@@ -9309,8 +8143,7 @@ if (typeof module !== "undefined" && module.exports) {
 				if (this.prefAutoScrollTranscript === 1) {
 					this.autoScrollTranscript = true;
 					this.$autoScrollTranscriptCheckbox.prop('checked',true);
-				}
-				else {
+				} else {
 					this.autoScrollTranscript = false;
 					this.$autoScrollTranscriptCheckbox.prop('checked',false);
 				}
@@ -9328,8 +8161,8 @@ if (typeof module !== "undefined" && module.exports) {
 						// only scroll once after moving a highlight
 						if (this.movingHighlight) {
 							this.$transcriptDiv.scrollTop(newTop);
-											this.movingHighlight = false;
-									}
+							this.movingHighlight = false;
+						}
 					}
 				}
 			}
@@ -9364,155 +8197,78 @@ if (typeof module !== "undefined" && module.exports) {
 				if (this.$status.text() !== this.tt.statusStopped) {
 					this.$status.text(this.tt.statusStopped);
 				}
-				if (this.$playpauseButton.find('span').first().hasClass('icon-pause')) {
-					if (this.iconType === 'font') {
-						this.$playpauseButton.find('span').first().removeClass('icon-pause').addClass('icon-play');
-						this.$playpauseButton.find('span.able-clipped').text(this.tt.play);
-					}
-					else if (this.iconType === 'svg') {
-						newSvgData = this.getSvgData('play');
-						this.$playpauseButton.find('svg').attr('viewBox',newSvgData[0]);
-						this.$playpauseButton.find('path').attr('d',newSvgData[1]);
-						this.$playpauseButton.find('span.able-clipped').text(this.tt.play);
-					}
-					else {
-						this.$playpauseButton.find('img').attr('src',this.playButtonImg);
-					}
-				}
-			}
-			else {
-				if (typeof this.$status !== 'undefined' && typeof this.seekBar !== 'undefined') {
-					// Update the text only if it's changed since it has role="alert";
-					// also don't update while tracking, since this may Pause/Play the player but we don't want to send a Pause/Play update.
-					this.getPlayerState().then(function(currentState) {
-						if (thisObj.$status.text() !== textByState[currentState] && !thisObj.seekBar.tracking) {
-							// Debounce updates; only update after status has stayed steadily different for a while
-							// "A while" is defined differently depending on context
-							if (thisObj.swappingSrc) {
-								// this is where most of the chatter occurs (e.g., playing, paused, buffering, playing),
-								// so set a longer wait time before writing a status message
-								if (!thisObj.debouncingStatus) {
-									thisObj.statusMessageThreshold = 2000; // in ms (2 seconds)
-								}
+				this.getIcon( this.$playpauseButton, 'play' );
+				this.$playpauseButton.find('span.able-clipped').text(this.tt.play);
+			} else if (typeof this.$status !== 'undefined' && typeof this.seekBar !== 'undefined') {
+				// Update the text only if it's changed since it has role="alert";
+				// also don't update while tracking, since this may Pause/Play the player but we don't want to send a Pause/Play update.
+				this.getPlayerState().then(function(currentState) {
+					if (thisObj.$status.text() !== textByState[currentState] && !thisObj.seekBar.tracking) {
+						// Debounce updates; only update after status has stayed steadily different for a while
+						// "A while" is defined differently depending on context
+						if (thisObj.swappingSrc) {
+							// this is where most of the chatter occurs (e.g., playing, paused, buffering, playing),
+							// so set a longer wait time before writing a status message
+							if (!thisObj.debouncingStatus) {
+								thisObj.statusMessageThreshold = 2000; // in ms (2 seconds)
 							}
-							else {
-								// for all other contexts (e.g., users clicks Play/Pause)
-								// user should receive more rapid feedback
-								if (!thisObj.debouncingStatus) {
-									thisObj.statusMessageThreshold = 250; // in ms
-								}
-							}
-							timestamp = (new Date()).getTime();
-							if (!thisObj.statusDebounceStart) {
-								thisObj.statusDebounceStart = timestamp;
-								// Call refreshControls() again after allotted time has passed
-								thisObj.debouncingStatus = true;
-								thisObj.statusTimeout = setTimeout(function () {
-									thisObj.debouncingStatus = false;
-									thisObj.refreshControls(context);
-								}, thisObj.statusMessageThreshold);
-							}
-							else if ((timestamp - thisObj.statusDebounceStart) > thisObj.statusMessageThreshold) {
-								thisObj.$status.text(textByState[currentState]);
-								thisObj.statusDebounceStart = null;
-								clearTimeout(thisObj.statusTimeout);
-								thisObj.statusTimeout = null;
-							}
+						} else if (!thisObj.debouncingStatus) {
+							// for all other contexts (e.g., users clicks Play/Pause)
+							// user should receive more rapid feedback
+							thisObj.statusMessageThreshold = 250; // in ms
 						}
-						else {
+						timestamp = (new Date()).getTime();
+						if (!thisObj.statusDebounceStart) {
+							thisObj.statusDebounceStart = timestamp;
+							// Call refreshControls() again after allotted time has passed
+							thisObj.debouncingStatus = true;
+							thisObj.statusTimeout = setTimeout(function () {
+								thisObj.debouncingStatus = false;
+								thisObj.refreshControls(context);
+							}, thisObj.statusMessageThreshold);
+						} else if ((timestamp - thisObj.statusDebounceStart) > thisObj.statusMessageThreshold) {
+							thisObj.$status.text(textByState[currentState]);
 							thisObj.statusDebounceStart = null;
-							thisObj.debouncingStatus = false;
 							clearTimeout(thisObj.statusTimeout);
 							thisObj.statusTimeout = null;
 						}
-						// Don't change play/pause button display while using the seek bar (or if YouTube stopped)
-						if (!thisObj.seekBar.tracking && !thisObj.stoppingYouTube) {
-							if (currentState === 'paused' || currentState === 'stopped' || currentState === 'ended') {
-								thisObj.$playpauseButton.attr('aria-label',thisObj.tt.play);
-
-								if (thisObj.iconType === 'font') {
-									thisObj.$playpauseButton.find('span').first().removeClass('icon-pause').addClass('icon-play');
-									thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.play);
-								}
-								else if (thisObj.iconType === 'svg') {
-									newSvgData = thisObj.getSvgData('play');
-									thisObj.$playpauseButton.find('svg').attr('viewBox',newSvgData[0]);
-									thisObj.$playpauseButton.find('path').attr('d',newSvgData[1]);
-									thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.play);
-								}
-								else {
-									thisObj.$playpauseButton.find('img').attr('src',thisObj.playButtonImg);
-								}
-							}
-							else {
-								thisObj.$playpauseButton.attr('aria-label',thisObj.tt.pause);
-
-								if (thisObj.iconType === 'font') {
-									thisObj.$playpauseButton.find('span').first().removeClass('icon-play').addClass('icon-pause');
-									thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.pause);
-								}
-								else if (thisObj.iconType === 'svg') {
-									newSvgData = thisObj.getSvgData('pause');
-									thisObj.$playpauseButton.find('svg').attr('viewBox',newSvgData[0]);
-									thisObj.$playpauseButton.find('path').attr('d',newSvgData[1]);
-									thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.pause);
-								}
-								else {
-									thisObj.$playpauseButton.find('img').attr('src',thisObj.pauseButtonImg);
-								}
-							}
+					} else {
+						thisObj.statusDebounceStart = null;
+						thisObj.debouncingStatus = false;
+						clearTimeout(thisObj.statusTimeout);
+						thisObj.statusTimeout = null;
+					}
+					// Don't change play/pause button display while using the seek bar (or if YouTube stopped)
+					if (!thisObj.seekBar.tracking && !thisObj.stoppingYouTube) {
+						if (currentState === 'paused' || currentState === 'stopped' || currentState === 'ended') {
+							thisObj.$playpauseButton.attr('aria-label',thisObj.tt.play);
+							thisObj.getIcon( thisObj.$playpauseButton, 'play' );
+							thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.play);
+						} else {
+							thisObj.$playpauseButton.attr('aria-label',thisObj.tt.pause);
+							thisObj.getIcon( thisObj.$playpauseButton, 'pause' );
+							thisObj.$playpauseButton.find('span.able-clipped').text(thisObj.tt.pause);
 						}
-					});
-				}
+					}
+				});
 			}
 		}
 
 		// Show/hide status bar content conditionally
 		if (!this.fullscreen) {
 			statusBarWidthBreakpoint = 300;
-			statusBarHeight = this.$statusBarDiv.height();
-			speedHeight = this.$statusBarDiv.find('span.able-speed').height();
-			if (speedHeight > (statusBarHeight + 5)) {
-				// speed bar is wrapping (happens often in German player)
+			if (this.$statusBarDiv.width() < statusBarWidthBreakpoint) {
+				// Player is too small for a speed span
 				this.$statusBarDiv.find('span.able-speed').hide();
 				this.hidingSpeed = true;
-			}
-			else {
+			} else {
 				if (this.hidingSpeed) {
 					this.$statusBarDiv.find('span.able-speed').show();
 					this.hidingSpeed = false;
 				}
-				if (this.$statusBarDiv.width() < statusBarWidthBreakpoint) {
-					// Player is too small for a speed span
-					this.$statusBarDiv.find('span.able-speed').hide();
-					this.hidingSpeed = true;
-				}
-				else {
-					if (this.hidingSpeed) {
-						this.$statusBarDiv.find('span.able-speed').show();
-						this.hidingSpeed = false;
-					}
-				}
 			}
 		}
 
-	};
-
-	AblePlayer.prototype.getHiddenWidth = function($el) {
-
-		// jQuery returns for width() if element is hidden
-		// this function is a workaround
-
-		// save a reference to a cloned element that can be measured
-		var $hiddenElement = $el.clone().appendTo('body');
-
-		// calculate the width of the clone
-		var width = $hiddenElement.outerWidth();
-
-		// remove the clone from the DOM
-		$hiddenElement.remove();
-
-		return width;
 	};
 
 	AblePlayer.prototype.handlePlay = function(e) {
@@ -9526,8 +8282,7 @@ if (typeof module !== "undefined" && module.exports) {
 				// resume utterance
 				this.synth.resume();
 			}
-		}
-		else {
+		} else {
 			// user clicked pause
 			this.okToPlay = false;
 			this.pauseMedia();
@@ -9553,28 +8308,18 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.handlePrevTrack = function() {
 
-		if (this.playlistIndex === 0) {
-			// currently on the first track
-			// wrap to bottom and play the last track
-			this.playlistIndex = this.$playlist.length - 1;
-		}
-		else {
-			this.playlistIndex--;
-		}
+		// currently on the first track
+		// wrap to bottom and play the last track
+		this.playlistIndex = (this.playlistIndex === 0) ? this.$playlist.length - 1 : this.playlistIndex--;
 		this.cueingPlaylistItem = true; // stopgap to prevent multiple firings
 		this.cuePlaylistItem(this.playlistIndex);
 	};
 
 	AblePlayer.prototype.handleNextTrack = function() {
 
-		if (this.playlistIndex === this.$playlist.length - 1) {
-			// currently on the last track
-			// wrap to top and play the forst track
-			this.playlistIndex = 0;
-		}
-		else {
-			this.playlistIndex++;
-		}
+		// currently on the last track
+		// wrap to top and play the forst track
+		this.playlistIndex = (this.playlistIndex === this.$playlist.length - 1) ? 0 : this.playlistIndex++;
 		this.cueingPlaylistItem = true; // stopgap to prevent multiple firings
 		this.cuePlaylistItem(this.playlistIndex);
 	};
@@ -9584,15 +8329,10 @@ if (typeof module !== "undefined" && module.exports) {
 		var targetTime;
 
 		targetTime = this.elapsed - this.seekInterval;
-		if (this.useChapterTimes) {
-			if (targetTime < this.currentChapter.start) {
-				targetTime = this.currentChapter.start;
-			}
-		}
-		else {
-			if (targetTime < 0) {
-				targetTime = 0;
-			}
+		if (this.useChapterTimes && (targetTime < this.currentChapter.start)) {
+			targetTime = this.currentChapter.start;
+		} else if (targetTime < 0) {
+			targetTime = 0;
 		}
 		this.seekTo(targetTime);
 	};
@@ -9610,14 +8350,12 @@ if (typeof module !== "undefined" && module.exports) {
 					// targetTime would exceed the end of the video (or chapter)
 					// scrub to end of whichever is earliest
 					targetTime = Math.min(this.duration, this.currentChapter.end);
-				}
-				else if (this.duration % targetTime < this.seekInterval) {
+				} else if (this.duration % targetTime < this.seekInterval) {
 					// nothing left but pocket change after seeking to targetTime
 					// go ahead and seek to end of video (or chapter), whichever is earliest
 					targetTime = Math.min(this.duration, this.currentChapter.end);
 				}
-			}
-			else {
+			} else {
 				// this is not the last chapter
 				if (targetTime > this.currentChapter.end) {
 					// targetTime would exceed the end of the chapter
@@ -9625,8 +8363,7 @@ if (typeof module !== "undefined" && module.exports) {
 					targetTime = this.currentChapter.end;
 				}
 			}
-		}
-		else {
+		} else {
 			// not using chapter times
 			if (targetTime > this.duration) {
 				targetTime = this.duration;
@@ -9650,16 +8387,14 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.player === 'html5') {
 			this.setPlaybackRate(this.getPlaybackRate() + (0.25 * dir));
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			if (this.youTubePlayerReady) {
 				rates = this.youTubePlayer.getAvailablePlaybackRates();
 				currentRate = this.getPlaybackRate();
 				index = rates.indexOf(currentRate);
 				if (index === -1) {
 					
-				}
-				else {
+				} else {
 					index += dir;
 					// Can only increase or decrease rate if there's another rate available.
 					if (index < rates.length && index >= 0) {
@@ -9667,27 +8402,15 @@ if (typeof module !== "undefined" && module.exports) {
 					}
 				}
 			}
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			// range is 0.5 to 2
 			// increase/decrease in inrements of 0.5
 			vimeoMin = 0.5;
 			vimeoMax = 2;
 			if (dir === 1) {
-				if (this.vimeoPlaybackRate + 0.5 <= vimeoMax) {
-					newRate = this.vimeoPlaybackRate + 0.5;
-				}
-				else {
-					newRate = vimeoMax;
-				}
-			}
-			else if (dir === -1) {
-				if (this.vimeoPlaybackRate - 0.5 >= vimeoMin) {
-					newRate = this.vimeoPlaybackRate - 0.5;
-				}
-				else {
-					newRate = vimeoMin;
-				}
+				newRate = (this.vimeoPlaybackRate + 0.5 <= vimeoMax) ? this.vimeoPlaybackRate + 0.5 : vimeoMax;
+			} else if (dir === -1) {
+				newRate = (this.vimeoPlaybackRate - 0.5 >= vimeoMin) ? this.vimeoPlaybackRate - 0.5 : vimeoMin;
 			}
 			this.setPlaybackRate(newRate);
 		}
@@ -9703,12 +8426,8 @@ if (typeof module !== "undefined" && module.exports) {
 			this.hidingPopup = false;
 			return false;
 		}
-		if (this.captions.length) {
-			captions = this.captions;
-		}
-		else {
-			captions = [];
-		}
+
+		captions = (this.captions.length) ? this.captions : [];
 		if (captions.length === 1) {
 			// When there's only one set of captions, just do an on/off toggle.
 			if (this.captionsOn === true) {
@@ -9719,15 +8438,12 @@ if (typeof module !== "undefined" && module.exports) {
 				this.updateCookie('prefCaptions');
 				if (this.usingYouTubeCaptions) {
 					this.youTubePlayer.unloadModule('captions');
-				}
-				else if (this.usingVimeoCaptions) {
+				} else if (this.usingVimeoCaptions) {
 					this.vimeoPlayer.disableTextTrack();
-				}
-				else {
+				} else {
 					this.$captionsWrapper.hide();
 				}
-			}
-			else {
+			} else {
 				// captions are off. Turn them on.
 				this.captionsOn = true;
 				this.prefCaptions = 1;
@@ -9735,8 +8451,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.updateCookie('prefCaptions');
 				if (this.usingYouTubeCaptions) {
 					this.youTubePlayer.loadModule('captions');
-				}
-				else if (this.usingVimeoCaptions) {
+				} else if (this.usingVimeoCaptions) {
 					this.vimeoPlayer.enableTextTrack(this.captionLang).then(function(track) {
 						// track.language = the iso code for the language
 						// track.kind = 'captions' or 'subtitles'
@@ -9757,8 +8472,7 @@ if (typeof module !== "undefined" && module.exports) {
 								break;
 							}
 					});
-				}
-				else {
+				} else {
 					this.$captionsWrapper.show();
 				}
 				for (var i=0; i<captions.length; i++) {
@@ -9772,8 +8486,7 @@ if (typeof module !== "undefined" && module.exports) {
 				}
 			}
 			this.refreshControls('captions');
-		}
-		else {
+		} else {
 			// there is more than one caption track.
 			// clicking on a track is handled via caption.js > getCaptionClickFunction()
 			if (this.captionsPopup && this.captionsPopup.is(':visible')) {
@@ -9781,8 +8494,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.hidingPopup = false;
 				this.$ccButton.attr('aria-expanded', 'false')
 				this.waitThenFocus(this.$ccButton);
-			}
-			else {
+			} else {
 				this.closePopups();
 				if (this.captionsPopup) {
 					this.captionsPopup.show();
@@ -9829,8 +8541,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.chaptersPopup.hide();
 			this.hidingPopup = false;
 			this.$chaptersButton.attr('aria-expanded','false').trigger('focus');
-		}
-		else {
+		} else {
 			this.closePopups();
 			this.chaptersPopup.show();
 			this.$chaptersButton.attr('aria-expanded','true');
@@ -9842,8 +8553,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.chaptersPopup.find('li').removeClass('able-focus');
 			if (this.chaptersPopup.find('li[aria-checked="true"]').length) {
 				this.chaptersPopup.find('li[aria-checked="true"]').trigger('focus').addClass('able-focus');
-			}
-			else {
+			} else {
 				this.chaptersPopup.find('li').first().addClass('able-focus').attr('aria-checked','true').trigger('focus');
 			}
 		}
@@ -9901,8 +8611,7 @@ if (typeof module !== "undefined" && module.exports) {
 			setTimeout(function() {
 				thisObj.hidingPopup = false;
 			},100);
-		}
-		else {
+		} else {
 			this.closePopups();
 			this.prefsPopup.show();
 			this.$prefsButton.attr('aria-expanded','true');
@@ -9929,37 +8638,41 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.handleTranscriptToggle = function () {
 
 		var thisObj = this;
-
-		if (this.$transcriptDiv.is(':visible')) {
+		var visible = this.$transcriptDiv.is(':visible');
+		if ( visible ) {
 			this.$transcriptArea.hide();
-			this.$transcriptButton.addClass('buttonOff').attr('aria-label',this.tt.showTranscript);
-			this.$transcriptButton.find('span.able-clipped').text(this.tt.showTranscript);
+			this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
 			this.prefTranscript = 0;
-			this.$transcriptButton.trigger('focus').addClass('able-focus');
-			// wait briefly before resetting stopgap var
-			// otherwise the keypress used to select 'Close' will trigger the transcript button
-			// Benchmark tests: If this is gonna happen, it typically happens in around 3ms; max 12ms
-			// Setting timeout to 100ms is a virtual guarantee of proper functionality
-			setTimeout(function() {
-				thisObj.closingTranscript = false;
-			}, 100);
-		}
-		else {
-			this.positionDraggableWindow('transcript');
-			this.$transcriptArea.show();
-			// showing transcriptArea has a cascading effect of showing all content *within* transcriptArea
-			// need to re-hide the popup menu
-			this.$transcriptPopup.hide();
-			this.$transcriptButton.removeClass('buttonOff').attr('aria-label',this.tt.hideTranscript);
-			this.$transcriptButton.find('span.able-clipped').text(this.tt.hideTranscript);
-			this.prefTranscript = 1;
-			// move focus to first focusable element (window options button)
-			this.focusNotClick = true;
-			this.$transcriptArea.find('button').first().trigger('focus');
-			// wait briefly before resetting stopgap var
-			setTimeout(function() {
-				thisObj.focusNotClick = false;
-			}, 100);
+			if ( this.transcriptType === 'popup' ) {
+				this.$transcriptButton.trigger('focus').addClass('able-focus');
+				// wait briefly before resetting stopgap var
+				// otherwise the keypress used to select 'Close' will trigger the transcript button
+				// Benchmark tests: If this is gonna happen, it typically happens in around 3ms; max 12ms
+				// Setting timeout to 100ms is a virtual guarantee of proper functionality
+				setTimeout(function() {
+					thisObj.closingTranscript = false;
+				}, 100);
+			}
+		} else {
+			if ( this.transcriptType === 'popup' ) {
+				this.positionDraggableWindow('transcript');
+				this.$transcriptArea.show();
+				// showing transcriptArea has a cascading effect of showing all content *within* transcriptArea
+				// need to re-hide the popup menu
+				this.$transcriptPopup.hide();
+				this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
+				this.prefTranscript = 1;
+				// move focus to first focusable element (window options button)
+				this.focusNotClick = true;
+				this.$transcriptArea.find('button').first().trigger('focus');
+				// wait briefly before resetting stopgap var
+				setTimeout(function() {
+					thisObj.focusNotClick = false;
+				}, 100);
+			} else {
+				this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
+				this.$transcriptArea.show();
+			}
 		}
 		this.updateCookie('prefTranscript');
 	};
@@ -9967,11 +8680,10 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.handleSignToggle = function () {
 
 		var thisObj = this;
-
-		if (this.$signWindow.is(':visible')) {
+		var visible = this.$signWindow.is(':visible');
+		if ( visible ) {
 			this.$signWindow.hide();
-			this.$signButton.addClass('buttonOff').attr('aria-label',this.tt.showSign);
-			this.$signButton.find('span.able-clipped').text(this.tt.showSign);
+			this.toggleButtonState( this.$signButton, visible, this.tt.hideSign, this.tt.showSign );
 			this.prefSign = 0;
 			this.$signButton.trigger('focus').addClass('able-focus');
 			// wait briefly before resetting stopgap var
@@ -9979,15 +8691,13 @@ if (typeof module !== "undefined" && module.exports) {
 			setTimeout(function() {
 				thisObj.closingSign = false;
 			}, 100);
-		}
-		else {
+		} else {
 			this.positionDraggableWindow('sign');
 			this.$signWindow.show();
 			// showing signWindow has a cascading effect of showing all content *within* signWindow
 			// need to re-hide the popup menu
 			this.$signPopup.hide();
-			this.$signButton.removeClass('buttonOff').attr('aria-label',this.tt.hideSign);
-			this.$signButton.find('span.able-clipped').text(this.tt.hideSign);
+			this.toggleButtonState( this.$signButton, visible, this.tt.hideSign, this.tt.showSign );
 			this.prefSign = 1;
 			this.focusNotClick = true;
 			this.$signWindow.find('button').first().trigger('focus');
@@ -10011,12 +8721,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.nativeFullscreenSupported()) {
 			return (document.fullscreenElement ||
-							document.webkitFullscreenElement ||
-							document.webkitCurrentFullscreenElement ||
-							document.mozFullscreenElement ||
-							document.msFullscreenElement) ? true : false;
-		}
-		else {
+					document.webkitFullscreenElement ||
+					document.webkitCurrentFullscreenElement ) ? true : false;
+		} else {
 			return this.modalFullscreenActive ? true : false;
 		}
 	}
@@ -10034,44 +8741,31 @@ if (typeof module !== "undefined" && module.exports) {
 		if (this.nativeFullscreenSupported()) {
 			// Note: many varying names for options for browser compatibility.
 			if (fullscreen) {
+				var scroll = {
+					x: window.pageXOffset || 0,
+					y: window.pageYOffset || 0
+				}
+				this.scrollPosition = scroll;
 				// Initialize fullscreen
-
 				if (el.requestFullscreen) {
 					el.requestFullscreen();
-				}
-				else if (el.webkitRequestFullscreen) {
+				} else if (el.webkitRequestFullscreen) {
 					el.webkitRequestFullscreen();
 				}
-				else if (el.mozRequestFullscreen) {
-					el.mozRequestFullscreen();
-				}
-				else if (el.msRequestFullscreen) {
-					el.msRequestFullscreen();
-				}
 				this.fullscreen = true;
-			}
-			else {
+			} else {
 				// Exit fullscreen
 				this.restoringAfterFullscreen = true;
 				if (document.exitFullscreen) {
 					document.exitFullscreen();
-				}
-				else if (document.webkitExitFullscreen) {
+				} else if (document.webkitExitFullscreen) {
 					document.webkitExitFullscreen();
-				}
-				else if (document.webkitCancelFullscreen) {
+				} else if (document.webkitCancelFullscreen) {
 					document.webkitCancelFullscreen();
-				}
-				else if (document.mozCancelFullscreen) {
-					document.mozCancelFullscreen();
-				}
-				else if (document.msExitFullscreen) {
-					document.msExitFullscreen();
 				}
 				this.fullscreen = false;
 			}
-		}
-		else {
+		} else {
 			// Non-native fullscreen support through modal dialog.
 			// Create dialog on first run through.
 			if (!this.fullscreenDialog) {
@@ -10099,22 +8793,12 @@ if (typeof module !== "undefined" && module.exports) {
 				this.$modalFullscreenPlaceholder.insertAfter($el);
 				$el.appendTo(this.fullscreenDialog.modal);
 
-				// Column left css is 50% by default; set to 100% for full screen.
-				if ($el === this.$ableColumnLeft) {
-					$el.width('100%');
-				}
 				var newHeight = $(window).height() - this.$playerDiv.height();
-				if (typeof this.$descDiv !== 'undefined') {
-					if (!this.$descDiv.is(':hidden')) {
-						newHeight -= this.$descDiv.height();
-					}
+				if (typeof this.$descDiv !== 'undefined' && (!this.$descDiv.is(':hidden')) ) {
+					newHeight -= this.$descDiv.height();
 				}
-			}
-			else {
+			} else {
 				this.modalFullscreenActive = false;
-				if ($el === this.$ableColumnLeft) {
-					$el.width('50%');
-				}
 				$el.insertAfter(this.$modalFullscreenPlaceholder);
 				this.$modalFullscreenPlaceholder.remove();
 				this.fullscreenDialog.hide();
@@ -10128,20 +8812,23 @@ if (typeof module !== "undefined" && module.exports) {
 		// add event handlers for changes in fullscreen mode.
 		// Browsers natively trigger this event with the Escape key,
 		// in addition to clicking the exit fullscreen button
-		$(document).on('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', function(e) {
+		$(document).on('fullscreenchange webkitfullscreenchange', function(e) {
 			// NOTE: e.type = the specific event that fired (in case needing to control for browser-specific idiosyncrasies)
 			if (!thisObj.fullscreen) {
 				// user has just exited full screen
 				thisObj.restoringAfterFullscreen = true;
-			}
-			else if (!thisObj.clickedFullscreenButton) {
+			} else if (!thisObj.clickedFullscreenButton) {
 				// user triggered fullscreenchange without clicking fullscreen button
 				thisObj.fullscreen = false;
 				thisObj.restoringAfterFullscreen = true;
 			}
 			thisObj.resizePlayer();
 			thisObj.refreshControls('fullscreen');
-
+			// Reset scrollPosition after closing fullscreen.
+			if ( thisObj.scrollPosition ) {
+				scroll = thisObj.scrollPosition;
+				window.scrollTo( scroll.x, scroll.y );
+			}
 			// NOTE: The fullscreenchange (or browser-equivalent) event is triggered twice
 			// when exiting fullscreen via the "Exit fullscreen" button (only once if using Escape)
 			// Not sure why, but consequently we need to be sure thisObj.clickedFullscreenButton
@@ -10152,7 +8839,7 @@ if (typeof module !== "undefined" && module.exports) {
 			setTimeout(function() {
 				thisObj.clickedFullscreenButton = false;
 				thisObj.restoringAfterFullscreen = false;
-			},1000);
+			},100);
 		});
 	};
 
@@ -10162,8 +8849,7 @@ if (typeof module !== "undefined" && module.exports) {
 		this.setFullscreen(!this.fullscreen);
 		if (stillPaused) {
 			this.pauseMedia(); // when toggling fullscreen and media is just paused, keep media paused.
-		}
-		else if (!stillPaused) {
+		} else if (!stillPaused) {
 			this.playMedia(); // when toggling fullscreen and media is playing, continue playing.
 		}
 		// automatically hide controller in fullscreen mode
@@ -10175,8 +8861,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.fadeControls('out');
 				this.controlsHidden = true;
 			}
-		}
-		else {
+		} else {
 			// exit fullscreen mode
 			this.hideControls = this.hideControlsOriginal;
 			if (!this.hideControls) { // do not hide controls
@@ -10192,7 +8877,6 @@ if (typeof module !== "undefined" && module.exports) {
 			}
 		}
 		// don't resizePlayer yet; that will be called in response to the window resize event
-		// this.resizePlayer();
 	};
 
 	AblePlayer.prototype.handleTranscriptLockToggle = function (val) {
@@ -10203,73 +8887,117 @@ if (typeof module !== "undefined" && module.exports) {
 		this.refreshControls('transcript');
 	};
 
+	AblePlayer.prototype.getIcon = function( $button, id, forceImg = false ) {
+		// Remove existing HTML before generating.
+		$button.find('svg, img, span:not(.able-clipped)').remove();
+		// iconData: [0 = svg viewbox, 1 = svg path, 2 = icon font class, 3 = image file]
+		var iconData = this.getIconData( id );
+		var iconType = this.iconType;
+		iconType = ( null === iconData[3] ) ? 'svg' : iconType;
+		iconType =  ( forceImg === true ) ? 'image' : iconType;
+
+		if (iconType === 'font') {
+			var $buttonIcon = $('<span>', {
+				'class': iconData[2],
+			});
+			$button.append( $buttonIcon );
+		} else if (iconType === 'svg') {
+			// Function to create SVG nodes.
+			function getNode(n, v) {
+				n = document.createElementNS("http://www.w3.org/2000/svg", n);
+				for (var p in v) {
+					n.setAttributeNS(null, p.replace(/[A-Z]/g, function(m) {
+						return "-" + m.toLowerCase();
+					}), v[p]);
+				}
+				return n;
+			}
+			var icon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+			icon.setAttribute( 'focusable', 'false' );
+			icon.setAttribute( 'aria-hidden', 'true');
+			icon.setAttribute( 'viewBox', iconData[0] );
+			let path = getNode( 'path', { d: iconData[1] } );
+			icon.appendChild( path );
+
+			$button.append( icon );
+			// Refresh the DOM.
+			$button.html($button.html());
+		} else {
+			var $buttonImg = $('<img>',{
+				'src': iconData[3],
+				'alt': '',
+				'role': 'presentation'
+			});
+			$button.append($buttonImg);
+			$button.find('img').attr('src',iconData[3]);
+		}
+	};
+
+	AblePlayer.prototype.setText = function( $button, text ) {
+		$button.attr( 'aria-label', text );
+		// add the visibly-hidden label for screen readers that don't support aria-label on the button
+		$buttonLabel = $('<span>',{ 'class': 'able-clipped' }).text( text );
+		$button.append($buttonLabel);
+	};
+
+	AblePlayer.prototype.toggleButtonState = function($button, isOn, onLabel, offLabel, offClass = 'buttonOff', ariaPressed = false, ariaExpanded = false) {
+		if (isOn) {
+			$button.removeClass(offClass).attr('aria-label', onLabel);
+			$button.find('span.able-clipped').text(onLabel);
+			if ( ariaPressed ) {
+				$button.attr('aria-pressed', 'true');
+			}
+			if ( ariaExpanded ) {
+				$button.attr( 'aria-expanded', 'true' );
+			}
+		} else {
+			$button.addClass(offClass).attr('aria-label', offLabel);
+			$button.find('span.able-clipped').text(offLabel);
+			if ( ariaPressed ) {
+				$button.attr('aria-pressed', 'false');
+			}
+			if ( ariaExpanded ) {
+				$button.attr( 'aria-expanded', 'false' );
+			}
+		}
+	};
 
 	AblePlayer.prototype.showTooltip = function($tooltip) {
 
 		if (($tooltip).is(':animated')) {
 			$tooltip.stop(true,true).show();
-		}
-		else {
+		} else {
 			$tooltip.stop().show();
 		}
 	};
 
-	AblePlayer.prototype.showAlert = function( msg, location ) {
+	AblePlayer.prototype.showAlert = function( msg, location = 'main' ) {
 
 		// location is either of the following:
 		// 'main' (default)
 		// 'screenreader (visibly hidden)
 		// 'sign' (sign language window)
-		// 'transcript' (trasncript window)
-		var thisObj, $alertBox, $parentWindow, alertLeft, alertTop;
+		// 'transcript' (transcript window)
+		var thisObj, $alertBox, $parentWindow;
 
 		thisObj = this;
-
+		$alertBox = thisObj.$alertBox;
+		$parentWindow = thisObj.$ableDiv;
 		if (location === 'transcript') {
-			$alertBox = this.$transcriptAlert;
-			$parentWindow = this.$transcriptArea;
+			$parentWindow = thisObj.$transcriptArea;
+		} else if (location === 'sign') {
+			$parentWindow = thisObj.$signWindow;
+		} else if (location === 'screenreader') {
+			$alertBox = thisObj.$srAlertBox;
 		}
-		else if (location === 'sign') {
-			$alertBox = this.$signAlert;
-			$parentWindow = this.$signWindow;
-		}
-		else if (location === 'screenreader') {
-			$alertBox = this.$srAlertBox;
-		}
-		else {
-			$alertBox = this.$alertBox;
-		}
-		$alertBox.text(msg).show();
-		if (location == 'transcript' || location === 'sign') {
-			if ($parentWindow.width() > $alertBox.width()) {
-				alertLeft = $parentWindow.width() / 2 - $alertBox.width() / 2;
-			}
-			else {
-				// alert box is wider than its container. Position it far left and let it wrap
-				alertLeft = 10;
-			}
-			if (location === 'sign') {
-				// position alert in the lower third of the sign window (to avoid covering the signer)
-				alertTop = ($parentWindow.height() / 3) * 2;
-			}
-			else if (location === 'transcript') {
-				// position alert just beneath the toolbar to avoid getting lost among transcript text
-				alertTop = this.$transcriptToolbar.height() + 30;
-			}
-			$alertBox.css({
-				top: alertTop + 'px',
-				left: alertLeft + 'px'
-			});
-		}
-		else if (location !== 'screenreader') {
-			$alertBox.css({
-				left: (this.$playerDiv.width() / 2) - ($alertBox.width() / 2)
-			});
-		}
+		$alertBox.find('span').text(msg);
+		$alertBox.appendTo($parentWindow)
+		$alertBox.css( {'display': 'flex'} );
+
 		if (location !== 'screenreader') {
-			setTimeout(function () {
+			setTimeout( function () {
 				$alertBox.fadeOut(300);
-			}, 3000);
+			}, 30000 );
 		}
 	};
 
@@ -10278,22 +9006,10 @@ if (typeof module !== "undefined" && module.exports) {
 		// returns true if the target alert has already been shown
 		// useful for throttling alerts that only need to be shown once
 		// e.g., move alerts with instructions for dragging a window
-
 		if (which === 'transcript') {
-			if (this.showedTranscriptAlert) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else if (which === 'sign') {
-			if (this.showedSignAlert) {
-				return true;
-			}
-			else {
-				return false;
-			}
+			return this.showedTranscriptAlert ?? false;
+		} else if (which === 'sign') {
+			return this.showedSignAlert ?? false;
 		}
 		return false;
 	}
@@ -10301,12 +9017,11 @@ if (typeof module !== "undefined" && module.exports) {
 	// Resizes all relevant player attributes.
 	AblePlayer.prototype.resizePlayer = function (width, height) {
 
-		var captionSize, newWidth, newHeight, $iframe, alertTop;
+		var captionSize, newWidth, newHeight, $iframe;
 
 		if (this.mediaType === 'audio') {
 			return;
 		}
-
 		if (typeof width !== 'undefined' && typeof height !== 'undefined') {
 			// this is being called the first time a player is initialized
 			// width and height were collected from the HTML, YouTube, or Vimeo media API
@@ -10318,43 +9033,26 @@ if (typeof module !== "undefined" && module.exports) {
 				newWidth = this.playerWidth;
 				if (this.playerHeight) {
 					newHeight = this.playerHeight;
-				}
-				else {
+				} else {
 					newHeight = Math.round(newWidth * this.aspectRatio);
 					this.playerHeight = newHeight;
 				}
-			}
-			else {
+			} else {
 				// playerWidth was not defined via HTML attributes
-				if (this.player === 'html5') {
-					newWidth = $(window).width();
-				}
-				else {
-					newWidth = this.$ableWrapper.width();
-				}
+				newWidth = (this.player === 'html5') ? $(window).width() : this.$ableWrapper.width();
 				newHeight = Math.round(newWidth * this.aspectRatio);
 			}
-		}
-		else if (this.fullscreen) {
+		} else if (this.fullscreen) {
 			this.$ableWrapper.addClass('fullscreen');
 			newWidth = $(window).width();
 			// the 5 pixel buffer is arbitrary, but results in a better fit for all browsers
 			newHeight = $(window).height() - this.$playerDiv.outerHeight() - 5;
 			this.positionCaptions('overlay');
-		}
-		else { // not fullscreen, and not first time initializing player
+		} else { // not fullscreen, and not first time initializing player
 			this.$ableWrapper.removeClass('fullscreen');
 			if (this.player === 'html5') {
-				if (this.playerWidth) {
-					newWidth = this.playerWidth;
-				}
-				else {
-					// use full size of window
-					// player will be downsized to fit container if CSS requires it
-					newWidth = $(window).width();
-				}
-			}
-			else {
+				newWidth = (this.playerWidth) ? this.playerWidth : $(window).width();
+			} else {
 				newWidth = this.$ableWrapper.width();
 			}
 			newHeight = Math.round(newWidth * this.aspectRatio);
@@ -10371,8 +9069,7 @@ if (typeof module !== "undefined" && module.exports) {
 				// this adds width and height attributes to the iframe
 				// but might have other effects, so best to do it this way
 				this.youTubePlayer.setSize(newWidth,newHeight);
-			}
-			else {
+			} else {
 				// Vimeo API does not have a method for changing size of player
 				// Therefore, need to change iframe attributes directly
 				$iframe.attr({
@@ -10387,8 +9084,7 @@ if (typeof module !== "undefined" && module.exports) {
 						'max-width': '',
 						'max-height': ''
 					});
-				}
-				else {
+				} else {
 					// use CSS on iframe to enforce explicitly defined size constraints
 					$iframe.css({
 						'max-width': this.playerWidth + 'px',
@@ -10396,8 +9092,7 @@ if (typeof module !== "undefined" && module.exports) {
 					});
 				}
 			}
-		}
-		else if (this.player === 'html5') {
+		} else if (this.player === 'html5') {
 			if (this.fullscreen) {
 				this.$media.attr({
 					'width': newWidth,
@@ -10407,8 +9102,7 @@ if (typeof module !== "undefined" && module.exports) {
 					'width': newWidth,
 					'height': newHeight
 				});
-			}
-			else {
+			} else {
 				// No constraints. Let CSS handle the positioning.
 				this.$media.removeAttr('width height');
 				this.$ableWrapper.css({
@@ -10442,15 +9136,6 @@ if (typeof module !== "undefined" && module.exports) {
 			});
 		}
 
-		// Reposition alert message (video player only) below the vertical center of the mediaContainer
-		// hopefully above captions, but not too far from the controller bar
-		if (this.mediaType === 'video') {
-			alertTop = Math.round(this.$mediaContainer.height() / 3) * 2;
-			this.$alertBox.css({
-				top: alertTop + 'px'
-			});
-		}
-
 		this.refreshControls();
 	};
 
@@ -10464,8 +9149,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (which == 'transcript') {
 			window = this.$transcriptArea;
-		}
-		else if (which == 'sign') {
+		} else if (which == 'sign') {
 			window = this.$signWindow;
 		}
 		windowWidth = window.width();
@@ -10519,8 +9203,7 @@ if (typeof module !== "undefined" && module.exports) {
 					// restore to the default
 					this.$transcriptArea.css('z-index',defLowZ);
 				}
-			}
-			else if (typeof this.$signWindow !== 'undefined') {
+			} else if (typeof this.$signWindow !== 'undefined') {
 				signZ = parseInt(this.$signWindow.css('z-index'));
 				if (signZ > defHighZ) {
 					// restore to the default
@@ -10540,24 +9223,20 @@ if (typeof module !== "undefined" && module.exports) {
 			// the two windows are equal; restore defaults (the target window will be on top)
 			newHighZ = defHighZ;
 			newLowZ = defLowZ;
-		}
-		else if (transcriptZ > signZ) {
+		} else if (transcriptZ > signZ) {
 			if (which === 'transcript') {
 				// transcript is already on top; nothing to do
 				return false;
-			}
-			else {
+			} else {
 				// swap z's
 				newHighZ = transcriptZ;
 				newLowZ = signZ;
 			}
-		}
-		else { // signZ is greater
+		} else { // signZ is greater
 			if (which === 'sign') {
 				// sign is already on top; nothing to do
 				return false;
-			}
-			else {
+			} else {
 				newHighZ = signZ;
 				newLowZ = transcriptZ;
 			}
@@ -10566,8 +9245,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (which === 'transcript') {
 			this.$transcriptArea.css('z-index',newHighZ);
 			this.$signWindow.css('z-index',newLowZ);
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			this.$signWindow.css('z-index',newHighZ);
 			this.$transcriptArea.css('z-index',newLowZ);
 		}
@@ -10626,8 +9304,7 @@ if (typeof module !== "undefined" && module.exports) {
 			// chapters popup is setup automatically when setupPopups() is called later with no param
 			// not sure why it was included here.
 			// this.setupPopups('chapters');
-		}
-		else if (source === 'transcript') {
+		} else if (source === 'transcript') {
 			this.transcriptCaptions = captions;
 			this.transcriptChapters = chapters;
 			this.transcriptDescriptions = descriptions;
@@ -10835,10 +9512,7 @@ if (typeof module !== "undefined" && module.exports) {
     if (typeof thisCaption !== "undefined") {
       if (this.currentCaption !== thisCaption) {
         // it's time to load the new caption into the container div
-        captionText = this.flattenCueForCaption(cues[thisCaption]).replace(
-          /\n/g,
-          "<br>"
-        );
+        captionText = this.flattenCueForCaption(cues[thisCaption]).replace( /\n/g, "<br>" );
 
         this.$captionsDiv.html(captionText);
         this.currentCaption = thisCaption;
@@ -11093,7 +9767,9 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.populateChaptersDiv = function() {
 
 		var headingLevel, headingType, headingId, $chaptersHeading;
-
+		if ( ! this.chaptersDivLocation ) {
+			return;
+		}
 		if ($('#' + this.chaptersDivLocation)) {
 
 			this.$chaptersDiv = $('#' + this.chaptersDivLocation);
@@ -11117,8 +9793,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.$chaptersNav = $('<nav>');
 			if (this.chaptersTitle) {
 				this.$chaptersNav.attr('aria-labelledby',headingId);
-			}
-			else {
+			} else {
 				this.$chaptersNav.attr('aria-label',this.tt.chapters);
 			}
 			this.$chaptersDiv.append(this.$chaptersNav);
@@ -11132,7 +9807,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var thisObj, cues, $chaptersList, c, thisChapter,
 			$chapterItem, $chapterButton, hasDefault,
-			getClickFunction, $clickedItem, $chaptersList, thisChapterIndex;
+			getClickFunction, $clickedItem, $chaptersList;
 
 		thisObj = this;
 
@@ -11143,20 +9818,13 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 
 		if (typeof this.useChapterTimes === 'undefined') {
-			if (this.seekbarScope === 'chapter' && this.selectedChapters.cues.length) {
-				this.useChapterTimes = true;
-			}
-			else {
-				this.useChapterTimes = false;
-			}
+			this.useChapterTimes = (this.seekbarScope === 'chapter' && this.selectedChapters.cues.length) ? true : false;
 		}
 		if (this.useChapterTimes) {
 			cues = this.selectedChapters.cues;
-		}
-		else if (this.chapters.length >= 1) {
+		} else if (this.chapters.length >= 1) {
 			cues = this.chapters[0].cues;
-		}
-		else {
+		} else {
 			cues = [];
 		}
 		if (cues.length > 0) {
@@ -11175,7 +9843,6 @@ if (typeof module !== "undefined" && module.exports) {
 						thisObj.seekTrigger = 'chapter';
 						$clickedItem = $(this).closest('li');
 						$chaptersList = $(this).closest('ul').find('li');
-						thisChapterIndex = $chaptersList.index($clickedItem);
 						$chaptersList.removeClass('able-current-chapter')
 							.children('button').removeAttr('aria-current');
 						$clickedItem.addClass('able-current-chapter')
@@ -11294,12 +9961,10 @@ if (typeof module !== "undefined" && module.exports) {
 				// chapter ends before or after video ends, adjust chapter end to match video end
 				chapterEnd = this.duration;
 				this.currentChapter.end = this.duration;
-			}
-			else {
+			} else {
 				chapterEnd = this.currentChapter.end;
 			}
-		}
-		else { // this is not the last chapter
+		} else { // this is not the last chapter
 			chapterEnd = this.currentChapter.end;
 		}
 		return chapterEnd - this.currentChapter.start;
@@ -11315,8 +9980,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (this.elapsed > this.currentChapter.start) {
 			return this.elapsed - this.currentChapter.start;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	};
@@ -11329,12 +9993,10 @@ if (typeof module !== "undefined" && module.exports) {
 			var newTime = this.currentChapter.start + chapterTime;
 			if (newTime > this.currentChapter.end) {
 				return this.currentChapter.end;
-			}
-			else {
+			} else {
 				return newTime;
 			}
-		}
-		else {
+		} else {
 			return chapterTime;
 		}
 	};
@@ -11503,8 +10165,8 @@ if (typeof module !== "undefined" && module.exports) {
     var deferred = new $.Deferred();
     var promise = deferred.promise();
 
-    if (this.usingYouTubeCaptions || this.usingVimeoCaptions) {
-      // a transcript is not possible
+    if (this.usingYouTubeCaptions || this.usingVimeoCaptions || this.hideTranscriptButton ) {
+      // a transcript is not possible or is disabled.
       this.transcriptType = null;
       deferred.resolve();
     } else {
@@ -11519,10 +10181,7 @@ if (typeof module !== "undefined" && module.exports) {
         }
       }
       if (this.transcriptType) {
-        if (
-          this.transcriptType === "popup" ||
-          this.transcriptType === "external"
-        ) {
+        if ( this.transcriptType === "popup" || this.transcriptType === "external" ) {
           this.injectTranscriptArea();
           deferred.resolve();
         } else if (this.transcriptType === "manual") {
@@ -12117,7 +10776,7 @@ if (typeof module !== "undefined" && module.exports) {
             }
           }
           if (comp.type === "b" || comp.type == "i") {
-            result.push($tag, " ");
+            result.push($tag);
           }
         } else {
           for (var i = 0; i < comp.children.length; i++) {
@@ -12130,13 +10789,22 @@ if (typeof module !== "undefined" && module.exports) {
       };
 
       for (var i = 0; i < cap.components.children.length; i++) {
+		var next_child_tagname;
+		if ( i < cap.components.children.length - 1 ) {
+			next_child_tagname = cap.components.children[i + 1].tagName;
+		}
         var results = flattenComponentForCaption(cap.components.children[i]);
         for (var jj = 0; jj < results.length; jj++) {
           var result = results[jj];
           if (typeof result === "string") {
-            if (thisObj.lyricsMode) {
-              // add <br> BETWEEN each caption and WITHIN each caption (if payload includes "\n")
-              result = result.replace(/\n/g, "<br>") + "<br>";
+           	if (thisObj.lyricsMode) {
+				// add <br> WITHIN each caption (if payload includes "\n")
+				result = result.replace(/\n/g,'<br>');
+
+				// add <br> BETWEEN each caption, but do not consider sibling style tags within this caption as the next caption!
+				if ( !next_child_tagname || ( next_child_tagname !== 'i' && next_child_tagname !== 'b' ) ) {
+					result += '<br>';
+				}
             } else {
               // just add a space between captions
               result += " ";
@@ -12234,10 +10902,7 @@ if (typeof module !== "undefined" && module.exports) {
           // this caption includes a bracket or parenth. Start a new block
           // close the previous block first
           if (spanCount > 0) {
-            $main
-              .find(".able-block-temp")
-              .removeClass("able-block-temp")
-              .wrapAll('<div class="able-transcript-block"></div>');
+            $main = wrapTranscriptBlocks( $main );
             spanCount = 0;
           }
         }
@@ -12246,16 +10911,24 @@ if (typeof module !== "undefined" && module.exports) {
       } else {
         // this is not a caption. Close the caption block
         if (spanCount > 0) {
-          $main
-            .find(".able-block-temp")
-            .removeClass("able-block-temp")
-            .wrapAll('<div class="able-transcript-block"></div>');
+          $main = wrapTranscriptBlocks( $main );
           spanCount = 0;
         }
       }
     });
+	// Close out remaining temp blocks.
+	$main = wrapTranscriptBlocks( $main );
+
     return $main;
   };
+
+  var wrapTranscriptBlocks = function( $main ) {
+	$main.find(".able-block-temp")
+		.removeClass("able-block-temp")
+		.wrapAll('<div class="able-transcript-block"></div>');
+
+	return $main;
+  }
 })(jQuery);
 
 (function ($) {
@@ -12510,20 +11183,18 @@ if (typeof module !== "undefined" && module.exports) {
 					this.playlistIndex = 0;
 					this.cueingPlaylistItem = true; // stopgap to prevent multiple firings
 					this.cuePlaylistItem(0);
-				}
-				else {
+				} else {
 					this.playing = false;
 					this.paused = true;
 				}
-			}
-			else {
+			} else {
 				// this is not the last track. Play the next one.
 				this.playlistIndex++;
 				this.cueingPlaylistItem = true; // stopgap to prevent multiple firings
 				this.cuePlaylistItem(this.playlistIndex)
 			}
 		}
-		this.refreshControls('init');
+		this.refreshControls();
 	};
 
 	AblePlayer.prototype.onMediaNewSourceLoad = function () {
@@ -12531,7 +11202,7 @@ if (typeof module !== "undefined" && module.exports) {
 		var loadIsComplete = false;
 
 		if (this.cueingPlaylistItem) {
-			// this variable was set in order to address bugs caused by multiple firings of media 'end' event
+			// this variable was set to address bugs caused by multiple firings of media 'end' event
 			// safe to reset now
 			this.cueingPlaylistItem = false;
 		}
@@ -12550,8 +11221,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.playMedia();
 				loadIsComplete = true;
 			 }
-		}
-		else if (this.seekTrigger == 'restart' ||
+		} else if (this.seekTrigger == 'restart' ||
 				this.seekTrigger == 'chapter' ||
 				this.seekTrigger == 'transcript' ||
 				this.seekTrigger == 'search'
@@ -12561,8 +11231,7 @@ if (typeof module !== "undefined" && module.exports) {
 			// (i.e., 'rewind', 'forward', or seekbar); for these, video remains paused until user initiates play
 			this.playMedia();
 			loadIsComplete = true;
-		}
-		else if (this.swappingSrc) {
+		} else if (this.swappingSrc) {
 			// new source file has just been loaded
 			if (this.hasPlaylist) {
 				// a new source file from the playlist has just been loaded
@@ -12571,18 +11240,16 @@ if (typeof module !== "undefined" && module.exports) {
 					this.playMedia();
 					loadIsComplete = true;
 				}
-			}
-			else if (this.swapTime > 0) {
+			} else if (this.swapTime > 0) {
 				if (this.seekStatus === 'complete') {
 					if (this.okToPlay) {
 						// should be able to resume playback
 						this.playMedia();
 					}
 					loadIsComplete = true;
-				}
-				else if (this.seekStatus === 'seeking') {
-				}
-				else {
+				} else if (this.seekStatus === 'seeking') {
+					// Do nothing.
+				} else {
 					if (this.swapTime === this.elapsed) {
 						// seek is finished!
 						this.seekStatus = 'complete';
@@ -12591,27 +11258,23 @@ if (typeof module !== "undefined" && module.exports) {
 							this.playMedia();
 						}
 						loadIsComplete = true;
-					}
-					else {
+					} else {
 						// seeking hasn't started yet
 						// first, determine whether it's possible
 						if (this.hasDescTracks) {
 							// do nothing. Unable to seek ahead if there are descTracks
 							loadIsComplete = true;
-						}
-						else if (this.durationsAreCloseEnough(this.duration,this.prevDuration)) {
+						} else if (this.durationsAreCloseEnough(this.duration,this.prevDuration)) {
 							// durations of two sources are close enough to making seek ahead in new source ok
 							this.seekStatus = 'seeking';
 							this.seekTo(this.swapTime);
-						}
-						else {
+						} else {
 							// durations of two sources are too dissimilar to support seeking ahead to swapTime.
 							loadIsComplete = true;
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				// swapTime is 0. No seeking required.
 				if (this.playing) {
 					this.playMedia();
@@ -12619,8 +11282,7 @@ if (typeof module !== "undefined" && module.exports) {
 					loadIsComplete = true;
 				}
 			}
-		}
-		else if (!this.startedPlaying) {
+		} else if (!this.startedPlaying) {
 			if (this.startTime > 0) {
 				if (this.seeking) {
 					// a seek has already been initiated
@@ -12630,24 +11292,20 @@ if (typeof module !== "undefined" && module.exports) {
 						this.playMedia();
 					}
 					loadIsComplete = true;
-				}
-				else {
+				} else {
 					// haven't started seeking yet
 					this.seekTo(this.startTime);
 				}
-			}
-			else if (this.defaultChapter && typeof this.selectedChapters !== 'undefined') {
+			} else if (this.defaultChapter && typeof this.selectedChapters !== 'undefined') {
 				this.seekToChapter(this.defaultChapter);
-			}
-			else {
+			} else {
 				// there is no startTime, therefore no seeking required
 				if (this.okToPlay) {
 					this.playMedia();
 				}
 				loadIsComplete = true;
 			}
-		}
-		else if (this.hasPlaylist) {
+		} else if (this.hasPlaylist) {
 			// new source media is part of a playlist, but user didn't click on it
 			// (and somehow, swappingSrc is false)
 			// this may happen when the previous track ends and next track loads
@@ -12657,8 +11315,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.playMedia();
 				loadIsComplete = true;
 			}
-		}
-		else {
+		} else {
 			// None of the above.
 			// User is likely seeking to a new time, but not loading a new media source
 			// need to reset vars
@@ -12674,10 +11331,11 @@ if (typeof module !== "undefined" && module.exports) {
 			this.userClickedPlaylist = false;
 			this.okToPlay = false;
 		}
-		this.refreshControls('init');
+		this.refreshControls();
 		if (this.$focusedElement) {
 			this.restoreFocus();
 			this.$focusedElement = null;
+			this.activeMedia = null;
 		}
 	};
 
@@ -12690,15 +11348,9 @@ if (typeof module !== "undefined" && module.exports) {
 		var tolerance, diff;
 
 		tolerance = 1;  // number of seconds between rounded durations that is considered "close enough"
-
 		diff = Math.abs(Math.round(d1) - Math.round(d2));
 
-		if (diff <= tolerance) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return (diff <= tolerance) ? true : false;
 	};
 
 	AblePlayer.prototype.restoreFocus = function() {
@@ -12708,15 +11360,15 @@ if (typeof module !== "undefined" && module.exports) {
 		// but this function finds a match in the new player
 		// and places focus there
 
-		var classList;
+		var classList, $mediaParent;
 
-		if (this.$focusedElement) {
-
-			if ((this.$focusedElement).attr('role') === 'button') {
+		if ( this.$focusedElement && null !== this.activeMedia ) {
+			$mediaParent = $( '#' + this.activeMedia ).closest( '.able' );
+			if ( (this.$focusedElement).attr('role') === 'button' ) {
 				classList = this.$focusedElement.attr("class").split(/\s+/);
 				$.each(classList, function(index, item) {
 					if (item.substring(0,20) === 'able-button-handler-') {
-						$('div.able-controller div.' + item).trigger('focus');
+						$mediaParent.find('div.able-controller div.' + item).trigger('focus');
 					}
 				});
 			}
@@ -12739,12 +11391,11 @@ if (typeof module !== "undefined" && module.exports) {
 			thisObj.showDescription(position);
 			thisObj.updateChapter(thisObj.convertChapterTimeToVideoTime(position));
 			thisObj.updateMeta(position);
-			thisObj.refreshControls('init');
+			thisObj.refreshControls();
 		}).on('stopTracking', function (e, position) {
 			if (thisObj.useChapterTimes) {
 				thisObj.seekTo(thisObj.convertChapterTimeToVideoTime(position));
-			}
-			else {
+			} else {
 				thisObj.seekTo(position);
 			}
 			if (!thisObj.pausedBeforeTracking) {
@@ -12760,97 +11411,94 @@ if (typeof module !== "undefined" && module.exports) {
 		var whichButton, prefsPopup;
 
 		whichButton = this.getButtonNameFromClass($(el).attr('class'));
-
-		if (whichButton === 'play') {
-			this.clickedPlay = true;
-			this.handlePlay();
-		}
-		else if (whichButton === 'restart') {
-			this.seekTrigger = 'restart';
-			this.handleRestart();
-		}
-		else if (whichButton === 'previous') {
-			this.userClickedPlaylist = true;
-			this.okToPlay = true;
-			this.seekTrigger = 'previous';
-			this.buttonWithFocus = 'previous';
-			this.handlePrevTrack();
-		}
-		else if (whichButton === 'next') {
-			this.userClickedPlaylist = true;
-			this.okToPlay = true;
-			this.seekTrigger = 'next';
-			this.buttonWithFocus = 'next';
-			this.handleNextTrack();
-		}
-		else if (whichButton === 'rewind') {
-			this.seekTrigger = 'rewind';
-			this.handleRewind();
-		}
-		else if (whichButton === 'forward') {
-			this.seekTrigger = 'forward';
-			this.handleFastForward();
-		}
-		else if (whichButton === 'mute') {
-			this.handleMute();
-		}
-		else if (whichButton === 'volume') {
-			this.handleVolumeButtonClick();
-		}
-		else if (whichButton === 'faster') {
-			this.handleRateIncrease();
-		}
-		else if (whichButton === 'slower') {
-			this.handleRateDecrease();
-		}
-		else if (whichButton === 'captions') {
-			this.handleCaptionToggle();
-		}
-		else if (whichButton === 'chapters') {
-			this.handleChapters();
-		}
-		else if (whichButton === 'descriptions') {
-			this.handleDescriptionToggle();
-		}
-		else if (whichButton === 'sign') {
-			if (!this.closingSign) {
-				this.handleSignToggle();
-			}
-		}
-		else if (whichButton === 'preferences') {
-			if ($(el).attr('data-prefs-popup') === 'menu') {
-				this.handlePrefsClick();
-			}
-			else {
-				this.showingPrefsDialog = true; // stopgap
-				this.closePopups();
-				prefsPopup = $(el).attr('data-prefs-popup');
-				if (prefsPopup === 'keyboard') {
-					this.keyboardPrefsDialog.show();
+		switch ( whichButton ) {
+			case 'play':
+				this.clickedPlay = true;
+				this.handlePlay();
+				break;
+			case 'restart':
+				this.seekTrigger = 'restart';
+				this.handleRestart();
+				break;
+			case 'previous':
+				this.userClickedPlaylist = true;
+				this.okToPlay = true;
+				this.seekTrigger = 'previous';
+				this.buttonWithFocus = 'previous';
+				this.handlePrevTrack();
+				break;
+			case 'next':
+				this.userClickedPlaylist = true;
+				this.okToPlay = true;
+				this.seekTrigger = 'next';
+				this.buttonWithFocus = 'next';
+				this.handleNextTrack();
+				break;
+			case 'rewind':
+				this.seekTrigger = 'rewind';
+				this.handleRewind();
+				break;
+			case 'forward':
+				this.seekTrigger = 'forward';
+				this.handleFastForward();
+				break;
+			case 'mute':
+				this.handleMute();
+				break;
+			case 'volume':
+				this.handleVolumeButtonClick();
+				break;
+			case 'faster':
+				this.handleRateIncrease();
+				break;
+			case 'slower':
+				this.handleRateDecrease();
+				break;
+			case 'captions':
+				this.handleCaptionToggle();
+				break;
+			case 'chapters':
+				this.handleChapters();
+				break;
+			case 'descriptions':
+				this.handleDescriptionToggle();
+				break;
+			case 'sign':
+				if ( ! this.closingSign ) {
+					this.handleSignToggle();
 				}
-				else if (prefsPopup === 'captions') {
-					this.captionPrefsDialog.show();
+				break;
+			case 'preferences':
+				if ($(el).attr('data-prefs-popup') === 'menu') {
+					this.handlePrefsClick();
+				} else {
+					this.showingPrefsDialog = true; // stopgap
+					this.closePopups();
+					prefsPopup = $(el).attr('data-prefs-popup');
+					if (prefsPopup === 'keyboard') {
+						this.keyboardPrefsDialog.show();
+					} else if (prefsPopup === 'captions') {
+						this.captionPrefsDialog.show();
+					} else if (prefsPopup === 'descriptions') {
+						this.descPrefsDialog.show();
+					} else if (prefsPopup === 'transcript') {
+						this.transcriptPrefsDialog.show();
+					}
+					this.showingPrefsDialog = false;
 				}
-				else if (prefsPopup === 'descriptions') {
-					this.descPrefsDialog.show();
+				break;
+			case 'help':
+				this.handleHelpClick();
+				break;
+			case 'transcript':
+				if ( !this.closingTranscript ) {
+					this.handleTranscriptToggle();
 				}
-				else if (prefsPopup === 'transcript') {
-					this.transcriptPrefsDialog.show();
-				}
-				this.showingPrefsDialog = false;
-			}
-		}
-		else if (whichButton === 'help') {
-			this.handleHelpClick();
-		}
-		else if (whichButton === 'transcript') {
-			if (!this.closingTranscript) {
-				this.handleTranscriptToggle();
-			}
-		}
-		else if (whichButton === 'fullscreen') {
-			this.clickedFullscreenButton = true;
-			this.handleFullscreenToggle();
+				break;
+			case 'fullscreen':
+				this.clickedFullscreenButton = true;
+				this.handleFullscreenToggle();
+				break;
 		}
 	};
 
@@ -12874,15 +11522,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// returns true unless user's focus is on a UI element
 		// that is likely to need supported keystrokes, including space
-
 		var activeElement = AblePlayer.getActiveDOMElement();
 
-		if ($(activeElement).prop('tagName') === 'INPUT') {
-			return false;
-		}
-		else {
-			return true;
-		}
+		return ($(activeElement).prop('tagName') === 'INPUT') ? false : true;
 	};
 
 	AblePlayer.prototype.onPlayerKeyPress = function (e) {
@@ -12898,16 +11540,13 @@ if (typeof module !== "undefined" && module.exports) {
 		// including removal of the "media player" design pattern. There's an issue about that:
 		// https://github.com/w3c/aria-practices/issues/27
 
-		var which, $thisElement;
+		var key, $thisElement;
 
 		// Convert to lower case.
-		which = e.which;
-		if (which >= 65 && which <= 90) {
-			which += 32;
-		}
+		key = e.key;
 		$thisElement = $(document.activeElement);
 
-		if (which === 27) { // escape
+		if (key === 'Escape') {
 			if (this.$transcriptArea && $.contains(this.$transcriptArea[0],$thisElement[0]) && !this.hidingPopup) {
 				// This element is part of transcript area.
 				this.handleTranscriptToggle();
@@ -12930,12 +11569,11 @@ if (typeof module !== "undefined" && module.exports) {
 			(e.target.tagName === 'TEXTAREA' && !this.stenoMode) ||
 			e.target.tagName === 'SELECT'
 		)){
-			if (which === 27) { // escape
+			if (key === 'Escape') {
 				this.closePopups();
 				this.$tooltipDiv.hide();
 				this.seekBar.hideSliderTooltips();
-			}
-			else if (which === 32) { // spacebar = play/pause
+			} else if (key === ' ') {
 				// disable spacebar support for play/pause toggle as of 4.2.10
 				// spacebar should not be handled everywhere on the page, since users use that to scroll the page
 				// when the player has focus, most controls are buttons so spacebar should be used to trigger the buttons
@@ -12944,86 +11582,72 @@ if (typeof module !== "undefined" && module.exports) {
 					e.preventDefault();
 					$thisElement.trigger( 'click' );
 				}
-			}
-			else if (which === 112) { // p = play/pause
+			} else if ( key === 'p' ) {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handlePlay();
 				}
-			}
-			else if (which === 115) { // s = stop (now restart)
+			} else if (key === 's') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleRestart();
 				}
-			}
-			else if (which === 109) { // m = mute
+			} else if (key === 'm') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleMute();
 				}
-			}
-			else if (which === 118) { // v = volume
+			} else if (key === 'v') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleVolumeButtonClick();
 				}
-			}
-			else if (which >= 49 && which <= 57) { // set volume 1-9
+			} else if (key >= 0 && key <= 9) {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
-					this.handleVolumeKeystroke(which);
+					this.handleVolumeKeystroke(key);
 				}
-			}
-			else if (which === 99) { // c = caption toggle
+			} else if (key === 'c') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleCaptionToggle();
 				}
-			}
-			else if (which === 100) { // d = description
+			} else if (key === 'd') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleDescriptionToggle();
 				}
-			}
-			else if (which === 102) { // f = forward
+			} else if (key === 'f') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleFastForward();
 				}
-			}
-			else if (which === 114) { // r = rewind
+			} else if (key === 'r') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleRewind();
 				}
-			}
-			else if (which === 98) { // b = back (previous track)
+			} else if (key === 'b') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handlePrevTrack();
 				}
-			}
-			else if (which === 110) { // n = next track
+			} else if (key === 'n') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handleNextTrack();
 				}
-			}
-			else if (which === 101) { // e = preferences
+			} else if (key === 'e') {
 				if (this.usingModifierKeys(e)) {
 					e.preventDefault();
 					this.handlePrefsClick();
 				}
-			}
-			else if (which === 13) { // Enter
+			} else if (key === 'Enter') {
 				if ($thisElement.attr('role') === 'button' || $thisElement.prop('tagName') === 'SPAN') {
 					// register a click on this element
 					// if it's a transcript span the transcript span click handler will take over
 					$thisElement.trigger( 'click' );
-				}
-				else if ($thisElement.prop('tagName') === 'LI') {
+				} else if ($thisElement.prop('tagName') === 'LI') {
 					$thisElement.trigger( 'click' );
 				}
 			}
@@ -13100,13 +11724,11 @@ if (typeof module !== "undefined" && module.exports) {
 					if (thisObj.hasPlaylist || thisObj.swappingSrc) {
 						// do NOT set playing to false.
 						// doing so prevents continual playback after new track is loaded
-					}
-					else {
+					} else {
 						thisObj.playing = false;
 						thisObj.paused = true;
 					}
-				}
-				else {
+				} else {
 					thisObj.playing = false;
 					thisObj.paused = true;
 				}
@@ -13200,13 +11822,11 @@ if (typeof module !== "undefined" && module.exports) {
 				if (thisObj.hasPlaylist || thisObj.swappingSrc) {
 						// do NOT set playing to false.
 					// doing so prevents continual playback after new track is loaded
-				}
-				else {
+				} else {
 					thisObj.playing = false;
 					thisObj.paused = true;
 				}
-			}
-			else {
+			} else {
 				thisObj.playing = false;
 				thisObj.paused = true;
 			}
@@ -13244,10 +11864,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.addEventListeners = function () {
 
-		var thisObj, whichButton, thisElement;
-
 		// Save the current object context in thisObj for use with inner functions.
-		thisObj = this;
+		var thisObj = this;
 
 		// Appropriately resize media player for full screen.
 		$(window).on('resize',function () {
@@ -13265,7 +11883,7 @@ if (typeof module !== "undefined" && module.exports) {
 					if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
 						// the player's style attribute has changed. Check to see if it's visible
 						if (thisObj.$ableDiv.is(':visible')) {
-							thisObj.refreshControls('init');
+							thisObj.refreshControls();
 						}
 					}
 				});
@@ -13275,8 +11893,7 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 		if (typeof this.seekBar !== 'undefined') {
 			this.addSeekbarListeners();
-		}
-		else {
+		} else {
 			// wait a bit and try again
 			// TODO: Should set this up to keep trying repeatedly.
 			// Seekbar listeners are critical.
@@ -13294,7 +11911,7 @@ if (typeof module !== "undefined" && module.exports) {
 		});
 
 		// handle clicks (left only) anywhere on the page. If any popups are open, close them.
-		$(document).on('click',function(e) {
+		$('body').on('click', function(e) {
 
 			if (e.button !== 0) { // not a left click
 				return false;
@@ -13324,8 +11941,7 @@ if (typeof module !== "undefined" && module.exports) {
 					// after showing controls, hide them again after a brief timeout
 					thisObj.invokeHideControlsTimeout();
 				}
-			}
-			else {
+			} else {
 				// if there's already an active timeout, clear it and start timer again
 				if (thisObj.hideControlsTimeoutStatus === 'active') {
 					window.clearTimeout(thisObj.hideControlsTimeout);
@@ -13350,8 +11966,7 @@ if (typeof module !== "undefined" && module.exports) {
 					// after showing controls, hide them again after a brief timeout
 					thisObj.invokeHideControlsTimeout();
 				}
-			}
-			else {
+			} else {
 				// controls are visible
 				// if there's already an active timeout, clear it and start timer again
 				if (thisObj.hideControlsTimeoutStatus === 'active') {
@@ -13410,11 +12025,9 @@ if (typeof module !== "undefined" && module.exports) {
 		// add listeners for media events
 		if (this.player === 'html5') {
 			this.addHtml5MediaListeners();
-		}
-		else if (this.player === 'vimeo') {
+		} else if (this.player === 'vimeo') {
 			 this.addVimeoListeners();
-		}
-		else if (this.player === 'youtube') {
+		} else if (this.player === 'youtube') {
 			// Youtube doesn't give us time update events, so we just periodically generate them ourselves
 			setInterval(function () {
 				thisObj.onMediaUpdateTime();
@@ -13424,7 +12037,6 @@ if (typeof module !== "undefined" && module.exports) {
 })(jQuery);
 
 (function ($) {
-
 	AblePlayer.prototype.initDragDrop = function ( which ) {
 
 		// supported values of which: 'sign', 'transcript'
@@ -13447,15 +12059,17 @@ if (typeof module !== "undefined" && module.exports) {
 			$window = this.$transcriptArea;
 			windowName = 'transcript-window';
 			$toolbar = this.$transcriptToolbar;
-		}
-		else if (which === 'sign') {
+			$toolbar.attr( 'aria-label', this.tt.transcriptControls );
+		} else if (which === 'sign') {
 			$window = this.$signWindow;
 			windowName = 'sign-window';
 			$toolbar = this.$signToolbar;
+			$toolbar.attr( 'aria-label', this.tt.signControls );
 		}
 
 		// add class to trigger change in cursor on hover
 		$toolbar.addClass('able-draggable');
+		$toolbar.attr( 'role', 'application' );
 
 		// add resize handle selector to bottom right corner
 		$resizeHandle = $('<div>',{
@@ -13475,14 +12089,12 @@ if (typeof module !== "undefined" && module.exports) {
 				y1 = '0';
 				x2 = '0';
 				y2 = '100';
-			}
-			else if (i === 2) {
+			} else if (i === 2) {
 				x1 = '33';
 				y1 = '100';
 				x2 = '100';
 				y2 = '33';
-			}
-			else if (i === 3) {
+			} else if (i === 3) {
 				x1 = '67';
 				y1 = '100';
 				x2 = '100';
@@ -13511,7 +12123,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// other event listeners will be added when drag starts
 		$toolbar.on('mousedown mouseup touchstart touchend', function(e) {
 			e.stopPropagation();
-			if (e.type === 'mousedown' || e.type === 'touchstart') {
+			if (e.type === 'mousedown' || e.type === 'touchstart' ) {
 				if (!thisObj.windowMenuClickRegistered) {
 					thisObj.windowMenuClickRegistered = true;
 					thisObj.startMouseX = e.pageX;
@@ -13519,8 +12131,7 @@ if (typeof module !== "undefined" && module.exports) {
 					thisObj.dragDevice = 'mouse'; // ok to use this even if device is a touchpad
 					thisObj.startDrag(which, $window);
 				}
-			}
-			else if (e.type === 'mouseup' || e.type === 'touchend') {
+			} else if (e.type === 'mouseup' || e.type === 'touchend') {
 				if (thisObj.dragging && thisObj.dragDevice === 'mouse') {
 					thisObj.endDrag(which);
 				}
@@ -13538,8 +12149,7 @@ if (typeof module !== "undefined" && module.exports) {
 					thisObj.startMouseY = e.pageY;
 					thisObj.startResize(which, $window);
 				}
-			}
-			else if (e.type === 'mouseup' || e.type === 'touchend') {
+			} else if (e.type === 'mouseup' || e.type === 'touchend') {
 				if (thisObj.resizing) {
 					thisObj.endResize(which);
 				}
@@ -13561,8 +12171,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.addWindowMenu = function(which, $window, windowName) {
 
-		var thisObj, $windowAlert, menuId, $newButton, $buttonIcon, buttonImgSrc,
-			$buttonLabel, tooltipId, $tooltip, $popup, menuId;
+		var thisObj, $windowAlert, menuId, $newButton, tooltipId, $tooltip, $popup, menuId;
 
 		thisObj = this;
 
@@ -13575,51 +12184,18 @@ if (typeof module !== "undefined" && module.exports) {
 		// this will prevent the click event from being triggered
 		this.finishingDrag = false;
 
-		// create an alert div and add it to window
-		$windowAlert = $('<div role="alert"></div>');
-		$windowAlert.addClass('able-alert');
-		$windowAlert.hide();
-		$windowAlert.appendTo(this.$activeWindow);
-		$windowAlert.css({
-			top: $window.offset().top
-		});
-
 		// add button to draggable window which triggers a popup menu
-		// for now, re-use preferences icon for this purpose
 		menuId = this.mediaId + '-' + windowName + '-menu';
 		$newButton = $('<button>',{
 			'type': 'button',
 			'tabindex': '0',
-			'aria-label': this.tt.windowButtonLabel,
 			'aria-haspopup': 'true',
 			'aria-controls': menuId,
 			'aria-expanded': 'false',
 			'class': 'able-button-handler-preferences'
 		});
-		if (this.iconType === 'font') {
-			$buttonIcon = $('<span>',{
-				'class': 'icon-preferences',
-				'aria-hidden': 'true'
-			});
-			$newButton.append($buttonIcon);
-		}
-		// Inexplicably, SVG images aren't working in the dragdrop UI.
-		else {
-			// use image
-			buttonImgSrc = this.rootPath + 'button-icons/' + this.toolbarIconColor + '/preferences.png';
-			$buttonIcon = $('<img>',{
-				'src': buttonImgSrc,
-				'alt': '',
-				'role': 'presentation'
-			});
-			$newButton.append($buttonIcon);
-		}
-
-		// add the visibly-hidden label for screen readers that don't support aria-label on the button
-		$buttonLabel = $('<span>',{
-			'class': 'able-clipped'
-		}).text(this.tt.windowButtonLabel);
-		$newButton.append($buttonLabel);
+		this.getIcon( $newButton, 'preferences' );
+		this.setText( $newButton, this.tt.windowButtonLabel );
 
 		// add a tooltip that displays aria-label on mouseenter or focus
 		tooltipId = this.mediaId + '-' + windowName + '-tooltip';
@@ -13627,6 +12203,7 @@ if (typeof module !== "undefined" && module.exports) {
 			'class' : 'able-tooltip',
 			'id' : tooltipId
 		}).hide();
+
 		$newButton.on('mouseenter focus',function(e) {
 			var label = $(this).attr('aria-label');
 			var tooltip = AblePlayer.localGetElementById($newButton[0], tooltipId).text(label);
@@ -13650,13 +12227,10 @@ if (typeof module !== "undefined" && module.exports) {
 		$popup = this.setupPopups(windowName); // 'transcript-window' or 'sign-window'
 		// define vars and assemble all the parts
 		if (which === 'transcript') {
-			this.$transcriptAlert = $windowAlert;
 			this.$transcriptPopupButton = $newButton;
 			this.$transcriptPopup = $popup;
 			this.$transcriptToolbar.prepend($windowAlert,$newButton,$tooltip,$popup);
-		}
-		else if (which === 'sign') {
-			this.$signAlert = $windowAlert;
+		} else if (which === 'sign') {
 			this.$signPopupButton = $newButton;
 			this.$signPopup = $popup;
 			this.$signToolbar.append($windowAlert,$newButton,$tooltip,$popup);
@@ -13685,28 +12259,22 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.addResizeDialog = function (which, $window) {
 
-		var thisObj, $windowPopup, $windowButton,
-			widthId, heightId, startingWidth, startingHeight, aspectRatio,
+		var thisObj, $windowPopup, $windowButton, widthId, heightId,
 			$resizeForm, $resizeWrapper, $resizeWidthDiv, $resizeWidthInput, $resizeWidthLabel,
-			$resizeHeightDiv, $resizeHeightInput, $resizeHeightLabel,
-			tempWidth, tempHeight, $saveButton, $cancelButton, newWidth, newHeight, resizeDialog;
+			$resizeHeightDiv, $resizeHeightInput, $resizeHeightLabel, $saveButton, $cancelButton, newWidth, newHeight, resizeDialog;
 
 		thisObj = this;
 
 		if (which === 'transcript') {
 			$windowPopup = this.$transcriptPopup;
 			$windowButton = this.$transcriptPopupButton;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$windowPopup = this.$signPopup;
 			$windowButton = this.$signPopupButton;
 		}
 
 		widthId = this.mediaId + '-resize-' + which + '-width';
 		heightId = this.mediaId + '-resize-' + which + '-height';
-		startingWidth = $window.width();
-		startingHeight = $window.height();
-		aspectRatio = startingWidth / startingHeight;
 
 		$resizeForm = $('<div></div>',{
 			'class' : 'able-resize-form'
@@ -13714,13 +12282,15 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// inner container for all content, will be assigned to modal div's aria-describedby
 		$resizeWrapper = $('<div></div>');
+		$resizeControls = $( '<div class="able-prefs-buttons"></div>' );
 
 		// width field
 		$resizeWidthDiv = $('<div></div>');
 		$resizeWidthInput = $('<input>',{
-			'type': 'text',
+			'type': 'number',
 			'id': widthId,
-			'value': startingWidth
+			'min': 0,
+			'value': '',
 		});
 		$resizeWidthLabel = $('<label>',{
 			'for': widthId
@@ -13729,24 +12299,14 @@ if (typeof module !== "undefined" && module.exports) {
 		// height field
 		$resizeHeightDiv = $('<div></div>');
 		$resizeHeightInput = $('<input>',{
-			'type': 'text',
+			'type': 'number',
 			'id': heightId,
-			'value': startingHeight
+			'min': 0,
+			'value': '',
 		});
 		$resizeHeightLabel = $('<label>',{
 			'for': heightId
 		}).text(this.tt.height);
-
-		if (which === 'sign') {
-			// make height a read-only field
-			// and calculate its value based on width to preserve aspect ratio
-			$resizeHeightInput.prop('readonly',true);
-			$resizeWidthInput.on('input',function() {
-				tempWidth = $(this).val();
-				tempHeight = Math.round(tempWidth/aspectRatio, 0);
-				$resizeHeightInput.val(tempHeight);
-			})
-		}
 
 		// Add save and cancel buttons.
 		$saveButton = $('<button class="modal-button">' + this.tt.save + '</button>');
@@ -13754,10 +12314,9 @@ if (typeof module !== "undefined" && module.exports) {
 		$saveButton.on('click',function () {
 			newWidth = $('#' + widthId).val();
 			newHeight = $('#' + heightId).val();
-			if (newWidth !== startingWidth || newHeight !== startingHeight) {
-				thisObj.resizeObject(which,newWidth,newHeight);
-				thisObj.updateCookie(which);
-			}
+			thisObj.resizeObject(which,newWidth,newHeight);
+			thisObj.updateCookie(which);
+
 			resizeDialog.hide();
 			$windowPopup.hide();
 			$windowButton.trigger('focus');
@@ -13772,7 +12331,8 @@ if (typeof module !== "undefined" && module.exports) {
 		$resizeWidthDiv.append($resizeWidthLabel,$resizeWidthInput);
 		$resizeHeightDiv.append($resizeHeightLabel,$resizeHeightInput);
 		$resizeWrapper.append($resizeWidthDiv,$resizeHeightDiv);
-		$resizeForm.append($resizeWrapper,'<hr>',$saveButton,$cancelButton);
+		$resizeControls.append($saveButton,$cancelButton);
+		$resizeForm.append($resizeWrapper,$resizeControls);
 
 		// must be appended to the BODY!
 		// otherwise when aria-hidden="true" is applied to all background content
@@ -13782,8 +12342,7 @@ if (typeof module !== "undefined" && module.exports) {
 		resizeDialog = new AccessibleDialog($resizeForm, $windowButton, 'dialog', true, this.tt.windowResizeHeading, $resizeWrapper, this.tt.closeButtonLabel, '20em');
 		if (which === 'transcript') {
 			this.transcriptResizeDialog = resizeDialog;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			this.signResizeDialog = resizeDialog;
 		}
 	};
@@ -13805,8 +12364,7 @@ if (typeof module !== "undefined" && module.exports) {
 			$windowPopup = this.$transcriptPopup;
 			$windowButton = this.$transcriptPopupButton;
 			$toolbar = this.$transcriptToolbar;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$windowPopup = this.$signPopup;
 			$windowButton = this.$signPopupButton;
 			$toolbar = this.$signToolbar;
@@ -13814,11 +12372,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (e.type === 'keydown') {
 			// user pressed a key
-			if (e.which === 32 || e.which === 13) {
-				// this was Enter or space
+			if (e.key === ' ' || e.key === 'Enter') {
 				this.windowMenuClickRegistered = true;
-			}
-			else if (e.which === 27) { // escape
+			} else if (e.key === 'Escape') {
 				if ($windowPopup.is(':visible')) {
 					// close the popup menu
 					$windowPopup.hide('fast', function() {
@@ -13829,22 +12385,18 @@ if (typeof module !== "undefined" && module.exports) {
 						// also return focus to window options button
 						$windowButton.trigger('focus');
 					});
-				}
-				else {
+				} else {
 					// popup isn't open. Close the window
 					if (which === 'sign') {
 						this.handleSignToggle();
-					}
-					else if (which === 'transcript') {
+					} else if (which === 'transcript') {
 						this.handleTranscriptToggle();
 					}
 				}
-			}
-			else {
+			} else {
 				return false;
 			}
-		}
-		else {
+		} else {
 			// this was a mouse event
 			this.windowMenuClickRegistered = true;
 		}
@@ -13855,8 +12407,7 @@ if (typeof module !== "undefined" && module.exports) {
 			});
 			$windowPopup.find('li').removeClass('able-focus');
 			$windowButton.attr('aria-expanded','false').trigger('focus');
-		}
-		else {
+		} else {
 			// first, be sure window is on top
 			this.updateZIndex(which);
 			popupTop = $toolbar.outerHeight() - 1;
@@ -13871,7 +12422,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 	AblePlayer.prototype.handleMenuChoice = function (which, choice, e) {
 
-		var thisObj, $window, $windowPopup, $windowButton, resizeDialog;
+		var thisObj, $window, $windowPopup, $windowButton, resizeDialog, startingWidth, startingHeight,
+		aspectRatio, tempWidth, tempHeight;
 
 		thisObj = this;
 		if (which === 'transcript') {
@@ -13879,17 +12431,30 @@ if (typeof module !== "undefined" && module.exports) {
 			$windowPopup = this.$transcriptPopup;
 			$windowButton = this.$transcriptPopupButton;
 			resizeDialog = this.transcriptResizeDialog;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$window = this.$signWindow;
 			$windowPopup = this.$signPopup;
 			$windowButton = this.$signPopupButton;
 			resizeDialog = this.signResizeDialog;
+
+			startingWidth = $window.outerWidth();
+			startingHeight = $window.outerHeight();
+			aspectRatio = startingWidth / startingHeight;
+			// make height a read-only field
+			// and calculate its value based on width to preserve aspect ratio
+			widthId = this.mediaId + '-resize-' + which + '-width';
+			heightId = this.mediaId + '-resize-' + which + '-height';
+			$( '#' + heightId ).prop('readonly',true);
+			$( '#' + widthId ).on('input',function() {
+				tempWidth = $(this).val();
+				tempHeight = Math.round(tempWidth/aspectRatio);
+				$( '#' + heightId ).val(tempHeight);
+			});
 		}
 		this.$activeWindow = $window;
 
 		if (e.type === 'keydown') {
-			if (e.which === 27) { // escape
+			if (e.key === 'Escape') { // escape
 				// hide the popup menu
 				$windowPopup.hide('fast', function() {
 					// also reset the Boolean
@@ -13901,8 +12466,7 @@ if (typeof module !== "undefined" && module.exports) {
 					$windowButton.trigger('focus');
 				});
 				return false;
-			}
-			else {
+			} else {
 				// all other keys will be handled by upstream functions
 				if (choice !== 'close') {
 					this.$activeWindow = $window;
@@ -13923,7 +12487,6 @@ if (typeof module !== "undefined" && module.exports) {
 			$windowButton.trigger('focus');
 		}
 		if (choice === 'move') {
-
 			// temporarily add role="application" to activeWindow
 			// otherwise, screen readers incercept arrow keys and moving window will not work
 			this.$activeWindow.attr('role','application');
@@ -13932,38 +12495,29 @@ if (typeof module !== "undefined" && module.exports) {
 				this.showAlert(this.tt.windowMoveAlert,which);
 				if (which === 'transcript') {
 					this.showedTranscriptAlert = true;
-				}
-				else if (which === 'sign') {
+				} else if (which === 'sign') {
 					this.showedSignAlert = true;
 				}
 			}
-			if (e.type === 'keydown') {
-				this.dragDevice = 'keyboard';
-			}
-			else {
-				this.dragDevice = 'mouse';
-			}
+			this.dragDevice = (e.type === 'keydown') ? 'keyboard' : 'mouse';
 			this.startDrag(which, $window);
 			$windowPopup.hide().parent().attr( 'tabindex', '-1' ).trigger('focus');
-		}
-		else if (choice == 'resize') {
+		} else if (choice == 'resize') {
 			// resize through the menu uses a form, not drag
 			var resizeFields = resizeDialog.getInputs();
 			if (resizeFields) {
 				// reset width and height values in form
-				resizeFields[0].value = $window.width();
-				resizeFields[1].value = $window.height();
+				resizeFields[0].value = Math.round( $window.outerWidth() );
+				resizeFields[1].value = Math.round( $window.outerHeight() );
 			}
 			resizeDialog.show();
-		}
-		else if (choice == 'close') {
+		} else if (choice == 'close') {
 			// close window, place focus on corresponding button on controller bar
 			if (which === 'transcript') {
-				this.closingTranscript = true; // stopgrap to prevent double-firing of keypress
+				this.closingTranscript = true; // stopgap to prevent double-firing of keypress
 				this.handleTranscriptToggle();
-			}
-			else if (which === 'sign') {
-				this.closingSign = true; // stopgrap to prevent double-firing of keypress
+			} else if (which === 'sign') {
+				this.closingSign = true; // stopgap to prevent double-firing of keypress
 				this.handleSignToggle();
 			}
 		}
@@ -13982,8 +12536,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		if (which === 'transcript') {
 			$windowPopup = this.$transcriptPopup;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$windowPopup = this.$signPopup;
 		}
 
@@ -14006,8 +12559,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.dragKeyY = this.dragStartY;
 			// add stopgap to prevent the Enter that triggered startDrag() from also triggering dragEnd()
 			this.startingDrag = true;
-		}
-		else {
+		} else {
 			this.dragDevice = 'mouse';
 			// get offset between mouse position and top left corner of draggable element
 			this.dragOffsetX = this.startMouseX - this.dragStartX;
@@ -14021,6 +12573,7 @@ if (typeof module !== "undefined" && module.exports) {
 			'left': this.dragStartX + 'px'
 		}).trigger('focus');
 
+		var dragDevice = this.dragDevice;
 		// add device-specific event listeners
 		if (this.dragDevice === 'mouse') { // might also be a touchpad
 			$(document).on('mousemove touchmove',function(e) {
@@ -14031,8 +12584,7 @@ if (typeof module !== "undefined" && module.exports) {
 					thisObj.resetDraggedObject( newX, newY );
 				}
 			});
-		}
-		else if (this.dragDevice === 'keyboard') {
+		} else if (this.dragDevice === 'keyboard') {
 			this.$activeWindow.on('keydown',function(e) {
 				if (thisObj.dragging) {
 					thisObj.dragKeys(which, e);
@@ -14042,6 +12594,12 @@ if (typeof module !== "undefined" && module.exports) {
 		return false;
 	};
 
+	/**
+	 * Handle moving the transcript or sign window from the keyboard.
+	 *
+	 * @param {string} which 'transcript' or 'sign' window.
+	 * @param {Event} e Triggered event.
+	 */
 	AblePlayer.prototype.dragKeys = function(which, e) {
 
 		var key, keySpeed;
@@ -14054,28 +12612,29 @@ if (typeof module !== "undefined" && module.exports) {
 			this.startingDrag = false;
 			return false;
 		}
-		key = e.which;
+		key = e.key;
 		keySpeed = 10; // pixels per keypress event
 
 		switch (key) {
-			case 37:	// left
-			case 63234:
+			case 'ArrowLeft':	// left
 				 this.dragKeyX -= keySpeed;
+				 this.$srAlertBox.text( this.tt.windowMoveLeft );
 				break;
-			case 38:	// up
-			case 63232:
+			case 'ArrowUp':	// up
 				this.dragKeyY -= keySpeed;
+				this.$srAlertBox.text( this.tt.windowMoveUp );
 				break;
-			case 39:	// right
-			case 63235:
+			case 'ArrowRight':	// right
 				this.dragKeyX += keySpeed;
+				this.$srAlertBox.text( this.tt.windowMoveRight );
 				break;
-			case 40:	// down
-			case 63233:
+			case 'ArrowDown':	// down
 				this.dragKeyY += keySpeed;
+				this.$srAlertBox.text( this.tt.windowMoveDown );
 				break;
-			case 13: 	// enter
-			case 27: 	// escape
+			case 'Enter': 	// enter
+			case 'Escape': 	// escape
+				this.$srAlertBox.text( this.tt.windowMoveStopped );
 				this.endDrag(which);
 				return false;
 			default:
@@ -14089,6 +12648,9 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.resetDraggedObject = function ( x, y) {
+		setTimeout( () => {
+			this.$srAlertBox.text( '' );
+		}, 2000 );
 
 		this.$activeWindow.css({
 			'left': x + 'px',
@@ -14123,8 +12685,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (which === 'transcript') {
 			$windowPopup = this.$transcriptPopup;
 			$windowButton = this.$transcriptPopupButton;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$windowPopup = this.$signPopup;
 			$windowButton = this.$signPopupButton;
 		}
@@ -14150,34 +12711,13 @@ if (typeof module !== "undefined" && module.exports) {
 		// Boolean to stop stray events from firing
 		this.windowMenuClickRegistered = false;
 		this.finishingDrag = true; // will be reset after window click event
-		// finishingDrag should e reset after window click event,
+		// finishingDrag should be reset after window click event,
 		// which is triggered automatically after mouseup
 		// However, in case that's not reliable in some browsers
 		// need to ensure this gets cancelled
 		setTimeout(function() {
 			thisObj.finishingDrag = false;
 		}, 100);
-	};
-
-	AblePlayer.prototype.isCloseToCorner = function($window, mouseX, mouseY) {
-
-		// return true if mouse is close to bottom right corner (resize target)
-		var tolerance, position, top, left, width, height, bottom, right;
-
-		tolerance = 10; // number of pixels in both directions considered "close enough"
-
-		// first, get position of element
-		position = $window.offset();
-		top = position.top;
-		left = position.left;
-		width = $window.width();
-		height = $window.height();
-		bottom = top + height;
-		right = left + width;
-		if ((Math.abs(bottom-mouseY) <= tolerance) && (Math.abs(right-mouseX) <= tolerance)) {
-			return true;
-		}
-		return false;
 	};
 
 	AblePlayer.prototype.startResize = function(which, $element) {
@@ -14188,12 +12728,7 @@ if (typeof module !== "undefined" && module.exports) {
 		this.$activeWindow = $element;
 		this.resizing = true;
 
-		if (which === 'transcript') {
-			$windowPopup = this.$transcriptPopup;
-		}
-		else if (which === 'sign') {
-			$windowPopup = this.$signPopup;
-		}
+		$windowPopup = (which === 'transcript') ? this.$transcriptPopup : this.$signPopup;
 
 		// if window's popup menu is open, close it & place focus on button (???)
 		if ($windowPopup.is(':visible')) {
@@ -14205,7 +12740,7 @@ if (typeof module !== "undefined" && module.exports) {
 		this.dragKeyX = this.dragStartX;
 		this.dragKeyY = this.dragStartY;
 		this.dragStartWidth = this.$activeWindow.width();
-		this.dragStartHeight = this.$activeWindow.height();
+		this.dragStartHeight = this.$activeWindow.outerHeight();
 
 		// add event listeners
 		$(document).on('mousemove touchmove',function(e) {
@@ -14216,6 +12751,7 @@ if (typeof module !== "undefined" && module.exports) {
 				thisObj.resizeObject( which, newWidth, newHeight );
 			}
 		});
+
 		return false;
 	};
 
@@ -14226,8 +12762,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (which === 'transcript') {
 			$windowPopup = this.$transcriptPopup;
 			$windowButton = this.$transcriptPopupButton;
-		}
-		else if (which === 'sign') {
+		} else if (which === 'sign') {
 			$windowPopup = this.$signPopup;
 			$windowButton = this.$signPopupButton;
 		}
@@ -14259,8 +12794,13 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.initSignLanguage = function() {
 
 		// Sign language is only currently supported in HTML5 player and YouTube.
-		if ( ! this.isIOS() && this.$media.data('sign-src') !== undefined && this.$media.data('sign-src') !== "" ) {
+		var hasLocalSrc = ( this.$media.data('sign-src') !== undefined && this.$media.data('sign-src') !== "" );
+		var hasRemoteSrc = ( this.$media.data('youtube-sign-src') !== undefined && this.$media.data('youtube-sign-src') !== "" );
+		if ( ! this.isIOS() && ( hasLocalSrc || hasRemoteSrc ) ) {
 			this.hasSignLanguage = true;
+			if ( hasRemoteSrc ) {
+				this.signYoutubeId = this.youTubeSignId;
+			}
 			this.injectSignPlayerCode();
 			return;
 		}
@@ -14268,29 +12808,27 @@ if (typeof module !== "undefined" && module.exports) {
 			// check to see if there's a sign language video accompanying this video
 			// check only the first source
 			// If sign language is provided, it must be provided for all sources
-			this.signFile = this.$sources.first().attr('data-sign-src');
-			if (this.signFile) {
+			this.signYoutubeId = this.youTubeSignId ?? DOMPurify.sanitize( this.$sources.first().attr('data-youtube-sign-src') );
+			this.signFile = DOMPurify.sanitize( this.$sources.first().attr('data-sign-src') );
+			if (this.signFile || this.signYoutubeId) {
 				if (this.isIOS()) {
-					// IOS does not allow multiple videos to play simultaneously
+					// iOS does not allow multiple videos to play simultaneously
 					// Therefore, sign language as rendered by Able Player unfortunately won't work
 					this.hasSignLanguage = false;
 					if (this.debug) {
 						
 					}
-				}
-				else {
+				} else {
 					if (this.debug) {
 						
 					}
 					this.hasSignLanguage = true;
 					this.injectSignPlayerCode();
 				}
-			}
-			else {
+			} else {
 				this.hasSignLanguage = false;
 			}
-		}
-		else {
+		} else {
 			this.hasSignLanguage = false;
 		}
 	};
@@ -14298,61 +12836,62 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.injectSignPlayerCode = function() {
 
 		// create and inject surrounding HTML structure
-
-		var thisObj, signVideoId, signVideoWidth, i, signSrc, srcType, $signSource;
+		var thisObj, signVideoId, i, signSrc, srcType, $signSource;
 
 		thisObj = this;
-
-		signVideoWidth = this.getDefaultWidth('sign');
-
 		signVideoId = this.mediaId + '-sign';
-		this.$signVideo = $('<video>',{
-			'id' : signVideoId,
-			'tabindex' : '-1',
-			'muted' : true,
-		});
-		this.signVideo = this.$signVideo[0];
 
-		if(this.$media.data('sign-src')) {
-			$signSource = $('<source>',{
-				'src' : this.$media.data('sign-src'),
-				'type' : 'video/' + this.$media.data('sign-src').substr(-3)
+		if ( this.signFile || this.signYoutubeId ) {
+			this.$signWindow = $('<div>',{
+				'class' : 'able-sign-window',
+				'role': 'dialog',
+				'aria-label': this.tt.sign
 			});
-			this.$signVideo.append($signSource);
+			this.$signToolbar = $('<div>',{
+				'class': 'able-window-toolbar able-' + this.toolbarIconColor + '-controls'
+			});
+
+			this.$signWindow.append(this.$signToolbar);
+			this.$ableWrapper.append(this.$signWindow);
 		}
-		else {
-			// for each original <source>, add a <source> to the sign <video>
-			for (i=0; i < this.$sources.length; i++) {
-				signSrc = DOMPurify.sanitize( this.$sources[i].getAttribute('data-sign-src') );
-				srcType = this.$sources[i].getAttribute('type');
-				if (signSrc) {
-					$signSource = $('<source>',{
-						'src' : signSrc,
-						'type' : srcType
-					});
-					this.$signVideo.append($signSource);
-				}
-				else {
-					// source is missing a sign language version
-					// can't include sign language
-					this.hasSignLanguage = false;
-					return;
+
+		if ( this.signFile ) {
+			this.$signVideo = $('<video>',{
+				'id' : signVideoId,
+				'tabindex' : '-1',
+				'muted' : true,
+			});
+			this.signVideo = this.$signVideo[0];
+
+			if ( this.signFile ) {
+				$signSource = $('<source>',{
+					'src' : this.signFile,
+					'type' : 'video/' + this.signFile.substr(-3)
+				});
+				this.$signVideo.append($signSource);
+			} else {
+				// for each original <source>, add a <source> to the sign <video>
+				for (i=0; i < this.$sources.length; i++) {
+					signSrc = DOMPurify.sanitize( this.$sources[i].getAttribute('data-sign-src') );
+					srcType = this.$sources[i].getAttribute('type');
+					if (signSrc) {
+						$signSource = $('<source>',{
+							'src' : signSrc,
+							'type' : srcType
+						});
+						this.$signVideo.append($signSource);
+					} else {
+						// source is missing a sign language version
+						// can't include sign language
+						this.hasSignLanguage = false;
+						return;
+					}
 				}
 			}
+			this.$signWindow.append( this.$signVideo );
+		} else if ( this.signYoutubeId ) {
+			this.signYoutube = this.initYouTubeSignPlayer();
 		}
-
-		this.$signWindow = $('<div>',{
-			'class' : 'able-sign-window',
-			'role': 'dialog',
-			'aria-label': this.tt.sign
-		});
-		this.$signToolbar = $('<div>',{
-			'class': 'able-window-toolbar able-' + this.toolbarIconColor + '-controls'
-		});
-
-		this.$signWindow.append(this.$signToolbar, this.$signVideo);
-
-		this.$ableWrapper.append(this.$signWindow);
 
 		// make it draggable
 		this.initDragDrop('sign');
@@ -14360,10 +12899,101 @@ if (typeof module !== "undefined" && module.exports) {
 		if (this.prefSign === 1) {
 			// sign window is on. Go ahead and position it and show it
 			this.positionDraggableWindow('sign',this.getDefaultWidth('sign'));
-		}
-		else {
+		} else {
 			this.$signWindow.hide();
 		}
+	};
+
+
+	AblePlayer.prototype.initYouTubeSignPlayer = function () {
+
+		var thisObj, deferred, promise;
+		thisObj = this;
+		deferred = new $.Deferred();
+		promise = deferred.promise();
+
+		this.youTubeSignPlayerReady = false;
+
+		if (AblePlayer.youTubeIframeAPIReady) {
+			// Script already loaded and ready.
+			thisObj.finalizeYoutubeSignInit().then(function() {
+				deferred.resolve();
+			});
+		} else {
+			// Has another player already started loading the script? If so, abort...
+			if (!AblePlayer.loadingYouTubeIframeAPI) {
+				$.getScript('https://www.youtube.com/iframe_api').fail(function () {
+					deferred.fail();
+				});
+			}
+
+			// Otherwise, keeping waiting for script load event...
+			$('body').on('youTubeIframeAPIReady', function () {
+				thisObj.finalizeYoutubeSignInit().then(function() {
+					deferred.resolve();
+				});
+			});
+		}
+		return promise;
+	};
+
+	AblePlayer.prototype.finalizeYoutubeSignInit = function () {
+
+		// This is called once we're sure the Youtube iFrame API is loaded -- see above
+		var deferred, promise, thisObj, containerId, ccLoadPolicy, autoplay;
+
+		deferred = new $.Deferred();
+		promise = deferred.promise();
+		thisObj = this;
+		containerId = this.mediaId + '_youtube_sign';
+
+		this.$signWindow.append($('<div>').attr('id', containerId));
+		autoplay = (this.okToPlay) ? 1 : 0;
+
+		// Documentation https://developers.google.com/youtube/player_parameters
+		this.youTubeSignPlayer = new YT.Player(containerId, {
+			videoId: this.getYouTubeId(this.signYoutubeId),
+			host: this.youTubeNoCookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com',
+			playerVars: {
+				autoplay: autoplay,
+				cc_lang_pref: this.captionLang, // set the caption language
+				cc_load_policy: 0,
+				controls: 0, // no controls, using our own
+				disableKb: 1, // disable keyboard shortcuts, using our own
+				enablejsapi: 1,
+				hl: this.lang, // set the UI language to match Able Player
+				iv_load_policy: 3, // do not show video annotations
+				origin: window.location.origin,
+				playsinline: this.playsInline,
+				rel: 0, // when video ends, show only related videos from same channel (1 shows any)
+				start: this.startTime
+			},
+			events: {
+				onReady: function (player) {
+					player.target.mute();
+					player.target.unloadModule( 'captions' );
+					thisObj.youTubeSignPlayerReady = true;
+
+					deferred.resolve();
+				},
+				onError: function (x) {
+					deferred.fail();
+				},
+				onStateChange: function (x) {
+					thisObj.getPlayerState().then(function(playerState) {
+						// no actions
+					});
+				},
+				onApiChange: function() {
+					// No actions
+				},
+				onPlaybackQualityChange: function () {
+					// no actions
+				},
+			}
+		});
+
+		return promise;
 	};
 
 })(jQuery);
@@ -15354,24 +13984,13 @@ if (typeof module !== "undefined" && module.exports) {
 		var lang, code, subTag;
 		lang = isoLangs[key.toLowerCase()];
 		if (lang) {
-			if (whichName === 'local') {
-				return lang.nativeName;
-			}
-			else {
-				return lang.name;
-			}
-		}
-		else if (key.includes('-')) {
+			return (whichName === 'local') ? lang.nativeName : lang.name;
+		} else if (key.includes('-')) {
 			code = key.substring(0,2);
 			subTag = key.substring(3);
 			lang = isoLangs[code.toLowerCase()];
 			if (lang) {
-				if (whichName === 'local') {
-					return lang.nativeName + ' (' + subTag + ')';
-				}
-				else {
-					return lang.name + ' (' + subTag + ')';
-				}
+				return (whichName === 'local') ? lang.nativeName + ' (' + subTag + ')' : lang.name + ' (' + subTag + ')';
 			}
 		}
 		// if all else has failed, use the key as the label
@@ -15382,7 +14001,7 @@ if (typeof module !== "undefined" && module.exports) {
 (function ($) {
 	AblePlayer.prototype.getSupportedLangs = function() {
 		// returns an array of languages for which AblePlayer has translation tables
-		var langs = ['ca','cs','da','de','en','es','fr','he','id','it','ja','nb','nl','pt','pt-br','sv','tr','zh-tw'];
+		var langs = ['ca','cs','da','de','en','es','fr','he','id','it','ja','ms','nb','nl','pl','pt','pt-br','sv','tr','zh-tw'];
 		return langs;
 	};
 
@@ -15401,17 +14020,9 @@ if (typeof module !== "undefined" && module.exports) {
 				if (this.lang.indexOf('-') == 2) {
 					// this is a localized lang attribute (e.g., fr-CA)
 					// try the parent language, given the first two characters
-					if ($.inArray(this.lang.substring(0,2),supportedLangs) !== -1) {
-						// parent lang is supported. Use that.
-						this.lang = this.lang.substring(0,2);
-					}
-					else {
-						// the parent language is not supported either
-						// unable to use the specified language
-						this.lang = null;
-					}
-				}
-				else {
+					// if parent lang is supported. Use that, else null.
+					this.lang = ($.inArray(this.lang.substring(0,2),supportedLangs) !== -1) ? this.lang.substring(0,2) : null;
+				} else {
 					// this is not a localized language.
 					// but maybe there's a similar localized language supported
 					// that has the same parent?
@@ -15436,19 +14047,16 @@ if (typeof module !== "undefined" && module.exports) {
 			// try the language of the web page, if specified
 			if ($('body').attr('lang')) {
 				docLang = $('body').attr('lang').toLowerCase();
-			}
-			else if ($('html').attr('lang')) {
+			} else if ($('html').attr('lang')) {
 				docLang = $('html').attr('lang').toLowerCase();
-			}
-			else {
+			} else {
 				docLang = null;
 			}
 			if (docLang) {
 				if ($.inArray(docLang,supportedLangs) !== -1) {
 					// the document language is supported
 					this.lang = docLang;
-				}
-				else {
+				} else {
 					// the document language is not supported
 					if (docLang.indexOf('-') == 2) {
 						// this is a localized lang attribute (e.g., fr-CA)
@@ -15471,7 +14079,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (!this.searchLang) {
 			this.searchLang = this.lang;
 		}
-		translationFile = this.rootPath + 'translations/' + this.lang + '.js';
+		translationFile = this.rootPath + 'translations/' + this.lang + '.json';
 		$.getJSON(translationFile, function(data) {
 			// success!
 			thisObj.tt = data;
@@ -15498,14 +14106,14 @@ if (typeof module !== "undefined" && module.exports) {
 
 		this.sampleText = [];
 		for (i=0; i < supportedLangs.length; i++) {
-			translationFile = this.rootPath + 'translations/' + supportedLangs[i] + '.js';
+			translationFile = this.rootPath + 'translations/' + supportedLangs[i] + '.json';
 			$.getJSON(translationFile, thisLang, (function(thisLang) {
 					return function(data) {
 						thisText = data.sampleDescriptionText;
 						translation = {'lang':thisLang, 'text': thisText};
 						thisObj.sampleText.push(translation);
 					};
-			}(supportedLangs[i])) // pass lang to callback function
+				}(supportedLangs[i])) // pass lang to callback function
 			);
 		}
 	};
@@ -15520,22 +14128,16 @@ if (typeof module !== "undefined" && module.exports) {
 (function ($) {
 	AblePlayer.prototype.injectVTS = function() {
 
-		// To add a transcript sorter to a web page:
-		// Add <div id="able-vts"></div> to the web page
+		// To add a transcript sorter to a web page: <div id="able-vts"></div>
 
-		// Define all variables
-		var thisObj, $heading, $instructions, $p1, $p2, $ul, $li1, $li2, $li3, 
+		var thisObj, $heading, $instructions, $p1, $p2, $ul, $li1, $li2, $li3,
 		$fieldset, $legend, i, $radioDiv, radioId, $label, $radio, $saveButton, $savedTable;
 
 		thisObj = this;
 
-		if ($('#able-vts').length) {
-			// Page includes a container for a VTS instance
-
+		if ( null !== document.getElementById( 'able-vts' ) ) {
 			// Are they qualifying tracks?
 			if (this.vtsTracks.length) {
-				// Yes - there are!
-
 				// Build an array of unique languages
 				this.langs = [];
 				this.getAllLangs(this.vtsTracks);
@@ -15572,7 +14174,8 @@ if (typeof module !== "undefined" && module.exports) {
 				// Inject a fieldset with radio buttons for each language
 				$fieldset = $('<fieldset>');
 				$legend = $('<legend>').text('Select a language'); // TODO: Localize this
-				$fieldset.append($legend)
+				$fieldset.append($legend);
+				$fieldWrapper = $( '<div class="vts-lang-selector"></div>' );
 				for (i in this.langs) {
 					radioId = 'vts-lang-radio-' + this.langs[i];
 					$radioDiv = $('<div>',{
@@ -15600,8 +14203,9 @@ if (typeof module !== "undefined" && module.exports) {
 						// TODO: if using this be sure to add lang attr to <div> (see above)
 					}).text(this.getLanguageName(this.langs[i]));
 					$radioDiv.append($radio,$label);
-					$fieldset.append($radioDiv);
+					$fieldWrapper.append($radioDiv);
 				}
+				$fieldset.append( $fieldWrapper );
 				$('#able-vts').append($fieldset);
 
 				// Inject a 'Save Changes' button
@@ -15632,20 +14236,16 @@ if (typeof module !== "undefined" && module.exports) {
 								// assume they correctly typed the first character
 								if (editedContent.substring(0,1) === 's') {
 									$(this).text('subtitles');
-								}
-								else if (editedContent.substring(0,1) === 'd') {
+								} else if (editedContent.substring(0,1) === 'd') {
 									$(this).text('descriptions');
-								}
-								else if (editedContent.substring(0,2) === 'ch') {
+								} else if (editedContent.substring(0,2) === 'ch') {
 									$(this).text('chapters');
-								}
-								else {
+								} else {
 									// whatever else they types, assume 'captions'
 									$(this).text('captions');
 								}
 							}
-						}
-						else if (editedCell === 2 || editedCell === 3) {
+						} else if (editedCell === 2 || editedCell === 3) {
 							// start or end time
 							// ensure proper formatting (with 3 decimal places)
 							$(this).text(thisObj.formatTimestamp(editedContent));
@@ -15669,8 +14269,7 @@ if (typeof module !== "undefined" && module.exports) {
 						$('#able-vts table').remove();
 						$('#able-vts-icon-credit').remove();
 						thisObj.parseVtsOutput($savedTable);
-					}
-					else {
+					} else {
 						// cancel saving, and restore the table using edited content
 						$(this).attr('value','save').text('Save Changes'); // TODO: Localize this
 						$('#able-vts-output').remove();
@@ -15708,15 +14307,9 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.getFilenameFromPath = function(path) {
 
 		var lastSlash;
-
 		lastSlash = path.lastIndexOf('/');
-		if (lastSlash === -1) {
-			// there are no slashes in path.
-			return path;
-		}
-		else {
-			return path.substring(lastSlash+1);
-		}
+		// fix slashes.
+		return (lastSlash === -1) ? path : path.substring(lastSlash+1);
 	};
 
 	AblePlayer.prototype.getFilenameFromTracks = function(kind,lang) {
@@ -15754,13 +14347,11 @@ if (typeof module !== "undefined" && module.exports) {
 							if (content.length > 0) {
 								// add back the EOL between rows of content
 								content += "\n" + nextRow;
-							}
-							else {
+							} else {
 								// this is the first row of content. No need for an EOL
 								content += nextRow;
 							}
-						}
-						else {
+						} else {
 							blankRow = true;
 						}
 						j++;
@@ -15772,8 +14363,7 @@ if (typeof module !== "undefined" && module.exports) {
 					});
 					i = j; //skip ahead
 				}
-			}
-			else {
+			} else {
 				i++;
 			}
 		}
@@ -15783,12 +14373,7 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.isValidTimestamp = function(timestamp) {
 
 		// return true if timestamp contains only numbers or expected punctuation
-		if (/^[0-9:,.]*$/.test(timestamp)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return (/^[0-9:,.]*$/.test(timestamp)) ? true : false;
 	};
 
 	AblePlayer.prototype.formatTimestamp = function(timestamp) {
@@ -15810,8 +14395,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (lastPart.length > 3) {
 			// chop off any extra digits
 			lastPart = lastPart.substring(0,3);
-		}
-		else if (lastPart.length < 3) {
+		} else if (lastPart.length < 3) {
 			// add trailing zeros
 			while (lastPart.length < 3) {
 				lastPart += '0';
@@ -15947,8 +14531,7 @@ if (typeof module !== "undefined" && module.exports) {
 					$button.html($button.html());
 					$td.append($button);
 				}
-			}
-			else if (button === 'down') {
+			} else if (button === 'down') {
 				if (rowNum < numRows) {
 					$button = $('<button>',{
 						'id': 'able-vts-button-down-' + rowNum,
@@ -15980,8 +14563,7 @@ if (typeof module !== "undefined" && module.exports) {
 					$button.html($button.html());
 					$td.append($button);
 				}
-			}
-			else if (button === 'insert') {
+			} else if (button === 'insert') {
 				// Add Insert button to all rows
 				$button = $('<button>',{
 					'id': 'able-vts-button-insert-' + rowNum,
@@ -16015,8 +14597,7 @@ if (typeof module !== "undefined" && module.exports) {
 				// Refresh button in the DOM in order for browser to process & display the SVG
 				$button.html($button.html());
 				$td.append($button);
-			}
-			else if (button === 'delete') {
+			} else if (button === 'delete') {
 				// Add Delete button to all rows
 				$button = $('<button>',{
 					'id': 'able-vts-button-delete-' + rowNum,
@@ -16145,16 +14726,13 @@ if (typeof module !== "undefined" && module.exports) {
 		if (action == 'up') {
 			// move the row up
 			this.moveRow(rowNum,'up');
-		}
-		else if (action == 'down') {
+		} else if (action == 'down') {
 			// move the row down
 			this.moveRow(rowNum,'down');
-		}
-		else if (action == 'insert') {
+		} else if (action == 'insert') {
 			// insert a row below
 			this.insertRow(rowNum);
-		}
-		else if (action == 'delete') {
+		} else if (action == 'delete') {
 			// delete the row
 			this.deleteRow(rowNum);
 		}
@@ -16163,7 +14741,7 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.insertRow = function(rowNum) {
 
 		// Insert empty row below rowNum
-		var $table, $rows, numRows, newRowNum, newRowId, $tr, $td, $select, 
+		var $table, $rows, numRows, newRowNum, newRowId, $tr, $td, $select,
 		options, i, $option, newKind, newClass, $parentRow, nextRowNum, $buttons;
 
 		$table = $('#able-vts table');
@@ -16287,8 +14865,7 @@ if (typeof module !== "undefined" && module.exports) {
 			otherRowNum = parseInt(rowNum) - 1;
 			$otherRow = $('#able-vts table').find('tr').eq(otherRowNum);
 			$otherRow.before($thisRow);
-		}
-		else if (direction == 'down') {
+		} else if (direction == 'down') {
 			otherRowNum = parseInt(rowNum) + 1;
 			$otherRow = $('#able-vts table').find('tr').eq(otherRowNum);
 			$otherRow.after($thisRow);
@@ -16343,16 +14920,10 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// Get kind, start, and end from current row
 		$row = $rows.eq(rowNum);
-		if ($row.is('[class^="kind-"]')) {
-			// row has a class that starts with "kind-"
-			// Extract kind from the class name
-			kind = this.getKindFromClass($row.attr('class'));
-		}
-		else {
-			// Kind has not been assigned (e.g., newly inserted row)
-			// Set as captions row by default
-			kind = 'captions';
-		}
+		// row has a class that starts with "kind-"
+		// Extract kind from the class name
+		kind = ($row.is('[class^="kind-"]')) ? this.getKindFromClass($row.attr('class')) : 'captions';
+
 		start = this.getSecondsFromColonTime($row.find('td').eq(2).text());
 		end = this.getSecondsFromColonTime($row.find('td').eq(3).text());
 
@@ -16361,19 +14932,12 @@ if (typeof module !== "undefined" && module.exports) {
 			// this is not the first row. Include the previous row
 			prevRowNum = rowNum - 1;
 			$prevRow = $rows.eq(prevRowNum);
-			if ($prevRow.is('[class^="kind-"]')) {
-				// row has a class that starts with "kind-"
-				// Extract kind from the class name
-			 prevKind = this.getKindFromClass($prevRow.attr('class'));
-			}
-			else {
-				// Kind has not been assigned (e.g., newly inserted row)
-				prevKind = null;
-			}
+			// row has a class that starts with "kind-"
+			// Extract kind from the class name
+			prevKind = ($prevRow.is('[class^="kind-"]')) ? this.getKindFromClass($prevRow.attr('class')) : null;
 			prevStart = this.getSecondsFromColonTime($prevRow.find('td').eq(2).text());
 			prevEnd = this.getSecondsFromColonTime($prevRow.find('td').eq(3).text());
-		}
-		else {
+		} else {
 			// this is the first row
 			prevRowNum = null;
 			$prevRow = null;
@@ -16387,19 +14951,12 @@ if (typeof module !== "undefined" && module.exports) {
 			// this is not the last row. Include the next row
 			nextRowNum = rowNum + 1;
 			$nextRow = $rows.eq(nextRowNum);
-			if ($nextRow.is('[class^="kind-"]')) {
-				// row has a class that starts with "kind-"
-				// Extract kind from the class name
-			 nextKind = this.getKindFromClass($nextRow.attr('class'));
-			}
-			else {
-				// Kind has not been assigned (e.g., newly inserted row)
-				nextKind = null;
-			}
+			// row has a class that starts with "kind-"
+			// Extract kind from the class name
+			nextKind = ($nextRow.is('[class^="kind-"]')) ? this.getKindFromClass($nextRow.attr('class')) : null;
 			nextStart = this.getSecondsFromColonTime($nextRow.find('td').eq(2).text());
 			nextEnd = this.getSecondsFromColonTime($nextRow.find('td').eq(3).text());
-		}
-		else {
+		} else {
 			// this is the last row
 			nextRowNum = null;
 			$nextRow = null;
@@ -16420,62 +14977,43 @@ if (typeof module !== "undefined" && module.exports) {
 			if (prevKind === 'captions') {
 				// start the new row immediately after the captions end
 				start = (parseFloat(prevEnd) + .001).toFixed(3);
-				if (nextStart) {
-					// end the new row immediately before the next row starts
-					end = (parseFloat(nextStart) - .001).toFixed(3);
-				}
-				else {
-					// this is the last row. Use minDuration to calculate end time.
-					end = (parseFloat(start) + minDuration[kind]).toFixed(3);
-				}
-			}
-			else if (prevKind === 'chapters') {
+				// end the new row immediately before the next row starts
+				end = (nextStart) ? (parseFloat(nextStart) - .001).toFixed(3) : (parseFloat(start) + minDuration[kind]).toFixed(3);
+			} else if (prevKind === 'chapters') {
 				// start the new row immediately after the chapter start (not end)
 				start = (parseFloat(prevStart) + .001).toFixed(3);
-				if (nextStart) {
-					// end the new row immediately before the next row starts
-					end = (parseFloat(nextStart) - .001).toFixed(3);
-				}
-				else {
-					// this is the last row. Use minDuration to calculate end time.
-					end = (parseFloat(start) + minDurartion[kind]).toFixed(3);
-				}
-			}
-			else if (prevKind === 'descriptions') {
+				// end the new row immediately before the next row starts
+				end = (nextStart) ? (parseFloat(nextStart) - .001).toFixed(3) : (parseFloat(start) + minDurartion[kind]).toFixed(3);
+			} else if (prevKind === 'descriptions') {
 				// start the new row minDuration['descriptions'] after the description starts
 				// this will theoretically allow at least a small cushion for the description to be read
 				start = (parseFloat(prevStart) + minDuration['descriptions']).toFixed(3);
 				end = (parseFloat(start) + minDuration['descriptions']).toFixed(3);
 			}
-		}
-		else {
+		} else {
 			// current row has a start time (i.e., an existing row has been moved))
 			if (prevStart) {
 				// this is not the first row.
 				if (prevStart < start) {
 					if (start < nextStart) {
 						// No change is necessary
-					}
-					else {
+					} else {
 						// nextStart needs to be incremented
 						nextStart = (parseFloat(start) + minDuration[kind]).toFixed(3);
 						nextEnd = (parseFloat(nextStart) + minDuration[nextKind]).toFixed(3);
 						// TODO: Ensure nextEnd does not exceed the following start (nextNextStart)
 						// Or... maybe this is getting too complicated and should be left up to the user
 					}
-				}
-				else {
+				} else {
 					// start needs to be incremented
 					start = (parseFloat(prevStart) + minDuration[prevKind]).toFixed(3);
 					end = (parseFloat(start) + minDuration[kind]).toFixed(3);
 				}
-			}
-			else {
+			} else {
 				// this is the first row
 				if (start < nextStart) {
 					// No change is necessary
-				}
-				else {
+				} else {
 					// nextStart needs to be incremented
 					nextStart = (parseFloat(start) + minDuration[kind]).toFixed(3);
 					nextEnd = (parseFloat(nextStart) + minDuration[nextKind]).toFixed(3);
@@ -16518,8 +15056,7 @@ if (typeof module !== "undefined" && module.exports) {
 		if (kindEnd == -1) {
 			// no spaces found, "kind-" must be the only myclass
 			return myclass.substring(kindStart);
-		}
-		else {
+		} else {
 			// kind-* is one of multiple classes
 			// the following will find it regardless of position of "kind-*" within the class string
 			return myclass.substring(kindStart,kindEnd);
@@ -16583,14 +15120,13 @@ if (typeof module !== "undefined" && module.exports) {
 
 		var $heading, filename, $p, pText, $textarea;
 
-		$heading = $('<h3>').text(kind.charAt(0).toUpperCase() + kind.slice(1));
+		$heading = $('<h3>').text( this.capitalizeFirstLetter( kind ) );
 		filename = this.getFilenameFromTracks(kind,lang);
 		pText = 'If you made changes, copy/paste the following content ';
 		if (filename) {
 			pText += 'to replace the original content of your ' + this.getLanguageName(lang) + ' ';
 			pText += '<em>' + kind + '</em> WebVTT file (<strong>' + filename + '</strong>).';
-		}
-		else {
+		} else {
 			pText += 'into a new ' + this.getLanguageName(lang) + ' <em>' + kind + '</em> WebVTT file.';
 		}
 		$p = $('<p>',{
@@ -16617,14 +15153,10 @@ if (typeof module !== "undefined" && module.exports) {
 		// add container to which Vimeo player iframe will be appended
 		this.$mediaContainer.prepend($('<div>').attr('id', containerId));
 
-		// if a described version is available && user prefers desription
+		// if a described version is available && user prefers description
 		// init player using the described version
-		if (this.vimeoDescId && this.prefDesc) {
-			vimeoId = this.vimeoDescId;
-		}
-		else {
-			vimeoId = this.vimeoId;
-		}
+		vimeoId = (this.vimeoDescId && this.prefDesc) ? this.vimeoDescId : this.vimeoId;
+
 		this.activeVimeoId = vimeoId;
 
 		// Notes re. Vimeo Embed Options:
@@ -16637,12 +15169,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// - It automatically loops (but this can be overridden by initializing the player with loop:false)
 		// - It automatically sets volume to 0 (not sure if this can be overridden, since no longer using the background option)
 
-		if (this.okToPlay) {
-			autoplay = 'true';
-		}
-		else {
-			autoplay = 'false';
-		}
+		autoplay = (this.okToPlay) ? 'true' : 'false';
 
 		if (this.playerWidth) {
 			if (this.vimeoUrlHasParams) {
@@ -16652,24 +15179,21 @@ if (typeof module !== "undefined" && module.exports) {
 					width: this.playerWidth,
 					controls: false
 				}
-			}
-			else {
+			} else {
 				options = {
 					id: vimeoId,
 					width: this.playerWidth,
 					controls: false
 				}
 			}
-		}
-		else {
+		} else {
 			// initialize without width & set width later
 			if (this.vimeoUrlHasParams) {
 				options = {
 					url: vimeoId,
 					controls: false
 				}
-			}
-			else {
+			} else {
 				options = {
 					id: vimeoId,
 					controls: false
@@ -16812,15 +15336,13 @@ if (typeof module !== "undefined" && module.exports) {
 						thisObj.hasCaptions = true;
 						if (thisObj.prefCaptions === 1) {
 								thisObj.captionsOn = true;
-						}
-						else {
+						} else {
 							thisObj.captionsOn = false;
 						}
 						// assign the default track based on language of the player
 						if (tracks[i]['language'] === thisObj.lang) {
 							isDefaultTrack = true;
-						}
-						else {
+						} else {
 								isDefaultTrack = false;
 						}
 						thisObj.tracks.push({
@@ -16836,8 +15358,7 @@ if (typeof module !== "undefined" && module.exports) {
 					// setupPopups again with new captions array, replacing original
 					thisObj.setupPopups('captions');
 					deferred.resolve();
-			 	}
-			 	else {
+			 	} else {
 					thisObj.hasCaptions = false;
 					thisObj.usingVimeoCaptions = false;
 					deferred.resolve();
@@ -16851,8 +15372,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// this is a placeholder, copied from getYouTubePosterUrl()
 		// Vimeo doesn't seem to have anything similar,
-		// nor does it seem to be possible to get the poster via the Vimeo API
-		// Vimeo playlist support (with thumbnail images) may require use of data-poster
+		// Vimeo API for images: https://vimeo.com/api/v2/video/328769500.json
+		// will require an unauthenticated API query.
 
 		// return a URL for retrieving a YouTube poster image
 		// supported values of width: 120, 320, 480, 640
@@ -16861,16 +15382,13 @@ if (typeof module !== "undefined" && module.exports) {
 		if (width == '120') {
 			// default (small) thumbnail, 120 x 90
 			return url + '/default.jpg';
-		}
-		else if (width == '320') {
+		} else if (width == '320') {
 			// medium quality thumbnail, 320 x 180
 			return url + '/hqdefault.jpg';
-		}
-		else if (width == '480') {
+		} else if (width == '480') {
 			// high quality thumbnail, 480 x 360
 			return url + '/hqdefault.jpg';
-		}
-		else if (width == '640') {
+		} else if (width == '640') {
 			// standard definition poster image, 640 x 480
 			return url + '/sddefault.jpg';
 		}
@@ -16902,10 +15420,13 @@ if (typeof module !== "undefined" && module.exports) {
 				this.vimeoUrlHasParams = true;
 				return url;
 			} else {
-				return urlObject.pathname.replace( '/video/', '' );;
+				if ( 'player.vimeo.com' === urlObject.hostname ) {
+					return urlObject.pathname.replace( '/video/', '' );
+				} else {
+					return urlObject.pathname.replace( '/', '' );
+				}
 			}
-		}
-		else {
+		} else {
 			return url;
 		}
 	};
