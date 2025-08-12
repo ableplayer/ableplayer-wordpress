@@ -69,11 +69,13 @@ function ableplayer_enqueue_scripts() {
 			'strategy'  => 'defer',
 		)
 	);
+	$settings = ableplayer_get_settings();
+	unset( $settings['last_shortcode'] );
 	wp_localize_script(
 		'ableplayer-video',
 		'ableplayer',
 		array(
-			'settings' => ableplayer_get_settings(),
+			'settings' => $settings,
 		)
 	);
 
@@ -435,7 +437,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'width'            => '',
 			'height'           => '',
 			'heading'          => '',
-			'speed'            => 'animals',
+			'speed'            => ableplayer_get_settings( 'default_speed' ),
 			'start'            => '',
 			'volume'           => '',
 			'seekinterval'     => '',
@@ -556,7 +558,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		if ( ! empty( $all_atts['heading'] ) && 'auto' !== $all_atts['heading'] ) {
 			$o .= ' data-heading-level="' . esc_attr( $all_atts['heading'] ) . '"';
 		}
-		if ( ! empty( $all_atts['speed'] ) && ableplayer_get_settings( 'default_speed' ) !== $all_atts['speed'] ) {
+		if ( ! empty( $all_atts['speed'] ) ) {
 			$o .= ' data-speed-icons="' . esc_attr( $all_atts['speed'] ) . '"';
 		}
 		if ( ! empty( $all_atts['start'] ) ) {
