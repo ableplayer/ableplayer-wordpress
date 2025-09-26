@@ -473,6 +473,8 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		$atts,
 		'ableplayer'
 	);
+	// Globally remove white space on attributes.
+	$all_atts = map_deep( $all_atts, 'trim' );
 	// If vimeo ID is set, enqueue the vimeo player.
 	if ( $all_atts['vimeo-id'] ) {
 		$debug   = ( SCRIPT_DEBUG || ABLEPLAYER_DEBUG ) ? true : false;
@@ -571,6 +573,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			// Allow passing an attachment ID as poster.
 			$poster = $all_atts['poster'];
 			if ( is_numeric( $poster ) ) {
+				$poster = absint( $poster );
 				$poster = wp_get_attachment_image_url( $poster, 'large' );
 			}
 			$o .= ' poster="' . esc_attr( $poster ) . '"';
