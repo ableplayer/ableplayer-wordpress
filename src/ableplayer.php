@@ -363,7 +363,7 @@ function able_player_parameters() {
 			'default'     => '',
 			'description' => __( 'YouTube ID or URL of an alternative described version of a video.', 'ableplayer' ),
 		),
-		'youtube-sign-src'     => array(
+		'youtube-sign-src'    => array(
 			'default'     => '',
 			'description' => __( 'YouTube ID or URL of a sign language interpreted version of a video.', 'ableplayer' ),
 		),
