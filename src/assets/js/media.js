@@ -107,7 +107,7 @@ if ( ableplayer !== 'undefined' ) {
 					el.setAttribute( 'data-heading-level', ableplayer.settings.default_heading );
 				}
 			}
-			if ( 'animals' !== ableplayer.settings.default_heading ) {
+			if ( 'animals' !== ableplayer.settings.default_speed ) {
 				if ( ! el.hasAttribute( 'data-speed-icons' ) ) {
 					el.setAttribute( 'data-speed-icons', 'arrows' );
 				}
