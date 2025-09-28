@@ -870,7 +870,7 @@ div.able-wrapper.fullscreen {
 	padding: 4px 8px;
 	border: 1px solid var(--able-tooltip-border);
 	color: var(--able-tooltip-color) !important;
-	background-color: var(--able-tooltip-background);
+	background-color: var(--able-tooltip-background) !important;
 	border-radius: 3px;
 	display: block;
 	font-size: .875rem;
