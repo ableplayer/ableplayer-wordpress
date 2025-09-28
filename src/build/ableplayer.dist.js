@@ -1,4 +1,4 @@
-/*! ableplayer V4.7.0-beta1 with DOMPurify included */
+/*! ableplayer V4.7.0 with DOMPurify included */
 /*! @license DOMPurify 3.2.6 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.6/LICENSE */
 
 (function (global, factory) {
@@ -1486,7 +1486,7 @@ var AblePlayerInstances = [];
 				break;
 
 			case 'slower':
-				svg[0] = '0 0 20 20';
+				svg[0] = '0 0 11 20';
 				svg[1] = 'M0 7.321q0-0.29 0.212-0.502t0.502-0.212h10q0.29 0 0.502 0.212t0.212 0.502-0.212 0.502l-5 5q-0.212 0.212-0.502 0.212t-0.502-0.212l-5-5q-0.212-0.212-0.212-0.502z';
 				svg[2] = 'icon-slower';
 				svg[3] = this.slowerButtonImg;
@@ -3694,7 +3694,7 @@ var AblePlayerInstances = [];
 
 	AblePlayer.prototype.injectBigPlayButton = function () {
 
-		var thisObj, svgData, buttonIcon, svgPath;
+		var thisObj;
 
 		thisObj = this;
 
@@ -5012,7 +5012,7 @@ var postProcessing = {
     return vttContent.replace(
       /<c class="([\w\s]+)">/g,
       function (_, classNames) {
-        var classes = classNames.replace(/\./g, " ");
+        var classes = classNames.replace(/ /g, ".");
         return "<c." + classes + ">";
       }
     );
@@ -6450,8 +6450,12 @@ if (typeof module !== "undefined" && module.exports) {
 			modal.attr({
 				'aria-labelledby': 'modalTitle-' + this.baseId,
 			});
-			modal.prepend(titleH1);
-			modal.prepend(closeButton);
+			var modalHeader = $( '<div>', {
+				'class': 'able-modal-header'
+			});
+			modalHeader.prepend(titleH1);
+			modalHeader.prepend(closeButton);
+			modal.prepend(modalHeader);
 		}
 
 		modal.attr({
@@ -7539,6 +7543,11 @@ if (typeof module !== "undefined" && module.exports) {
 					this.youTubeSignPlayer.playVideo();
 				}
 			}
+			if (options && typeof options.volume !== 'undefined') {
+				if ( this.signVideo ) {
+					this.signVideo.volume = 0;
+				}
+			}
 		}
 	};
 
@@ -7722,7 +7731,7 @@ if (typeof module !== "undefined" && module.exports) {
 			}
 		}
 
-		if (context === 'descriptions' || context == 'init'){
+		if (context === 'descriptions' || context == 'init') {
 			if (this.$descButton) {
 				this.toggleButtonState(
 					this.$descButton,
@@ -7777,14 +7786,6 @@ if (typeof module !== "undefined" && module.exports) {
 					if (!this.hideBigPlayButton) {
 						this.$bigPlayButton.show();
 						this.$bigPlayButton.attr('aria-hidden', 'false');
-
-					}
-					if (this.fullscreen) {
-						this.$bigPlayButton.width($(window).width());
-						this.$bigPlayButton.height($(window).height());
-					} else {
-						this.$bigPlayButton.width(this.$mediaContainer.width());
-						this.$bigPlayButton.height(this.$mediaContainer.height());
 					}
 				} else {
 					this.$bigPlayButton.hide();
@@ -7908,7 +7909,6 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.handlePlay = function(e) {
-
 		if (this.paused) {
 			this.okToPlay = true;
 			this.playMedia();
@@ -8031,7 +8031,7 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.handleCaptionToggle = function() {
 
 		var thisObj = this;
-		var captions;
+		var captions, ariaPressed;
 		if (this.hidingPopup) {
 			this.hidingPopup = false;
 			return false;
@@ -8042,7 +8042,7 @@ if (typeof module !== "undefined" && module.exports) {
 			if (this.captionsOn === true) {
 				this.captionsOn = false;
 				this.prefCaptions = 0;
-				this.$ccButton.attr('aria-pressed', 'false');
+				ariaPressed = false;
 				this.updateCookie('prefCaptions');
 				if (this.usingYouTubeCaptions) {
 					this.youTubePlayer.unloadModule('captions');
@@ -8054,7 +8054,7 @@ if (typeof module !== "undefined" && module.exports) {
 			} else {
 				this.captionsOn = true;
 				this.prefCaptions = 1;
-				this.$ccButton.attr('aria-pressed', 'true');
+				ariaPressed = true;
 				this.updateCookie('prefCaptions');
 				if (this.usingYouTubeCaptions) {
 					this.youTubePlayer.loadModule('captions');
@@ -8086,7 +8086,6 @@ if (typeof module !== "undefined" && module.exports) {
 					this.selectedDescriptions = this.descriptions[0];
 				}
 			}
-			this.refreshControls('captions');
 		} else {
 			if (this.captionsPopup && this.captionsPopup.is(':visible')) {
 				this.captionsPopup.hide();
@@ -8108,6 +8107,16 @@ if (typeof module !== "undefined" && module.exports) {
 				}
 			}
 		}
+		var ariaLabelOn = ( captions.length > 1 ) ? this.tt.captions : this.tt.showCaptions;
+		var ariaLabelOff = ( captions.length > 1 ) ? this.tt.captions : this.tt.hideCaptions;
+
+		this.toggleButtonState(
+			this.$ccButton,
+			this.captionsOn,
+			ariaLabelOff,
+			ariaLabelOn,
+			ariaPressed
+		);
 	};
 
 	AblePlayer.prototype.waitThenFocus = function($el, timeout) {
@@ -8206,12 +8215,11 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.handleTranscriptToggle = function () {
-
 		var thisObj = this;
 		var visible = this.$transcriptDiv.is(':visible');
 		if ( visible ) {
 			this.$transcriptArea.hide();
-			this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
+			this.toggleButtonState( this.$transcriptButton, ! visible, this.tt.hideTranscript, this.tt.showTranscript );
 			this.prefTranscript = 0;
 			if ( this.transcriptType === 'popup' ) {
 				this.$transcriptButton.trigger('focus').addClass('able-focus');
@@ -8224,7 +8232,7 @@ if (typeof module !== "undefined" && module.exports) {
 				this.positionDraggableWindow('transcript');
 				this.$transcriptArea.show();
 				this.$transcriptPopup.hide();
-				this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
+				this.toggleButtonState( this.$transcriptButton, ! visible, this.tt.hideTranscript, this.tt.showTranscript );
 				this.prefTranscript = 1;
 				this.focusNotClick = true;
 				this.$transcriptArea.find('button').first().trigger('focus');
@@ -8232,7 +8240,7 @@ if (typeof module !== "undefined" && module.exports) {
 					thisObj.focusNotClick = false;
 				}, 100);
 			} else {
-				this.toggleButtonState( this.$transcriptButton, visible, this.tt.hideTranscript, this.tt.showTranscript );
+				this.toggleButtonState( this.$transcriptButton, ! visible, this.tt.hideTranscript, this.tt.showTranscript );
 				this.$transcriptArea.show();
 			}
 		}
@@ -8245,7 +8253,7 @@ if (typeof module !== "undefined" && module.exports) {
 		var visible = this.$signWindow.is(':visible');
 		if ( visible ) {
 			this.$signWindow.hide();
-			this.toggleButtonState( this.$signButton, visible, this.tt.hideSign, this.tt.showSign );
+			this.toggleButtonState( this.$signButton, ! visible, this.tt.hideSign, this.tt.showSign );
 			this.prefSign = 0;
 			this.$signButton.trigger('focus').addClass('able-focus');
 			setTimeout(function() {
@@ -8255,7 +8263,7 @@ if (typeof module !== "undefined" && module.exports) {
 			this.positionDraggableWindow('sign');
 			this.$signWindow.show();
 			this.$signPopup.hide();
-			this.toggleButtonState( this.$signButton, visible, this.tt.hideSign, this.tt.showSign );
+			this.toggleButtonState( this.$signButton, ! visible, this.tt.hideSign, this.tt.showSign );
 			this.prefSign = 1;
 			this.focusNotClick = true;
 			this.$signWindow.find('button').first().trigger('focus');
@@ -8453,24 +8461,28 @@ if (typeof module !== "undefined" && module.exports) {
 		$button.append($buttonLabel);
 	};
 
-	AblePlayer.prototype.toggleButtonState = function($button, isOn, onLabel, offLabel, offClass = 'buttonOff', ariaPressed = false, ariaExpanded = false) {
-		if (isOn) {
-			$button.removeClass(offClass).attr('aria-label', onLabel);
-			$button.find('span.able-clipped').text(onLabel);
-			if ( ariaPressed ) {
-				$button.attr('aria-pressed', 'true');
-			}
-			if ( ariaExpanded ) {
-				$button.attr( 'aria-expanded', 'true' );
-			}
-		} else {
-			$button.addClass(offClass).attr('aria-label', offLabel);
+	AblePlayer.prototype.toggleButtonState = function($button, isOn, onLabel, offLabel, ariaPressed = false, ariaExpanded = false) {
+		let buttonOff = ( $button.hasClass( 'buttonOff' ) ) ? true : false;
+		if ( buttonOff && ! isOn || ! buttonOff && isOn ) {
+			return;
+		}
+		if (! isOn) {
+			$button.addClass('buttonOff').attr('aria-label', offLabel);
 			$button.find('span.able-clipped').text(offLabel);
 			if ( ariaPressed ) {
 				$button.attr('aria-pressed', 'false');
 			}
 			if ( ariaExpanded ) {
 				$button.attr( 'aria-expanded', 'false' );
+			}
+		} else {
+			$button.removeClass('buttonOff').attr('aria-label', onLabel);
+			$button.find('span.able-clipped').text(onLabel);
+			if ( ariaPressed ) {
+				$button.attr('aria-pressed', 'true');
+			}
+			if ( ariaExpanded ) {
+				$button.attr( 'aria-expanded', 'true' );
 			}
 		}
 	};
@@ -10612,9 +10624,7 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.onClickPlayerButton = function (el) {
-
 		var whichButton, prefsPopup;
-
 		whichButton = this.getButtonNameFromClass($(el).attr('class'));
 		switch ( whichButton ) {
 			case 'play':
@@ -10845,17 +10855,13 @@ if (typeof module !== "undefined" && module.exports) {
 			})
 			.on('loadedmetadata',function() {
 				thisObj.duration = thisObj.media.duration;
-				var x = 50.5;
-				var y = 51.9;
-				var diff = Math.abs(Math.round(x)-Math.round(y));
 			})
 			.on('canplay',function() {
 			})
 			.on('canplaythrough',function() {
-					thisObj.onMediaNewSourceLoad();
+				thisObj.onMediaNewSourceLoad();
 			})
 			.on('play',function() {
-				 thisObj.refreshControls('playpause');
 			})
 			.on('playing',function() {
 				thisObj.playing = true;
@@ -10977,7 +10983,6 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.addEventListeners = function () {
-
 		var thisObj = this;
 
 		$(window).on('resize',function () {
@@ -11018,7 +11023,7 @@ if (typeof module !== "undefined" && module.exports) {
 			if (e.button !== 0) { 
 				return false;
 			}
-			if ($('.able-popup:visible').length || $('.able-volume-popup:visible')) {
+			if ($('.able-popup:visible').length || $('.able-volume-slider:visible').length ) {
 				thisObj.closePopups();
 			}
 			if (e.target.tagName === 'VIDEO') {
@@ -11771,23 +11776,22 @@ if (typeof module !== "undefined" && module.exports) {
 
 (function ($) {
 	AblePlayer.prototype.initSignLanguage = function() {
-
-		var hasLocalSrc = ( this.$media.data('sign-src') !== undefined && this.$media.data('sign-src') !== "" );
+		this.hasSignLanguage = false;
+		var hasLocalSrc = ( this.$sources.first().attr('data-sign-src') !== undefined && this.$sources.first().attr('data-sign-src') !== "" );
 		var hasRemoteSrc = ( this.$media.data('youtube-sign-src') !== undefined && this.$media.data('youtube-sign-src') !== "" );
-		if ( ! this.isIOS() && ( hasLocalSrc || hasRemoteSrc ) ) {
-			this.hasSignLanguage = true;
+		var hasRemoteSource = ( this.$sources.first().attr('data-youtube-sign-src') !== undefined && this.$sources.first().attr('data-youtube-sign-src') !== '' );
+		if ( ! this.isIOS() && ( hasLocalSrc || hasRemoteSrc || hasRemoteSource ) && ( this.player === 'html5' || this.player === 'youtube' ) ) {
+			let ytSignSrc = this.youTubeSignId ?? DOMPurify.sanitize( this.$sources.first().attr('data-youtube-sign-src') );
+			let signSrc = DOMPurify.sanitize( this.$sources.first().attr('data-sign-src') );
+			let signVideo = DOMPurify.sanitize( this.$media.data('youtube-sign-src') );
+			this.signFile = (hasLocalSrc ) ? signSrc : false;
 			if ( hasRemoteSrc ) {
-				this.signYoutubeId = this.youTubeSignId;
+				this.signYoutubeId = signVideo;
+			} else if ( hasRemoteSource ) {
+				this.signYoutubeId = ytSignSrc;
 			}
-			this.injectSignPlayerCode();
-			return;
-		}
-		if (this.player === 'html5') {
-			this.signYoutubeId = this.youTubeSignId ?? DOMPurify.sanitize( this.$sources.first().attr('data-youtube-sign-src') );
-			this.signFile = DOMPurify.sanitize( this.$sources.first().attr('data-sign-src') );
-			if (this.signFile || this.signYoutubeId) {
+			if ( this.signFile || this.signYoutubeId ) {
 				if (this.isIOS()) {
-					this.hasSignLanguage = false;
 					if (this.debug) {
 
 											}
@@ -11798,11 +11802,7 @@ if (typeof module !== "undefined" && module.exports) {
 					this.hasSignLanguage = true;
 					this.injectSignPlayerCode();
 				}
-			} else {
-				this.hasSignLanguage = false;
 			}
-		} else {
-			this.hasSignLanguage = false;
 		}
 	};
 
@@ -13019,8 +13019,16 @@ if (typeof module !== "undefined" && module.exports) {
 		})
 		.fail(function() {
 
-						thisObj.provideFallback();
-			deferred.fail();
+						translationFile = thisObj.rootPath + 'translations/' + thisObj.lang + '.js';
+			$.getJSON(translationFile, function(data) {
+				thisObj.tt = data;
+				deferred.resolve();
+			})
+			.fail( function() {
+
+								thisObj.provideFallback();
+				deferred.fail();
+			});
 		})
 		return deferred.promise();
 	};

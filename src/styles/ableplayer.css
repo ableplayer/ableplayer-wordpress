@@ -31,6 +31,26 @@
  * 	.able = 5000
 **/
 
+:root {
+	--able-white: #fff;
+	--able-black: #000;
+	--able-transparent-gray: #00000077;
+	--able-medium-light-gray: #a8a8a8;
+	--able-light-gray: #dadada;
+	--able-very-light-gray: #eee;
+	--able-off-white: #fdfdfd;
+	--able-dark-gray: #262626;
+	--able-medium-dark-gray: #333;
+	--able-medium-dark-gray2: #464646;
+	--able-medium-gray: #666;
+	--able-bright-yellow: #ff6;
+	--able-light-yellow: #ffc;
+	--able-bright-orange: #f90;
+	--able-light-orange: #ffbb37;
+	--able-bright-green: #8ab839;
+	--able-light-pink: #fee;
+}
+
 .able-modal-overlay,
 .able-playlist,
 .able-search-results,
@@ -39,72 +59,73 @@
 .able-transcript-area,
 .able-wrapper {
 	--able-base-control-size: 24px;
-	--able-color: #fff;
-	--able-control-background: #000;
-	--able-control-color: #fff;
-	--able-alert-button-color: #000;
-	--able-seekbar-border: #a8a8a8;
-	--able-seekbar-background: #000;
-	--able-seekbar-loaded: #666;
-	--able-seekbar-played: #dadada;
-	--able-seekbar-head: #fdfdfd;
-	--able-control-label-color: #fff;
-	--able-controller-background: #464646;
-	--able-separator-color: #a8a8a8;
-	--able-volume-background: #000;
-	--able-volume-outline: #666;
-	--able-statusbar-color: #dadada;
-	--able-statusbar-background: #000;
-	--able-default-caption-color: #fff;
-	--able-default-caption-background: #000;
-	--able-default-description-color: #ff6;
-	--able-default-description-background: #262626;
-	--able-description-border: #666;
-	--able-now-playing-color: #fff;
-	--able-now-playing-background: #000;
-	--able-modal-color: #000;
-	--able-modal-background: #fdfdfd;
-	--able-modal-overlay: #00000077;
-	--able-modal-border: 3px solid #ccc;
-	--able-drag-outline: #f90;
-	--able-sign-background: #fff;
-	--able-sign-border: #000;
-	--able-resizable-color: #666;
+	--able-color: var(--able-white);
+	--able-control-background: var(--able-black);
+	--able-control-color: var(--able-white);
+	--able-big-play-background: var(--able-transparent-gray);
+	--able-alert-button-color: var(--able-black);
+	--able-seekbar-border: var(--able-medium-light-gray);
+	--able-seekbar-background: var(--able-black);
+	--able-seekbar-loaded: var(--able-medium-gray);
+	--able-seekbar-played: var(--able-light-gray);
+	--able-seekbar-head: var(--able-off-white);
+	--able-control-label-color: var(--able-white);
+	--able-controller-background: var(--able-medium-dark-gray2);
+	--able-separator-color: var(--able-medium-light-gray);
+	--able-volume-background: var(--able-black);
+	--able-volume-outline: var(--able-medium-gray);
+	--able-statusbar-color: var(--able-light-gray);
+	--able-statusbar-background: var(--able-black);
+	--able-default-caption-color: var(--able-white);
+	--able-default-caption-background: var(--able-black);
+	--able-default-description-color: var(--able-bright-yellow);
+	--able-default-description-background: var(--able-dark-gray);
+	--able-description-border: var(--able-medium-gray);
+	--able-now-playing-color: var(--able-white);
+	--able-now-playing-background: var(--able-black);
+	--able-modal-color: var(--able-black);
+	--able-modal-background: var(--able-off-white);
+	--able-modal-overlay: var(--able-transparent-gray);
+	--able-modal-border: 3px solid var(--able-light-gray);
+	--able-drag-outline: var(--able-bright-orange);
+	--able-sign-background: var(--able-white);
+	--able-sign-border: var(--able-black);
+	--able-resizable-color: var(--able-medium-gray);
 	--able-chapter-background: transparent;
-	--able-chapter-color: #000;
-	--able-current-chapter-background: #000;
-	--able-current-chapter-color: #fff;
-	--able-focus-outline: #ffbb37;
-	--able-hover-outline: #8ab839;
-	--able-tooltip-border: #262626;
-	--able-tooltip-color: #333;
-	--able-tooltip-background: #eee;
-	--able-alert-background: #ffc;
-	--able-menu-border: #262626;
-	--able-menu-background: #000;
-	--able-menu-outline: #666;
-	--able-menu-color: #fff;
-	--able-menu-focus-background: #eee;
-	--able-menu-focus-color: #000;
-	--able-transcript-background: #fff;
-	--able-cue-audio-description-background: #fee;
-	--able-cue-audio-description-color: #262626;
-	--able-cue-highlighted-background: #000;
-	--able-cue-highlighted-color: #fff;
-	--able-cue-interacting-background: #ffc;
-	--able-cue-interacting-color: #000;
-	--able-playlist-item-background: #eee;
-	--able-playlist-item-color: #000;
-	--able-playlist-item-button-color: #000;
-	--able-search-results-button-background: #fff;
-	--able-search-results-button-color: #000;
-	--able-playlist-current-background: #fff;
-	--able-playlist-current-border: #230330;
-	--able-playlist-current-outline: #340449;
-	--able-playlist-current-active-color: #000;
-	--able-playlist-current-active-background: #fff;
-	--able-search-term-background: #ffc;
-	--able-search-term-color: #000;
+	--able-chapter-color: var(--able-black);
+	--able-current-chapter-background: var(--able-black);
+	--able-current-chapter-color: var(--able-white);
+	--able-focus-outline: var(--able-light-orange);
+	--able-hover-outline: var(--able-bright-green);
+	--able-tooltip-border: var(--able-dark-gray);
+	--able-tooltip-color: var(--able-medium-dark-gray);
+	--able-tooltip-background: var(--able-very-light-gray);
+	--able-alert-background: var(--able-light-yellow);
+	--able-menu-border: var(--able-dark-gray);
+	--able-menu-background: var(--able-black);
+	--able-menu-outline: var(--able-medium-gray);
+	--able-menu-color: var(--able-white);
+	--able-menu-focus-background: var(--able-very-light-gray);
+	--able-menu-focus-color: var(--able-black);
+	--able-transcript-background: var(--able-white);
+	--able-cue-audio-description-background: var(--able-light-pink);
+	--able-cue-audio-description-color: var(--able-dark-gray);
+	--able-cue-highlighted-background: var(--able-black);
+	--able-cue-highlighted-color: var(--able-white);
+	--able-cue-interacting-background: var(--able-light-yellow);
+	--able-cue-interacting-color: var(--able-black);
+	--able-playlist-item-background: var(--able-off-white);
+	--able-playlist-item-color: var(--able-black);
+	--able-playlist-item-button-color: var(--able-black);
+	--able-search-results-button-background: var(--able-white);
+	--able-search-results-button-color: var(--able-black);
+	--able-playlist-current-background: var(--able-white);
+	--able-playlist-current-border: var(--able-dark-gray);
+	--able-playlist-current-outline: var(--able-medium-dark-gray);
+	--able-playlist-current-active-color: var(--able-black);
+	--able-playlist-current-active-background: var(--able-white);
+	--able-search-term-background: var(--able-light-yellow);
+	--able-search-term-color: var(--able-black);
 }
 
 .able-black-controls {
@@ -121,6 +142,8 @@
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+.able-playlist, .able-playlist *,
+.able-chapters-div, .able-chapters-div *,
 .able-wrapper, .able-wrapper * {
 	box-sizing: border-box;
 }
@@ -239,7 +262,7 @@
 .able-wrapper .able button.able-big-play-button {
 	position: absolute;
 	color: var(--able-control-color);
-	background-color: transparent;
+	background-color: var(--able-big-play-background);
 	border: none;
 	outline: none;
 	left: 0;
@@ -469,7 +492,7 @@ div.able-captions {
 	line-height: 1.4;
 	/* settings that are overridden by user prefs */
 	background-color: var(--able-default-caption-background);
-	font-size: 1em;
+	font-size: 1rem;
 	color: var(--able-default-caption-color);
 	opacity: 0.75;
 }
@@ -482,7 +505,7 @@ div.able-vidcap-container div.able-captions-overlay {
 
 div.able-vidcap-container div.able-captions-below {
 	position: relative;
-	min-height: 3.2em;
+	min-height: 4rem;
 }
 
 div.able-audcap-container.captions-off {
@@ -493,7 +516,7 @@ div.able-descriptions {
 	position: relative;
 	color: var(--able-default-description-color); /* yellow, to differentiate it from captions */
 	background-color: var(--able-default-description-background);
-	min-height: 3.2em;
+	min-height: 4rem;
 	border-top: 1px solid var(--able-description-border);
 	margin: 0;
 	padding: 12px;
@@ -505,7 +528,7 @@ div.able-now-playing {
 	text-align: center;
 	font-weight: bold;
 	font-size: 1rem;
-	padding: 0.5em 0.5em 1em;
+	padding: 0.5rem 0.5rem 1rem;
 	color: var(--able-now-playing-color);
 	background: var(--able-now-playing-background);
 }
@@ -569,17 +592,21 @@ div.able-modal-overlay {
 	margin-top: 1rem;
 }
 
+.able-modal-header {
+	display: flex;
+	justify-content: space-between;
+}
+
 .able-modal-dialog .modalCloseButton {
-	position: absolute;
-	top: 5px;
-	right: 5px;
 	margin: 0;
+	align-self: flex-start;
 }
 
 div.able-modal-dialog h1 {
 	font-size: 1.5rem;
 	line-height: 1.6;
 	margin: 0 0 .5rem;
+	order: -1;
 }
 
 /* Preferences Form */
@@ -590,17 +617,17 @@ div.able-modal-dialog h1 {
 
 .able-prefs-form h2 {
 	font-weight: bold;
-	font-size: 1.1em;
+	font-size: 1.1rem;
 }
 
 .able-desc-pref-prompt {
 	font-weight: bold;
 	font-style: italic;
-	margin-left: 1em !important;
+	margin-left: 1rem !important;
 }
 
 .able-prefDescFormat > div {
-	margin-left: 1.5em;
+	margin-left: 1.5rem;
 }
 
 .able-prefs-descriptions > div,
@@ -623,20 +650,20 @@ div.able-modal-dialog h1 {
 
 .able-prefs-descriptions select,
 .able-prefs-captions select {
-	width: 10em;
+	width: 10rem;
 }
 
 div.able-prefDescPause {
-	margin-top: 1em;
+	margin-top: 1rem;
 }
 
 .able-prefs-form div.able-captions-sample {
-	padding: 0.5em;
+	padding: 0.5rem;
 	text-align: center;
 }
 
 .able-prefs-form div.able-desc-sample {
-	padding: 0.5em;
+	padding: 0.5rem;
 	text-align: center;
 	color: #fff;
 	background-color: #000;
@@ -644,8 +671,8 @@ div.able-prefDescPause {
 
 .able-prefs-form h2 {
 	margin-top: 0;
-	margin-bottom: 0.5em;
-	font-size: 1.1em;
+	margin-bottom: 0.5rem;
+	font-size: 1.1rem;
 }
 
 .able-prefs-form ul {
@@ -667,16 +694,16 @@ span.able-modkey-shift {
 span.able-modkey {
 	font-weight: bold;
 	color: #000;
-	font-size: 1.1em;
+	font-size: 1.1rem;
 }
 
 /* Resize Window Dialog */
 .able-resize-form h1 {
-	font-size: 1.15em;
+	font-size: 1.15rem;
 }
 
 .able-resize-form div div {
-	margin: 1em 0;
+	margin: 1rem 0;
 }
 
 .able-resize-form label {
@@ -946,7 +973,7 @@ ul.able-popup li.able-focus,
 }
 
 .able-transcript div {
-	margin: 1em 0;
+	margin: 1rem 0;
 }
 
 .able-transcript-heading {
@@ -981,7 +1008,7 @@ ul.able-popup li.able-focus,
 .able-highlight span:active {
 	background-color: var(--able-cue-highlighted-background) !important;
 	color: var(--able-cue-highlighted-color) !important;
-	padding: 0.25em 0.10em;
+	padding: 0.25rem 0.10rem;
 	border: none;
 	outline: none;
 }
@@ -1178,7 +1205,7 @@ button.able-search-results-time {
 
 /* Video Transcript Sorter (VTS) */
 #able-vts-instructions {
-	padding: 1em;
+	padding: 1rem;
 	border: 1px solid #999;
 	width: 100%;
 	margin: 0 auto 1.5rem;
@@ -1276,16 +1303,16 @@ div#able-vts-alert {
 	left: 5px;
 	border: 2px solid #666;
 	background-color: #ffc;
-	padding: 1em;
+	padding: 1rem;
 	font-weight: bold;
 	z-index: 9400;
 }
 
 button#able-vts-save {
-	font-size: 1em;
+	font-size: 1rem;
 	padding: 6px 12px;
 	border-radius: 4px;
-	margin-bottom: 1em;
+	margin-bottom: 1rem;
 	font-weight: bold;
 }
 
@@ -1320,6 +1347,6 @@ button#able-vts-save:focus {
 		width: 100% !important;
 	}
 	div.able-captions-wrapper:not(.able-captions-overlay) {
-		min-height: 5em;
+		min-height: 5rem;
 	}
 }
