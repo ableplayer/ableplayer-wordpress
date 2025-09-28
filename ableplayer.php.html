@@ -41,14 +41,14 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Version:     2.2.0-beta1
+ * Version:     2.2.0
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '2.2.0-beta1' );
+define( 'ABLEPLAYER_VERSION', '2.2.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'inc/generator.php';
@@ -389,6 +389,10 @@ function able_player_parameters() {
 			'default'     => '',
 			'description' => __( 'YouTube ID or URL of an alternative described version of a video.', 'ableplayer' ),
 		),
+		'youtube-sign-src'     => array(
+			'default'     => '',
+			'description' => __( 'YouTube ID or URL of a sign language interpreted version of a video.', 'ableplayer' ),
+		),
 		'youtube-nocookie'    => array(
 			'default'     => '',
 			'description' => __( 'If set to “true” the YouTube video will be embedded using the “youtube-nocookie.com” host.', 'ableplayer' ),
@@ -445,6 +449,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'youtube-id'       => '',
 			'youtube-desc-id'  => '',
 			'youtube-nocookie' => '',
+			'youtube-sign-src' => '',
 			'vimeo-id'         => '',
 			'vimeo-desc-id'    => '',
 			'media-id'         => '',
@@ -610,6 +615,9 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		if ( ! empty( $all_atts['youtube-desc-id'] ) ) {
 			$o .= ' data-youtube-desc-id="' . esc_attr( $all_atts['youtube-desc-id'] ) . '"';
+		}
+		if ( ! empty( $all_atts['youtube-sign-src'] ) ) {
+			$o .= ' data-youtube-sign-src="' . esc_attr( $all_atts['youtube-sign-src'] ) . '"';
 		}
 		if ( ! empty( $all_atts['youtube-nocookie'] ) ) {
 			$o .= ' data-youtube-nocookie="' . esc_attr( $all_atts['youtube-nocookie'] ) . '"';
