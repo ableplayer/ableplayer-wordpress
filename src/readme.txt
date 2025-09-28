@@ -7,7 +7,7 @@ Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -136,7 +136,12 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 = 2.2.0 =
 
-* Update to Able Player v4.7.0
+* Update to [Able Player v4.7.0](https://github.com/ableplayer/ableplayer/releases/tag/v4.7.0).
+* Add support for sign language sources from YouTube, new in Able Player 4.7.
+* Remove `data-href` from allowed attributes in Able Player KSES.
+* Trim all shortcode attributes of whitespace.
+* Cast poster attribute to int if is numeric.
+* Update screenshots.
 
 = 2.1.0 =
 
