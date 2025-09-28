@@ -433,6 +433,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 			'subtitles'        => '',
 			'descriptions'     => '',
 			'chapters'         => '',
+			'transcript-div'   => '',
 			'autoplay'         => 'false',
 			'preload'          => 'metadata',
 			'loop'             => 'false',
@@ -601,6 +602,9 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		}
 		if ( ! empty( $all_atts['vimeo-desc-id'] ) ) {
 			$o .= ' data-vimeo-desc-id="' . esc_attr( $all_atts['vimeo-desc-id'] ) . '"';
+		}
+		if ( ! empty( $all_atts['transcript-div'] ) ) {
+			$o .= ' data-transcript-div="' . esc_attr( $all_atts['transcript-div'] ) . '"';
 		}
 		$o .= '>' . PHP_EOL;
 

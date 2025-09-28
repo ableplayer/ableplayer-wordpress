@@ -59,6 +59,7 @@ The `[ableplayer]` shortcode supports the following attributes.
 * `chapters` - Attachment ID or URL to `.vtt` chapters file. Optional pipe separator for language code and label.
 * `descriptions` - Attachment ID or URL to `.vtt` audio descriptions file. Optional pipe separator for language code and label.
 * `youtube-desc-id` - YouTube URL or ID of a described version of the video
+* `youtube-sign-src` - YouTube URL or ID of a sign language interpreted accompanying video
 * `vimeo-desc-id` - Vimeo URL or ID of a described version of the video
 
 All captions, subtitles, chapters, and descriptions tracks must be in `.vtt` format. The shortcode only supports a single set of values for each type of data; to add multiple tracks of the same type you can use the Video block or add custom HTML.
@@ -85,6 +86,7 @@ By default, the language will be your WordPress installation language, with the 
 * `volume` - "0" to "10" (default is "7" to avoid overpowering screen reader audio). Some browsers do not support this.
 * `seekinterval` - number of seconds to forward/rewind with the Forward and Rewind buttons. If omitted, the interval will be intelligently assigned based on length of the video.
 * `nowplaying` - "true" or "false" to include a "Selected Track" section within the media player (default is "false").
+* `transcript-div` - ID attribute of a target element that will contain the video transcript
 * `id` - a unique id for the player (if omitted, one will be automatically assigned)
 
 == Examples ==
