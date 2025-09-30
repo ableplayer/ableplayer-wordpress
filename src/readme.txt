@@ -6,8 +6,8 @@ Donate link: https://www.joedolson.com/donate/
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
 Tested up to: 6.8
-Requires PHP: 7.0
-Stable tag: 2.2.0
+Requires PHP: 7.4
+Stable tag: 2.2.1
 License: MIT
 License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
 
@@ -135,6 +135,11 @@ This example uses a shortcode to add a Vimeo player to the page, with two versio
 The Able Player plugin was originally created by [Terrill Thompson](https://terrillthompson.com).
 
 == Changelog ==
+
+= 2.2.1 =
+
+* Bug fix: Speed parameter variable misnamed in JS.
+* Bug fix: Minified JS out of date.
 
 = 2.2.0 =
 
