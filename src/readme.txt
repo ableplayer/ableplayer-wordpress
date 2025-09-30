@@ -138,7 +138,7 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 = 2.2.1 =
 
-* Bug fix: Speed parameter variable misnamed in JS.
+* Bug fix: Speed parameter variable misnamed in JS, so icons always defaulted to arrows.
 * Bug fix: Minified JS out of date.
 
 = 2.2.0 =
