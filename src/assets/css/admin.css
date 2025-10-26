@@ -46,12 +46,8 @@
 }
 
 
-.wp-admin.js .wptab {
+.wp-admin.no-js .wptab {
 	display: none;
-}
-
-.wp-admin.js .wptab[aria-hidden=false] {
-	display: block;
 }
 
 .ableplayer-tabs .tabs, .mc-tablinks {
