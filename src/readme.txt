@@ -5,7 +5,7 @@ Author URI: https://www.joedolson.com
 Donate link: https://www.joedolson.com/donate/
 Tags: html5,media,audio,video,accessibility
 Requires at least: 4.9
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 2.2.1
 License: MIT
