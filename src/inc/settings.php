@@ -263,6 +263,7 @@ function ableplayer_update_settings( $post ) {
 	$seek_interval     = ( isset( $post['seek_interval'] ) && $post['seek_interval'] > 5 ) ? absint( $post['seek_interval'] ) : '';
 	$default_heading   = ( isset( $post['default_heading'] ) && 'auto' !== $post['default_heading'] ) ? absint( $post['default_heading'] ) : 'auto';
 	$vimeo             = ( ! empty( $post['vimeo'] ) && 'on' === $post['vimeo'] ) ? 'true' : 'false';
+	$cookies           = ( ! empty( $post['cookies'] ) && 'on' === $post['cookies'] ) ? 'true' : 'false';
 
 	$settings['replace_video']     = $replace_video;
 	$settings['replace_audio']     = $replace_audio;
@@ -277,6 +278,7 @@ function ableplayer_update_settings( $post ) {
 	$settings['default_speed']     = $default_speed;
 	$settings['default_heading']   = $default_heading;
 	$settings['vimeo']             = $vimeo;
+	$settings['cookies']           = $cookies;
 
 	ableplayer_update_options( $settings );
 }
@@ -326,6 +328,18 @@ function ableplayer_settings_form() {
 										'label' => __( 'Load the Vimeo player scripts globally.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
 										'note'  => __( 'Required to play media from Vimeo outside of the AblePlayer shortcode.', 'ableplayer' ),
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'  => 'cookies',
+										'label' => __( 'Store user settings in cookies.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
+										'note'  => __( 'Required if you need to access user settings from server-side code.', 'ableplayer' ),
 									)
 								);
 								?>
@@ -591,6 +605,7 @@ function ableplayer_default_settings() {
 		'default_heading'   => 'auto',
 		'last_shortcode'    => '',
 		'vimeo'             => 'false',
+		'cookies'           => 'false',
 	);
 
 	return $settings;
