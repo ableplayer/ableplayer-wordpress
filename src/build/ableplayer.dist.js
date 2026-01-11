@@ -5260,7 +5260,7 @@ if (typeof module !== "undefined" && module.exports) {
         continue;
       }
 	  var trackSrc = track.src;
-      loadingPromise = this.loadTextObject(trackSrc); 
+      loadingPromise = this.loadTextObject(trackSrc);
       loadingPromises.push(
         loadingPromise.catch(function (src) {
 
@@ -5282,7 +5282,7 @@ if (typeof module !== "undefined" && module.exports) {
                 trackDesc,
                 trackLabel,
                 trackSrc,
-                trackText
+                data.text
               );
             }
             if (kind === 'captions' || kind === 'subtitles') {
@@ -5764,7 +5764,6 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.getYouTubeCaptionTracks = function () {
-
 
 		var deferred = new this.defer();
 		var promise = deferred.promise();
@@ -10332,11 +10331,8 @@ if (typeof module !== "undefined" && module.exports) {
           var $resultsSummary = $("<p>", {
             class: "able-search-results-summary",
           });
-          var resultsSummaryText = this.translate( 'resultsSummary2', 'Found' );
-          resultsSummaryText +=
-            ' <strong>' + resultsArray.length + '</strong> ';
-          resultsSummaryText += this.translate( 'resultsSummary3', 'matching items.' ) + ' ';
-          resultsSummaryText += this.translate( 'resultsSummary4', 'Click the time associated with any item to play the video from that point.' );
+          var resultsSummaryText = this.translate( 'resultsSummary2', 'Found %1 matching items.', [ '<strong>' + resultsArray.length + '</strong>' ] );
+          resultsSummaryText += ' ' + this.translate( 'resultsSummary3', 'Click the time associated with any item to play the video from that point.' );
           $resultsSummary.html( resultsSummaryText );
           var $resultsList = $("<ul>");
           for (var i = 0; i < resultsArray.length; i++) {
@@ -10344,7 +10340,7 @@ if (typeof module !== "undefined" && module.exports) {
             var $resultsItem = $("<li>", {});
             var itemStartTime = this.secondsToTime(resultsArray[i]["start"]);
             var itemLabel =
-              this.translate( 'searchButtonLabel', 'Play at' ) + ' ' + itemStartTime["title"];
+              this.translate( 'searchButtonLabel', 'Play at %1', [ itemStartTime["title"] ] );
             var itemStartSpan = $("<button>", {
               class: "able-search-results-time",
               "data-start": resultsArray[i]["start"],
@@ -13082,12 +13078,21 @@ if (typeof module !== "undefined" && module.exports) {
 		return langs;
 	};
 
-	AblePlayer.prototype.translate = function( key, fallback ) {
+	AblePlayer.prototype.translate = function( key, fallback, args = Array() ) {
+		let translation = '';
 		if ( this.tt[ key ] ) {
-			return this.tt[ key ];
+			translation = this.tt[ key ];
 		} else {
-			return fallback;
+			translation = fallback;
 		}
+		if ( args.length > 0 ) {
+			args.forEach( ( val, index ) => {
+				let ref = index + 1;
+				translation = translation.replace( '%' + ref, val );
+			});
+		}
+
+		return translation;
 	}
 
 	AblePlayer.prototype.getTranslationText = function() {
@@ -13210,7 +13215,6 @@ if (typeof module !== "undefined" && module.exports) {
 (function ($) {
 	AblePlayer.prototype.injectVTS = function() {
 
-
 		var thisObj, $heading, $instructions, $p1, $p2, $ul, $li1, $li2, $li3,
 		$fieldset, $legend, i, $radioDiv, radioId, $label, $radio, $saveButton, $savedTable;
 
@@ -13223,7 +13227,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 				this.vtsLang = this.lang;
 
-				$heading = $('<h2>').text('Video Transcript Sorter'); 
+				let heading = this.translate( 'vtsHeading', 'Video Transcript Sorter' );
+				$heading = $('<h2>').text( heading ); 
 				$('#able-vts').append($heading);
 
 				this.$vtsAlert = $('<div>',{
@@ -13236,18 +13241,18 @@ if (typeof module !== "undefined" && module.exports) {
 				$instructions = $('<div>',{
 					'id': 'able-vts-instructions'
 				});
-				$p1 = $('<p>').text('Use the Video Transcript Sorter to modify text tracks:');
+				$p1 = $('<p>').text( this.translate( 'vtsInstructions1', 'Use the Video Transcript Sorter to modify text tracks:' ) );
 				$ul = $('<ul>');
-				$li1 = $('<li>').text('Reorder chapters, descriptions, captions, and/or subtitles so they appear in the proper sequence in Able Player\'s auto-generated transcript.');
-				$li2 = $('<li>').text('Modify content or start/end times (all are directly editable within the table).');
-				$li3 = $('<li>').text('Add new content, such as chapters or descriptions.');
-				$p2 = $('<p>').text('After editing, click the "Save Changes" button to generate new content for all relevant timed text files. The new text can be copied and pasted into new WebVTT files.');
+				$li1 = $('<li>').text( this.translate( 'vtsInstructions2', 'Reorder chapters, descriptions, captions, and/or subtitles so they appear in the proper sequence in Able Player\'s auto-generated transcript.' ) );
+				$li2 = $('<li>').text( this.translate( 'vtsInstructions3', 'Modify content or start/end times (all are directly editable within the table).' ) );
+				$li3 = $('<li>').text( this.translate( 'vtsInstructions4', 'Add new content, such as chapters or descriptions.' ) );
+				$p2 = $('<p>').text( this.translate( 'vtsInstructions5', 'After editing, click the "Save Changes" button to generate new content for all relevant timed text files. The new text can be copied and pasted into new WebVTT files.' ) );
 				$ul.append($li1,$li2,$li3);
 				$instructions.append($p1,$ul,$p2);
 				$('#able-vts').append($instructions);
 
 				$fieldset = $('<fieldset>');
-				$legend = $('<legend>').text('Select a language'); 
+				$legend = $('<legend>').text( this.translate( 'vtsSelectLanguage', 'Select a language' ) );
 				$fieldset.append($legend);
 				$fieldWrapper = $( '<div class="vts-lang-selector"></div>' );
 				for (i in this.langs) {
@@ -13275,12 +13280,12 @@ if (typeof module !== "undefined" && module.exports) {
 				}
 				$fieldset.append( $fieldWrapper );
 				$('#able-vts').append($fieldset);
-
+				let vtsSave = this.translate( 'vtsSave', 'Generate new .vtt content' );
 				$saveButton = $('<button>',{
 					'type': 'button',
 					'id': 'able-vts-save',
 					'value': 'save'
-				}).text('Save Changes'); 
+				}).text( vtsSave );
 				$('#able-vts').append($saveButton);
 
 				this.injectVtsTable('add',this.vtsLang);
@@ -13316,7 +13321,7 @@ if (typeof module !== "undefined" && module.exports) {
 				$('#able-vts-save').on('click',function(e) {
 					e.stopPropagation();
 					if ($(this).attr('value') == 'save') {
-						$(this).attr('value','cancel').text('Return to Editor'); 
+						$(this).attr('value','cancel').text( this.translate( 'vtsReturn', 'Return to Editor' ) );
 						$savedTable = $('#able-vts table');
 						$('#able-vts-instructions').hide();
 						$('#able-vts > fieldset').hide();
@@ -13324,13 +13329,13 @@ if (typeof module !== "undefined" && module.exports) {
 						$('#able-vts-icon-credit').remove();
 						thisObj.parseVtsOutput($savedTable);
 					} else {
-						$(this).attr('value','save').text('Save Changes'); 
+						$(this).attr('value','save').text( vtsSave );
 						$('#able-vts-output').remove();
 						$('#able-vts-instructions').show();
 						$('#able-vts > fieldset').show();
 						$('#able-vts').append($savedTable);
 						$('#able-vts').append(thisObj.getIconCredit());
-						thisObj.showVtsAlert('Cancelling saving. Any edits you made have been restored in the VTS table.'); 
+						thisObj.showVtsAlert( this.translate( 'vtsCancel', 'Cancelling saving. Any edits you made have been restored in the VTS table.' ) );
 					}
 				});
 			}
@@ -13338,7 +13343,6 @@ if (typeof module !== "undefined" && module.exports) {
 	};
 
 	AblePlayer.prototype.setupVtsTracks = function(kind, lang, trackDesc, label, src, contents) {
-
 
 		var srcFile, vtsCues;
 
@@ -13450,11 +13454,16 @@ if (typeof module !== "undefined" && module.exports) {
 		$table = $('<table>',{
 			'lang': lang
 		});
-		$thead = $('<thead>');
-		$tr = $('<tr>',{
-			'lang': 'en' 
-		});
-		headers = ['Row','Kind','Start','End','Content','Actions']; 
+		$thead = $( '<thead>' );
+		$tr = $( '<tr>' );
+		headers = [
+			this.translate( 'vtsRow', 'Row' ),
+			this.translate( 'vtsKind', 'Kind' ),
+			this.translate( 'vtsStart', 'Start' ),
+			this.translate( 'vtsEnd', 'End' ),
+			this.translate( 'vtsContent', 'Content' ),
+			this.translate( 'vtsActions', 'Actions' )
+		];
 		for (i=0; i < headers.length; i++) {
 			$th = $('<th>', {
 				'scope': 'col'
@@ -13808,7 +13817,8 @@ if (typeof module !== "undefined" && module.exports) {
 
 		this.adjustTimes(newRowNum);
 
-		this.showVtsAlert('A new row ' + newRowNum + ' has been inserted'); 
+		let newAlert = this.translate( 'vtsNewRow', 'A new row %1 has been inserted.', [ newRowNum ] );
+		this.showVtsAlert( newAlert );
 
 		$select.trigger('focus');
 
@@ -13831,7 +13841,8 @@ if (typeof module !== "undefined" && module.exports) {
 			this.updateVtsActionButtons($buttons,nextRowNum);
 		}
 
-		this.showVtsAlert('Row ' + rowNum + ' has been deleted'); 
+		let newAlert = this.translate( 'vtsDeletedRow', 'Row %1 has been deleted.', [ rowNum ] );
+		this.showVtsAlert( newAlert );
 
 	};
 
@@ -13859,8 +13870,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		this.adjustTimes(otherRowNum);
 
-		msg = 'Row ' + rowNum + ' has been moved ' + direction;
-		msg += ' and is now Row ' + otherRowNum;
+		msg = this.translate( 'vtsMovedRow', 'Row %1 has been moved %2 and is now Row %3.', [ rowNum, direction, otherRowNum ] );
 		this.showVtsAlert(msg);
 	};
 
@@ -13989,7 +13999,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 		const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 		this.$vtsAlert.text(message).show();
-		delay(3000).then(() => {
+		delay(10000).then(() => {
 			this.$vtsAlert.text(message).hide()
 		});
 	};

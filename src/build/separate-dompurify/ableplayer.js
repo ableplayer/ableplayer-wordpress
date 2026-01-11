@@ -847,7 +847,7 @@ var AblePlayerInstances = [];
 		thisObj = this;
 
 		this.startedPlaying = false;
-		// TODO: Move this setting to cookie.
+		// TODO: Move this setting to preferences.
 		this.autoScrollTranscript = true;
 		//this.autoScrollTranscript = this.getPref(autoScrollTranscript); // (doesn't work)
 
@@ -5025,7 +5025,7 @@ if (typeof module !== "undefined" && module.exports) {
         continue;
       }
 	  var trackSrc = track.src;
-      loadingPromise = this.loadTextObject(trackSrc); // resolves with src, trackText
+      loadingPromise = this.loadTextObject(trackSrc);
       loadingPromises.push(
         loadingPromise.catch(function (src) {
           console.warn("Failed to load captions track from " + src);
@@ -5039,17 +5039,15 @@ if (typeof module !== "undefined" && module.exports) {
           var trackDesc = track.desc;
 
           return function (data) {
-            // these are the two vars returned from loadTextObject
             var cues = thisObj.parseWebVTT(data).cues;
             if (thisObj.hasVts) {
-              // setupVtsTracks() is in vts.js
               thisObj.setupVtsTracks(
                 kind,
                 trackLang,
                 trackDesc,
                 trackLabel,
                 trackSrc,
-                trackText
+                data.text
               );
             }
             if (kind === 'captions' || kind === 'subtitles') {
@@ -5618,17 +5616,13 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 	};
 
+	/**
+	 * Get data from the YouTube iFrame API. Pushes data into `this.tracks` and `this.captions`.
+	 * Initiates play to trigger loading the captions module, then stops and collects data.
+	 *
+	 * @returns {Promise} promise
+	 */
 	AblePlayer.prototype.getYouTubeCaptionTracks = function () {
-
-		// get data via YouTube IFrame Player API, and push data to this.tracks & this.captions
-		// NOTE: Caption tracks are not available through the IFrame Player API
-		// until AFTER the video has started playing.
-		// Therefore, this function plays the video briefly to load the captions module
-		// then stops the video and collects the data needed to build the cc menu
-		// This is stupid, but seemingly unavoidable.
-		// Caption tracks could be obtained through the YouTube Data API
-		// but this required authors to have a Google API key,
-		// which would complicate Able Player installation
 
 		var deferred = new this.defer();
 		var promise = deferred.promise();
@@ -5755,10 +5749,10 @@ if (typeof module !== "undefined" && module.exports) {
 	AblePlayer.prototype.getYouTubeId = function (url) {
 
 		// return a YouTube ID, extracted from a full YouTube URL
-		// Supported URL patterns (with http or https):
-		// https://youtu.be/xxx
-		// https://www.youtube.com/watch?v=xxx
-		// https://www.youtube.com/embed/xxx
+		// Supported URL patterns:
+		// http|s://youtu.be/xxx
+		// http|s://www.youtube.com/watch?v=xxx
+		// http|s://www.youtube.com/embed/xxx
 
 		// in all supported patterns, the id is the last 11 characters
 		var idStartPos, id;
@@ -10989,11 +10983,8 @@ if (typeof module !== "undefined" && module.exports) {
           var $resultsSummary = $("<p>", {
             class: "able-search-results-summary",
           });
-          var resultsSummaryText = this.translate( 'resultsSummary2', 'Found' );
-          resultsSummaryText +=
-            ' <strong>' + resultsArray.length + '</strong> ';
-          resultsSummaryText += this.translate( 'resultsSummary3', 'matching items.' ) + ' ';
-          resultsSummaryText += this.translate( 'resultsSummary4', 'Click the time associated with any item to play the video from that point.' );
+          var resultsSummaryText = this.translate( 'resultsSummary2', 'Found %1 matching items.', [ '<strong>' + resultsArray.length + '</strong>' ] );
+          resultsSummaryText += ' ' + this.translate( 'resultsSummary3', 'Click the time associated with any item to play the video from that point.' );
           $resultsSummary.html( resultsSummaryText );
           var $resultsList = $("<ul>");
           for (var i = 0; i < resultsArray.length; i++) {
@@ -11001,7 +10992,7 @@ if (typeof module !== "undefined" && module.exports) {
             var $resultsItem = $("<li>", {});
             var itemStartTime = this.secondsToTime(resultsArray[i]["start"]);
             var itemLabel =
-              this.translate( 'searchButtonLabel', 'Play at' ) + ' ' + itemStartTime["title"];
+              this.translate( 'searchButtonLabel', 'Play at %1', [ itemStartTime["title"] ] );
             var itemStartSpan = $("<button>", {
               class: "able-search-results-time",
               "data-start": resultsArray[i]["start"],
@@ -14058,12 +14049,29 @@ if (typeof module !== "undefined" && module.exports) {
 		return langs;
 	};
 
-	AblePlayer.prototype.translate = function( key, fallback ) {
+	/**
+	 * Fetch a translated string if it exists.
+	 *
+	 * @param {string} key JSON key to locate translated string.
+	 * @param {string} fallback Default language if no translation found.
+	 * @param {Array} args Ordered array of arguments to replace in string.
+	 * @returns
+	 */
+	AblePlayer.prototype.translate = function( key, fallback, args = Array() ) {
+		let translation = '';
 		if ( this.tt[ key ] ) {
-			return this.tt[ key ];
+			translation = this.tt[ key ];
 		} else {
-			return fallback;
+			translation = fallback;
 		}
+		if ( args.length > 0 ) {
+			args.forEach( ( val, index ) => {
+				let ref = index + 1;
+				translation = translation.replace( '%' + ref, val );
+			});
+		}
+
+		return translation;
 	}
 
 	AblePlayer.prototype.getTranslationText = function() {
@@ -14210,8 +14218,6 @@ if (typeof module !== "undefined" && module.exports) {
 (function ($) {
 	AblePlayer.prototype.injectVTS = function() {
 
-		// To add a transcript sorter to a web page: <div id="able-vts"></div>
-
 		var thisObj, $heading, $instructions, $p1, $p2, $ul, $li1, $li2, $li3,
 		$fieldset, $legend, i, $radioDiv, radioId, $label, $radio, $saveButton, $savedTable;
 
@@ -14228,7 +14234,8 @@ if (typeof module !== "undefined" && module.exports) {
 				this.vtsLang = this.lang;
 
 				// Inject a heading
-				$heading = $('<h2>').text('Video Transcript Sorter'); // TODO: Localize; intelligently assign proper heading level
+				let heading = this.translate( 'vtsHeading', 'Video Transcript Sorter' );
+				$heading = $('<h2>').text( heading ); // TODO: intelligently assign proper heading level
 				$('#able-vts').append($heading);
 
 				// Inject an empty div for writing messages
@@ -14243,19 +14250,19 @@ if (typeof module !== "undefined" && module.exports) {
 				$instructions = $('<div>',{
 					'id': 'able-vts-instructions'
 				});
-				$p1 = $('<p>').text('Use the Video Transcript Sorter to modify text tracks:');
+				$p1 = $('<p>').text( this.translate( 'vtsInstructions1', 'Use the Video Transcript Sorter to modify text tracks:' ) );
 				$ul = $('<ul>');
-				$li1 = $('<li>').text('Reorder chapters, descriptions, captions, and/or subtitles so they appear in the proper sequence in Able Player\'s auto-generated transcript.');
-				$li2 = $('<li>').text('Modify content or start/end times (all are directly editable within the table).');
-				$li3 = $('<li>').text('Add new content, such as chapters or descriptions.');
-				$p2 = $('<p>').text('After editing, click the "Save Changes" button to generate new content for all relevant timed text files. The new text can be copied and pasted into new WebVTT files.');
+				$li1 = $('<li>').text( this.translate( 'vtsInstructions2', 'Reorder chapters, descriptions, captions, and/or subtitles so they appear in the proper sequence in Able Player\'s auto-generated transcript.' ) );
+				$li2 = $('<li>').text( this.translate( 'vtsInstructions3', 'Modify content or start/end times (all are directly editable within the table).' ) );
+				$li3 = $('<li>').text( this.translate( 'vtsInstructions4', 'Add new content, such as chapters or descriptions.' ) );
+				$p2 = $('<p>').text( this.translate( 'vtsInstructions5', 'After editing, click the "Save Changes" button to generate new content for all relevant timed text files. The new text can be copied and pasted into new WebVTT files.' ) );
 				$ul.append($li1,$li2,$li3);
 				$instructions.append($p1,$ul,$p2);
 				$('#able-vts').append($instructions);
 
 				// Inject a fieldset with radio buttons for each language
 				$fieldset = $('<fieldset>');
-				$legend = $('<legend>').text('Select a language'); // TODO: Localize this
+				$legend = $('<legend>').text( this.translate( 'vtsSelectLanguage', 'Select a language' ) );
 				$fieldset.append($legend);
 				$fieldWrapper = $( '<div class="vts-lang-selector"></div>' );
 				for (i in this.langs) {
@@ -14289,13 +14296,13 @@ if (typeof module !== "undefined" && module.exports) {
 				}
 				$fieldset.append( $fieldWrapper );
 				$('#able-vts').append($fieldset);
-
-				// Inject a 'Save Changes' button
+				let vtsSave = this.translate( 'vtsSave', 'Generate new .vtt content' );
+				// Inject a button to generate new files.
 				$saveButton = $('<button>',{
 					'type': 'button',
 					'id': 'able-vts-save',
 					'value': 'save'
-				}).text('Save Changes'); // TODO: Localize this
+				}).text( vtsSave );
 				$('#able-vts').append($saveButton);
 
 				// Inject a table with one row for each cue in the default language
@@ -14344,7 +14351,7 @@ if (typeof module !== "undefined" && module.exports) {
 					e.stopPropagation();
 					if ($(this).attr('value') == 'save') {
 						// replace table with WebVTT output in textarea fields (for copying/pasting)
-						$(this).attr('value','cancel').text('Return to Editor'); // TODO: Localize this
+						$(this).attr('value','cancel').text( this.translate( 'vtsReturn', 'Return to Editor' ) );
 						$savedTable = $('#able-vts table');
 						$('#able-vts-instructions').hide();
 						$('#able-vts > fieldset').hide();
@@ -14353,13 +14360,13 @@ if (typeof module !== "undefined" && module.exports) {
 						thisObj.parseVtsOutput($savedTable);
 					} else {
 						// cancel saving, and restore the table using edited content
-						$(this).attr('value','save').text('Save Changes'); // TODO: Localize this
+						$(this).attr('value','save').text( vtsSave );
 						$('#able-vts-output').remove();
 						$('#able-vts-instructions').show();
 						$('#able-vts > fieldset').show();
 						$('#able-vts').append($savedTable);
 						$('#able-vts').append(thisObj.getIconCredit());
-						thisObj.showVtsAlert('Cancelling saving. Any edits you made have been restored in the VTS table.'); // TODO: Localize this
+						thisObj.showVtsAlert( this.translate( 'vtsCancel', 'Cancelling saving. Any edits you made have been restored in the VTS table.' ) );
 					}
 				});
 			}
@@ -14370,8 +14377,6 @@ if (typeof module !== "undefined" && module.exports) {
 
 		// TODO: Add support for trackDesc
 		// (to destinguish between tracks for the decribed vs non-described versions)
-
-		// Called from tracks.js
 		var srcFile, vtsCues;
 
 		srcFile = this.getFilenameFromPath(src);
@@ -14502,11 +14507,16 @@ if (typeof module !== "undefined" && module.exports) {
 		$table = $('<table>',{
 			'lang': lang
 		});
-		$thead = $('<thead>');
-		$tr = $('<tr>',{
-			'lang': 'en' // TEMP, until header row is localized
-		});
-		headers = ['Row','Kind','Start','End','Content','Actions']; // TODO: Localize this
+		$thead = $( '<thead>' );
+		$tr = $( '<tr>' );
+		headers = [
+			this.translate( 'vtsRow', 'Row' ),
+			this.translate( 'vtsKind', 'Kind' ),
+			this.translate( 'vtsStart', 'Start' ),
+			this.translate( 'vtsEnd', 'End' ),
+			this.translate( 'vtsContent', 'Content' ),
+			this.translate( 'vtsActions', 'Actions' )
+		];
 		for (i=0; i < headers.length; i++) {
 			$th = $('<th>', {
 				'scope': 'col'
@@ -14906,7 +14916,8 @@ if (typeof module !== "undefined" && module.exports) {
 		this.adjustTimes(newRowNum);
 
 		// Announce the insertion
-		this.showVtsAlert('A new row ' + newRowNum + ' has been inserted'); // TODO: Localize this
+		let newAlert = this.translate( 'vtsNewRow', 'A new row %1 has been inserted.', [ newRowNum ] );
+		this.showVtsAlert( newAlert );
 
 		// Place focus in new select field
 		$select.trigger('focus');
@@ -14932,7 +14943,8 @@ if (typeof module !== "undefined" && module.exports) {
 		}
 
 		// Announce the deletion
-		this.showVtsAlert('Row ' + rowNum + ' has been deleted'); // TODO: Localize this
+		let newAlert = this.translate( 'vtsDeletedRow', 'Row %1 has been deleted.', [ rowNum ] );
+		this.showVtsAlert( newAlert );
 
 	};
 
@@ -14963,9 +14975,8 @@ if (typeof module !== "undefined" && module.exports) {
 		// auto-adjust times
 		this.adjustTimes(otherRowNum);
 
-		// Announce the move (TODO: Localize this)
-		msg = 'Row ' + rowNum + ' has been moved ' + direction;
-		msg += ' and is now Row ' + otherRowNum;
+		// Announce the move
+		msg = this.translate( 'vtsMovedRow', 'Row %1 has been moved %2 and is now Row %3.', [ rowNum, direction, otherRowNum ] );
 		this.showVtsAlert(msg);
 	};
 
@@ -15153,7 +15164,7 @@ if (typeof module !== "undefined" && module.exports) {
 		// but could ultimately be modified to appear near the point of action in the VTS table
 		const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 		this.$vtsAlert.text(message).show();
-		delay(3000).then(() => {
+		delay(10000).then(() => {
 			this.$vtsAlert.text(message).hide()
 		});
 	};
