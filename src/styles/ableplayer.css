@@ -248,6 +248,7 @@
 
 .able .able-vidcap-container video {
 	max-width: 100%;
+	width: 100%;
 	display: block; /* Prevents excess height after element */
 }
 
@@ -1351,6 +1352,10 @@ button.able-search-results-time {
 	border: 1px solid #323232;
 	padding: 8px;
 	color: #323232;
+}
+
+#able-vts table td[contenteditable="true"] {
+	white-space: pre-wrap;
 }
 
 #able-vts table td[contenteditable="true"]:hover {
