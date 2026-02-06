@@ -139,7 +139,7 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 = 2.3.0 =
 
 * Add Playground previews on .org
-* Update to Able Player 4.8.
+* Update to [Able Player v4.8.0](https://github.com/ableplayer/ableplayer/releases/tag/v4.8.0).
 * New feature to enable/disable cookies.
 * Bug fix: Use history.pushState on tabs change.
 
