@@ -177,7 +177,6 @@ jQuery(document).ready(function ($) {
 		const idField      = document.querySelector( 'input[name="' + input + '"]' );
 		const displayField = document.querySelector( '.preview-' + input );
 		const container    = $( this ).parent().parent( '.ableplayer-media-preview' );
-		console.log( container );
 		let library;
 		if ( 'media-id' === input || 'media-desc-id' === input || 'media-asl-id' === input ) {
 			library = [ 'audio', 'video' ];
