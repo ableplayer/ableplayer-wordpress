@@ -20,8 +20,8 @@ This plug-in uses Able Player, an open-source fully-accessible cross-browser HTM
 == Installation ==
 
 1. Upload the unzipped folder `ableplayer` to the `/wp-content/plugins/` directory.
-1. Activate the Able Player plugin through the 'Plugins' menu in WordPress
-1. Follow the Instructions for Use
+1. Activate the Able Player plugin through the 'Plugins' menu in WordPress.
+1. Follow the Instructions for Use.
 
 == Screenshots ==
 
@@ -32,7 +32,7 @@ This plug-in uses Able Player, an open-source fully-accessible cross-browser HTM
 
 There are currently three ways to add an Able Player instance to a WordPress site:
 
-1. Go to Settings > Able Player > Settings and enable the options to use Able Player for all video, audio, and playlists. Able Player will automatically replace MediaElement.jss or the default WordPress video/audio blocks with Able Player.
+1. Go to Settings > Able Player > Settings and enable the options to use Able Player for all video, audio, and playlists. Able Player will automatically replace MediaElement.js or the default WordPress video/audio blocks with Able Player.
 2. Go to Settings > Able Player > Shortcodes to generate an `[ableplayer]` shortcode.
 3. Enter or paste any valid HTML5 Able Player code into your web page. Full documentation is available on the [Able Player](http://ableplayer.github.io/ableplayer) project page on GitHub.
 
@@ -50,7 +50,7 @@ The `[ableplayer]` shortcode supports the following attributes.
 
 * `youtube-id` - 11-character YouTube ID or YouTube URL.
 * `vimeo-id` - Vimeo ID or URL.
-* `media-id' - An attachment ID for a media file in your WordPress media library or the URL to a hosted video.
+* `media-id` - An attachment ID for a media file in your WordPress media library or the URL to a hosted video.
 
 = Additional Player Content =
 
