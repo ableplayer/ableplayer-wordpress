@@ -527,7 +527,7 @@ function ableplayer_menu() {
 	add_options_page(
 		__( 'Able Player', 'ableplayer' ),
 		__( 'Able Player', 'ableplayer' ),
-		'manage_options',
+		apply_filters( 'ableplayer_capability', 'manage_options' ),
 		'ableplayer',
 		'ableplayer_settings_form'
 	);
