@@ -529,7 +529,7 @@ function ableplayer_menu() {
 	 *
 	 * @hook ableplayer_capability
 	 *
-	 * @param {string} $capability The capability string required.
+	 * @param string $capability The capability string required.
 	 */
 	$capability = apply_filters( 'ableplayer_capability', 'manage_options' );
 	add_options_page(
