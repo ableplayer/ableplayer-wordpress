@@ -15,14 +15,14 @@
  * Text Domain: ableplayer
  * License:     MIT
  * License URI: https://github.com/ableplayer/ableplayer-wordpress/blob/master/LICENSE
- * Version:     2.3.0
+ * Version:     2.4.0-beta1
  */
 
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
 // Get current version number.
-define( 'ABLEPLAYER_VERSION', '2.3.0' );
+define( 'ABLEPLAYER_VERSION', '2.4.0-beta1' );
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'inc/generator.php';
@@ -102,10 +102,10 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_css
 	 *
-	 * @param {string} $url URL to Able Player root directory.
-	 * @param {bool}   $debug True if environment is debugging.
+	 * @param string $url URL to Able Player root directory.
+	 * @param bool   $debug True if environment is debugging.
 	 *
-	 * @return {string}
+	 * @return string
 	 */
 	$css_dir = apply_filters( 'able_player_css', plugins_url( '', __FILE__ ) . '/' . $css_file, $debug );
 
