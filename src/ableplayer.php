@@ -382,11 +382,11 @@ function able_player_parameters() {
 	 *
 	 * @hook ableplayer_parameters
 	 *
-	 * @param {array} $params Array of default parameters. The array is a multidimensional array with the shortcode
+	 * @param array $params Array of default parameters. The array is a multidimensional array with the shortcode
 	 *                        attribute as a key with array of `default` value, `description`, available `options`,
 	 *(                       and alternate `parameter` name if the output isn't `data-{key}`.
 	 *
-	 * @return {array} Array of parameters.
+	 * @return array Array of parameters.
 	 */
 	return apply_filters( 'ableplayer_default_parameters', $params );
 }
