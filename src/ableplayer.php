@@ -91,7 +91,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_js
 	 *
-	 * @param string $url URL to Able Player root directory.
+	 * @param string $url Default URL to Able Player JS file.
 	 * @param bool   $debug True if environment is in debugging.
 	 *
 	 * @return string
@@ -102,7 +102,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_css
 	 *
-	 * @param string $url URL to Able Player root directory.
+	 * @param string $url Default URL to Able Player CSS file.
 	 * @param bool   $debug True if environment is debugging.
 	 *
 	 * @return string
