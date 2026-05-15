@@ -474,6 +474,7 @@ function ableplayer_shortcode( $atts, $content = null ) {
 		// Shortcode must have one of YouTube, Vimeo, or a local source.
 		return false;
 	} else {
+		$type = false;
 		if ( $all_atts['media-id'] ) {
 			// If Video ID is set but is not a valid URL, return.
 			$media_id = ( is_numeric( $all_atts['media-id'] ) ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
