@@ -1,25 +1,16 @@
-name: Build Hook Docs
+name: Extract WordPress Hooks
 
 on:
- push:
-   branches:
-    - main
+  push:
+    branches: [ main, master ]
+    paths: [ '**.php' ]
+  workflow_dispatch:
 
 jobs:
-  hookdocs:
+  extract-hooks:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to push to wiki repository
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js 10
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.x'
-    - name: npm install, and build docs
-      run: |
-        npm install
-        npm run build:docs
-    - name: Deploy to GH Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        publish_dir: './docs'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v4
+    - uses: akirk/extract-wp-hooks@main
