@@ -378,7 +378,7 @@ function able_player_parameters() {
 		),
 	);
 	/**
-	 * Filter the default values, options, and descriptions for all Able Player shortcode parameters. Not used yet in 1.2.0.
+	 * Filter the default values, options, and descriptions for all Able Player shortcode parameters. Not used at this time.
 	 *
 	 * @hook ableplayer_parameters
 	 *
