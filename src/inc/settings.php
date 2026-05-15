@@ -524,10 +524,18 @@ function ableplayer_settings_form() {
  * Add Able Player menu items to main admin menu
  */
 function ableplayer_menu() {
+	/**
+	 * Filter the capability required to manage Able Player settings.
+	 *
+	 * @hook ableplayer_capability
+	 *
+	 * @param {string} $capability The capability string required.
+	 */
+	$capability = apply_filters( 'ableplayer_capability', 'manage_options' );
 	add_options_page(
 		__( 'Able Player', 'ableplayer' ),
 		__( 'Able Player', 'ableplayer' ),
-		apply_filters( 'ableplayer_capability', 'manage_options' ),
+		$capability,
 		'ableplayer',
 		'ableplayer_settings_form'
 	);
