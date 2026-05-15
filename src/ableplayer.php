@@ -114,10 +114,10 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook ableplayer_dependencies
 	 *
-	 * @param {array} $dependencies Array of scripts required by the main Able Player script.
-	 * @param {bool}  $debug True if environment is in debugging mode.
+	 * @param array $dependencies Array of scripts required by the main Able Player script.
+	 * @param bool  $debug True if environment is in debugging mode.
 	 *
-	 * @return {array}
+	 * @return array
 	 */
 	$dependencies = apply_filters( 'ableplayer_dependencies', $dependencies, $debug );
 	wp_enqueue_script(
