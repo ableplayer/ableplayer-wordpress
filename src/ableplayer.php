@@ -91,10 +91,10 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @hook able_player_js
 	 *
-	 * @param {string} $url URL to Able Player root directory.
-	 * @param {bool}   $debug True if environment is in debugging.
+	 * @param string $url URL to Able Player root directory.
+	 * @param bool   $debug True if environment is in debugging.
 	 *
-	 * @return {string}
+	 * @return string
 	 */
 	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $debug );
 	/**
