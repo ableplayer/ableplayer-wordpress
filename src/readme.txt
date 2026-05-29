@@ -136,6 +136,14 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 == Changelog ==
 
+= 2.4.0 =
+
+* Update to [Able Player v5.0.0](https://github.com/ableplayer/ableplayer/releases/tag/v5.0.0)
+* New filter: `ableplayer_capability` to modify who has access to Able Player settings.
+* Dev: Get Able Player from NPM
+* Docs: Update hook docs generation method.
+* Remove obsolete assets following change to use NPM.
+
 = 2.3.0 =
 
 * Add Playground previews on .org
