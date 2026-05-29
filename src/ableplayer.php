@@ -55,8 +55,8 @@ function ableplayer_enqueue_scripts() {
 
 	// Register/enqueue other dependencies.
 	if ( 'true' === ableplayer_get_settings( 'cookies' ) ) {
-		$cookie_js = ( $debug ) ? '/js.cookie.js' : '/js.cookie.min.js';
-		wp_enqueue_script( 'js-cookie', plugins_url( 'thirdparty', __FILE__ ) . $cookie_js, array(), $version, true );
+		$cookie_js = ( $debug ) ? 'node_modules/js-cookie/dist/js.cookie.js' : 'node_modules/js-cookie/dist/js.cookie.min.js';
+		wp_enqueue_script( 'js-cookie', plugins_url( '', __FILE__ ) . '/' . $cookie_js, array(), $version, true );
 		$dependencies = array( 'js-cookie', 'jquery', 'ableplayer-video' );
 	}
 	if ( 'true' === ableplayer_get_settings( 'vimeo' ) ) {
@@ -85,7 +85,7 @@ function ableplayer_enqueue_scripts() {
 	);
 
 	$js_file  = ( $debug ) ? 'ableplayer.js' : 'ableplayer.min.js';
-	$css_file = ( $debug ) ? 'styles/ableplayer.css' : 'build/ableplayer.min.css';
+	$css_file = ( $debug ) ? 'node_modules/ableplayer/styles/ableplayer.css' : 'node_modules/ableplayer/build/ableplayer.min.css';
 	/**
 	 * Filter the Able Player JS URL.
 	 *
@@ -96,7 +96,7 @@ function ableplayer_enqueue_scripts() {
 	 *
 	 * @return string
 	 */
-	$js_dir = apply_filters( 'able_player_js', plugins_url( 'build', __FILE__ ) . '/' . $js_file, $debug );
+	$js_dir = apply_filters( 'able_player_js', plugins_url( 'node_modules/ableplayer/build', __FILE__ ) . '/' . $js_file, $debug );
 	/**
 	 * Filter the Able Player CSS URL.
 	 *
