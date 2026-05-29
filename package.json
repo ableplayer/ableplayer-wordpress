@@ -8,8 +8,8 @@
   "keywords": [
     "media",
     "audio",
-	"video",
-	"html5"
+    "video",
+    "html5"
   ],
   "homepage": "https://github.com/ableplayer/ableplayer-wordpress",
   "repository": "git+https://github.com/ableplayer/ableplayer-wordpress.git",
@@ -22,19 +22,19 @@
   },
   "devDependencies": {
     "@wordpress/env": "^11.6",
-    "jsdoc": "~4.0.5",
-    "wp-hookdoc": "^0.2.0",
+    "esbuild": "^0.28.0",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
+    "jsdoc": "~4.0.5",
     "lint-staged": "^17.0.4",
     "prettier": "^3.8.3",
-    "esbuild": "^0.28.0"
+    "wp-hookdoc": "^0.2.0"
   },
   "scripts": {
     "presetup": "find .scripts -type f -exec chmod +x {} \\;",
- 	"start": "esbuild admin.min=src/assets/js/admin.js media.min=src/assets/js/media.js --bundle --outdir=src/assets/js --target=chrome58,firefox57,safari11,edge18 --watch --sourcemap",
+    "start": "esbuild admin.min=src/assets/js/admin.js media.min=src/assets/js/media.js --bundle --outdir=src/assets/js --target=chrome58,firefox57,safari11,edge18 --watch --sourcemap",
     "build:js": "esbuild admin.min=src/assets/js/admin.js media.min=src/assets/js/media.js --bundle --outdir=src/assets/js --target=chrome58,firefox57,safari11,edge18 --minify",
     "build:docs": "rm -rf docs/ && jsdoc -c hookdoc-conf.json",
     "format-php": "wp-env run composer run-script format",
@@ -46,8 +46,10 @@
     "wp-env": "wp-env"
   },
   "lint-staged": {
-    "./src/js/!(*min).js": ["eslint --fix", "prettier --write"],
+    "./src/js/!(*min).js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
     "./src/css/*.css": "prettier --write"
-  },
-  "dependencies": {}
+  }
 }
