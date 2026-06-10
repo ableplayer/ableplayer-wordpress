@@ -251,6 +251,7 @@ function ableplayer_update_options( $settings ) {
 function ableplayer_update_settings( $post ) {
 	$settings          = array();
 	$replace_video     = ( ! empty( $post['replace_video'] ) && 'on' === $post['replace_video'] ) ? 'true' : 'false';
+	$replace_youtube   = ( ! empty( $post['replace_youtube'] ) && 'on' === $post['replace_youtube'] ) ? 'true' : 'false';
 	$replace_audio     = ( ! empty( $post['replace_audio'] ) && 'on' === $post['replace_audio'] ) ? 'true' : 'false';
 	$exclude_class     = ( ! empty( $post['exclude_class'] ) ) ? sanitize_text_field( $post['exclude_class'] ) : '';
 	$replace_playlists = ( ! empty( $post['replace_playlists'] ) && 'on' === $post['replace_playlists'] ) ? 'true' : 'false';
@@ -266,6 +267,7 @@ function ableplayer_update_settings( $post ) {
 	$cookies           = ( ! empty( $post['cookies'] ) && 'on' === $post['cookies'] ) ? 'true' : 'false';
 
 	$settings['replace_video']     = $replace_video;
+	$settings['replace_youtube']   = $replace_youtube;
 	$settings['replace_audio']     = $replace_audio;
 	$settings['exclude_class']     = $exclude_class;
 	$settings['replace_playlists'] = $replace_playlists;
@@ -352,6 +354,17 @@ function ableplayer_settings_form() {
 										'label' => __( 'Use Able Player for all <code>video</code> elements.', 'ableplayer' ),
 										'type'  => 'checkbox-single',
 										'note'  => __( 'Does not replace Vimeo or YouTube Embed blocks', 'ableplayer' ),
+									)
+								);
+								?>
+								</p>
+								<p>
+								<?php
+								ableplayer_settings_field(
+									array(
+										'name'  => 'replace_youtube',
+										'label' => __( 'Use Able Player for all YouTube Embed blocks.', 'ableplayer' ),
+										'type'  => 'checkbox-single',
 									)
 								);
 								?>
@@ -600,6 +613,7 @@ function ableplayer_show_sidebar() {
 function ableplayer_default_settings() {
 	$settings = array(
 		'replace_video'     => 'false',
+		'replace_youtube'   => 'false',
 		'replace_audio'     => 'false',
 		'exclude_class'     => '',
 		'replace_playlists' => 'false',

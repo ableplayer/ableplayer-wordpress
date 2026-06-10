@@ -3,6 +3,9 @@ if ( ableplayer !== 'undefined' ) {
 	if ( ableplayer.settings.replace_video === 'true' ) {
 		ableplayer_selectors.push( 'video' );
 	}
+	if ( ableplayer.settings.replace_youtube === 'true' ) {
+		ableplayer_selectors.push( '.is-provider-youtube iframe' );
+	}
 	if ( ableplayer.settings.replace_audio === 'true' ) {
 		ableplayer_selectors.push( 'audio' );
 	}
@@ -19,6 +22,16 @@ if ( ableplayer !== 'undefined' ) {
 				if ( excludeClass !== '' && el.classList.contains( excludeClass ) || parentHasClass || parentDivHasClass ) {
 					el.classList.add( 'ableplayer-skipped' );
 				} else {
+					if ( el.tagName === 'IFRAME' ) {
+						let url = el.getAttribute( 'src' );
+						let newEl = document.createElement( 'video' );
+						let youTubeId = getYouTubeIdFromEmbed( url );
+						newEl.setAttribute( 'data-able-player', 'true' );
+						newEl.setAttribute( 'data-youtube-id', youTubeId );
+						el.remove();
+						parentEl.appendChild( newEl );
+						parentEl.classList.remove( 'wp-has-aspect-ratio' );
+					}
 					el.removeAttribute( 'controls' );
 					if ( ! el.hasAttribute( 'data-able-player' ) ) {
 						el.setAttribute( 'data-able-player', 'true' );
@@ -46,6 +59,17 @@ if ( ableplayer !== 'undefined' ) {
 			playlists.forEach((playlist,index,listObj) => {
 				renderPlaylist( playlist );
 			});
+		}
+	}
+
+	function getYouTubeIdFromEmbed( embedUrl ) {
+		try {
+			const url = new URL( embedUrl );
+			// Splits '/embed/abc123xyz' and returns the final segment
+			const segments = url.pathname.split('/');
+			return segments[segments.indexOf('embed') + 1] || null;
+		} catch ( error ) {
+			return null;
 		}
 	}
 
