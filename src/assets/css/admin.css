@@ -172,6 +172,7 @@
 	grid-template-columns: 1fr auto auto;
 	column-gap: 10px;
 	align-items: center;
+	position: relative;
 }
 
 @media screen and ( width <= 481px ) {
@@ -206,7 +207,7 @@
 	padding: 6px;
 	border-radius: 3px;
 	position: absolute;
-	top: 2rem;
+	top: 0;
 }
 
 .ableplayer-notice-copied.visible {
