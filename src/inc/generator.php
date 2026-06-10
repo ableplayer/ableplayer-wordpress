@@ -27,10 +27,10 @@ function ableplayer_generate( $format = 'shortcode' ) {
 		$string    = '';
 		$array     = array();
 		$shortcode = 'ableplayer';
-		$keys      = array( 'youtube-id', 'vimeo-id', 'media-id', 'youtube-desc-id', 'youtube-sign-src', 'vimeo-desc-id', 'media-desc-id', 'media-asl-id', 'poster', 'captions', 'subtitles', 'descriptions', 'chapters', 'autoplay', 'loop', 'playsinline', 'hidecontrols', 'heading', 'speed', 'start', 'volume', 'seekinterval' );
+		$keys      = array( 'youtube-id', 'vimeo-id', 'media-id', 'media-id-url', 'media-desc-id-url', 'media-asl-id-url', 'youtube-desc-id', 'youtube-sign-src', 'vimeo-desc-id', 'media-desc-id', 'media-asl-id', 'poster', 'captions', 'subtitles', 'descriptions', 'chapters', 'autoplay', 'loop', 'playsinline', 'hidecontrols', 'heading', 'speed', 'start', 'volume', 'seekinterval' );
 		$post      = map_deep( $_POST, 'sanitize_text_field' );
 
-		if ( empty( $post['youtube-id'] ) && empty( $post['vimeo-id'] ) && empty( $post['media-id'] ) ) {
+		if ( empty( $post['youtube-id'] ) && empty( $post['vimeo-id'] ) && empty( $post['media-id'] ) && empty( $post['media-id-url'] ) ) {
 			return array(
 				'message' => __( 'You must specify at least one media source', 'ableplayer' ),
 				'type'    => 'error',
@@ -43,6 +43,9 @@ function ableplayer_generate( $format = 'shortcode' ) {
 				}
 				if ( 'heading' === $key && ableplayer_get_settings( 'default_heading' ) === $v ) {
 					continue;
+				}
+				if ( str_contains( $key, '-url' ) ) {
+					$key = str_replace( '-url', '', $key );
 				}
 				if ( '' !== $v ) {
 					if ( in_array( $key, array( 'captions', 'subtitles', 'descriptions', 'chapters' ), true ) ) {
@@ -178,6 +181,7 @@ function ableplayer_generator_fields( $data ) {
 							'youtube' => 'YouTube',
 							'vimeo'   => 'Vimeo',
 							'local'   => 'Local',
+							'media'   => 'URL',
 						),
 					),
 					'generator'
@@ -215,6 +219,43 @@ function ableplayer_generator_fields( $data ) {
 						'type'  => 'url',
 						'atts'  => array(
 							'placeholder' => 'https://youtube.com',
+						),
+					),
+					'generator'
+				);
+				?>
+				</p>
+				<p class="media-sources media">
+				<?php
+				ableplayer_settings_field(
+					array(
+						'name'  => 'media-id-url',
+						'label' => __( 'URL Source', 'ableplayer' ),
+						'type'  => 'url',
+						'atts'  => array(
+							'placeholder' => 'https://example.com',
+						),
+					),
+					'generator'
+				);
+				ableplayer_settings_field(
+					array(
+						'name'  => 'media-desc-id-url',
+						'label' => __( 'URL for Audio Described Source', 'ableplayer' ),
+						'type'  => 'url',
+						'atts'  => array(
+							'placeholder' => 'https://example.com',
+						),
+					),
+					'generator'
+				);
+				ableplayer_settings_field(
+					array(
+						'name'  => 'media-asl-id-url',
+						'label' => __( 'URL for Sign Language Source', 'ableplayer' ),
+						'type'  => 'url',
+						'atts'  => array(
+							'placeholder' => 'https://example.com',
 						),
 					),
 					'generator'

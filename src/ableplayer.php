@@ -476,31 +476,34 @@ function ableplayer_shortcode( $atts, $content = null ) {
 	} else {
 		$type = false;
 		if ( $all_atts['media-id'] ) {
+			$is_num = is_numeric( $all_atts['media-id'] );
 			// If Video ID is set but is not a valid URL, return.
-			$media_id = ( is_numeric( $all_atts['media-id'] ) ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
+			$media_id = ( $is_num ) ? wp_get_attachment_url( $all_atts['media-id'] ) : $all_atts['media-id'];
 			if ( ! $media_id ) {
 				return false;
 			} else {
-				$type    = get_post_mime_type( $all_atts['media-id'] );
+				$type    = ( $is_num ) ? get_post_mime_type( $all_atts['media-id'] ) : 'video/mp4';
 				$type    = ( 'video/quicktime' === $type ) ? 'video/mp4' : $type;
 				$element = ( wp_attachment_is( 'audio', $all_atts['media-id'] ) ) ? 'audio' : 'video';
 				$source  = '<source type="' . esc_attr( $type ) . '" src="' . esc_url( $media_id ) . '"%datasrc%>' . PHP_EOL;
 			}
 		}
 		if ( $all_atts['media-desc-id'] ) {
+			$is_num = is_numeric( $all_atts['media-desc-id'] );
 			// If Video ID is set but is not a valid URL, return.
-			$media_desc_id = ( is_numeric( $all_atts['media-desc-id'] ) ) ? wp_get_attachment_url( $all_atts['media-desc-id'] ) : $all_atts['media-desc-id'];
+			$media_desc_id = ( $is_num ) ? wp_get_attachment_url( $all_atts['media-desc-id'] ) : $all_atts['media-desc-id'];
 			if ( $media_desc_id ) {
-				$datatype    = get_post_mime_type( $all_atts['media-desc-id'] );
+				$datatype    = ( $is_num ) ? get_post_mime_type( $all_atts['media-desc-id'] ) : 'video/mp4';
 				$datatype    = ( 'video/quicktime' ) ? 'video/mp4' : $datatype;
 				$datasource .= ( $type === $datatype ) ? ' data-desc-src="' . esc_url( $media_desc_id ) . '"' : '';
 			}
 		}
 		if ( $all_atts['media-asl-id'] ) {
+			$is_num = is_numeric( $all_atts['media-asl-id'] );
 			// If Video ID is set but is not a valid URL, return.
-			$media_asl_id = ( is_numeric( $all_atts['media-asl-id'] ) ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-desc-id'];
+			$media_asl_id = ( $is_num ) ? wp_get_attachment_url( $all_atts['media-asl-id'] ) : $all_atts['media-asl-id'];
 			if ( $media_asl_id ) {
-				$datatype    = get_post_mime_type( $all_atts['media-asl-id'] );
+				$datatype    = ( $is_num ) ? get_post_mime_type( $all_atts['media-asl-id'] ) : 'video/mp4';
 				$datatype    = ( 'video/quicktime' ) ? 'video/mp4' : $datatype;
 				$datasource .= ( $type === $datatype ) ? ' data-sign-src="' . esc_url( $media_asl_id ) . '"' : '';
 			}
