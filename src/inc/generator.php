@@ -132,7 +132,7 @@ function ableplayer_generator_fields( $data ) {
 	if ( $data && is_array( $data ) ) {
 		$params = $data;
 	}
-	$message        = isset( $params['message'] ) ? $params['message'] : __( 'Generate an <code>[ableplayer]</code> shortcode.', 'ableplayer' );
+	$message        = isset( $params['message'] ) ? $params['message'] : '';
 	$message_type   = isset( $params['type'] ) ? $params['type'] : 'info';
 	$shortcode      = isset( $params['shortcode'] ) ? $params['shortcode'] : '[ableplayer]';
 	$last_shortcode = ableplayer_get_settings( 'last_shortcode' );
@@ -148,13 +148,15 @@ function ableplayer_generator_fields( $data ) {
 	<div id="ableplayer-generator" class="generator">
 		<div class="ableplayer-generator-data">
 			<?php
-			wp_admin_notice(
-				$message,
-				array(
-					'type'               => $message_type,
-					'additional_classes' => array( 'inline' ),
-				)
-			);
+			if ( $message ) {
+				wp_admin_notice(
+					$message,
+					array(
+						'type'               => $message_type,
+						'additional_classes' => array( 'inline' ),
+					)
+				);
+			}
 			?>
 			<div><input type="hidden" name="_wpnonce" value="<?php echo esc_attr( wp_create_nonce( 'ableplayer-nonce' ) ); ?>"/></div>
 			<?php
