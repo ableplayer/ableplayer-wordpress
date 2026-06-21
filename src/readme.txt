@@ -138,6 +138,11 @@ The Able Player plugin was originally created by [Terrill Thompson](https://terr
 
 = 2.4.0 =
 
+* Feature: Add support to generate Able Player shortcodes using media URLs.
+* Feature: Add option dynamic replacement for YouTube embeds.
+* Bug fix: Don't show a notice in shortcode generator when no action taken.
+* Bug fix: Fix positioning of shortcode 'copied' indicator.
+* Bug fix: Add an uninstall routine.
 * Update to [Able Player v5.0.0](https://github.com/ableplayer/ableplayer/releases/tag/v5.0.0)
 * New filter: `ableplayer_capability` to modify who has access to Able Player settings.
 * Dev: Get Able Player from NPM
