@@ -5,7 +5,7 @@
  * @category Core
  * @package  Able Player for WordPress
  * @author   Joe Dolson
- * @license  GPLv3
+ * @license  GPLv2
  * @link     https://xposterpro.com
  */
 
