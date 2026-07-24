@@ -29,8 +29,7 @@
     "husky": "^9.1.7",
     "jsdoc": "~4.0.5",
     "lint-staged": "^17.0.4",
-    "prettier": "^3.8.3",
-    "wp-hookdoc": "^0.2.0"
+    "prettier": "^3.8.3"
   },
   "scripts": {
     "presetup": "find .scripts -type f -exec chmod +x {} \\;",
