@@ -174,7 +174,7 @@ add_action( 'admin_enqueue_scripts', 'ableplayer_admin_scripts' );
  *
  * @return array
  */
-function able_player_parameters() {
+function ableplayer_parameters() {
 	/**
 	 * 'default': Default value in shortcode.
 	 * 'description': Explanation of field and value expected.
@@ -681,11 +681,11 @@ function ableplayer_is_true( $condition ) {
 }
 
 
-add_action( 'admin_notices', 'able_status_notice', 10 );
+add_action( 'admin_notices', 'ableplayer_status_notice', 10 );
 /**
  * Display notice in Playground for demo purposes.
  */
-function able_status_notice() {
+function ableplayer_status_notice() {
 	// Only shown when in the Playground preview.
 	if ( 'true' === get_option( 'able_show_playground_intro', '' ) ) {
 		$settings_url = admin_url( 'options-general.php?page=ableplayer' );
