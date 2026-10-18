@@ -290,7 +290,7 @@ function ableplayer_update_settings( $post ) {
  */
 function ableplayer_settings_form() {
 	if ( ! empty( $_POST ) ) {
-		$nonce = $_REQUEST['_wpnonce'];
+		$nonce = isset( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'ableplayer-nonce' ) ) {
 			wp_die( 'Able Player: Security check failed' );
 		}

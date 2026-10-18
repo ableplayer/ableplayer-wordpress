@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function ableplayer_generate( $format = 'shortcode' ) {
 	if ( isset( $_POST['generator'] ) ) {
-		$nonce = sanitize_text_field( $_POST['_wpnonce'] );
+		$nonce = isset( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'ableplayer-nonce' ) ) {
 			wp_die( 'Invalid nonce' );
 		}
