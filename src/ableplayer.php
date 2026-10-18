@@ -18,6 +18,10 @@
  * Version:     2.4.0
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // Configure debugging mode.
 define( 'ABLEPLAYER_DEBUG', false );
 
@@ -686,15 +690,15 @@ function able_status_notice() {
 	if ( 'true' === get_option( 'able_show_playground_intro', '' ) ) {
 		$settings_url = admin_url( 'options-general.php?page=ableplayer' );
 		echo '<div class="notice notice-info">';
-		echo '<h3>' . __( 'Thanks for trying out Able Player!', 'ableplayer' ) . '</h3>';
-		echo '<p>' . __( "Let me give you a few quick things to try out while you're here:", 'ableplayer' ) . '</p>';
+		echo '<h3>' . esc_html__( 'Thanks for trying out Able Player!', 'ableplayer' ) . '</h3>';
+		echo '<p>' . esc_html__( "Let me give you a few quick things to try out while you're here:", 'ableplayer' ) . '</p>';
 		echo '<ol>';
-		echo '<li>' . __( 'Create a new post and add media to experiment with Able Player.', 'ableplayer' ) . '</li>';
+		echo '<li>' . esc_html__( 'Create a new post and add media to experiment with Able Player.', 'ableplayer' ) . '</li>';
 		// translators: link to settings page.
-		echo '<li>' . sprintf( __( 'Visit the <a href="%s">Able Player settings page</a> and explore options.', 'ableplayer' ), esc_url( $settings_url ) ) . '</li>';
+		echo '<li>' . sprintf( wp_kses_post( __( 'Visit the <a href="%s">Able Player settings page</a> and explore options.', 'ableplayer' ) ), esc_url( $settings_url ) ) . '</li>';
 		echo '</ol>';
 		// translators: link to plugin documentation.
-		echo '<p>' . sprintf( __( 'To learn more, check out the <a href="%s">player documentation</a>.', 'ableplayer' ), 'https://ableplayer.github.io/ableplayer/' ) . '</p>';
+		echo '<p>' . sprintf( wp_kses_post( __( 'To learn more, check out the <a href="%s">player documentation</a>.', 'ableplayer' ) ), 'https://ableplayer.github.io/ableplayer/' ) . '</p>';
 		echo '</div>';
 	}
 }
